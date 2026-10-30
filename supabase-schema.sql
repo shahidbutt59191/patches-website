@@ -87,10 +87,24 @@ CREATE POLICY "Allow anonymous users to insert quotes"
     TO anon, authenticated 
     WITH CHECK (true);
 
--- Allow reading quote by matching reference code
-CREATE POLICY "Allow users to view their own quote by ref_code" 
+-- Allow reading quotes
+CREATE POLICY "Allow users to view quotes" 
     ON public.quotes 
     FOR SELECT 
+    TO anon, authenticated 
+    USING (true);
+
+-- Allow updating quotes (for Admin portal status changes)
+CREATE POLICY "Allow updating quotes" 
+    ON public.quotes 
+    FOR UPDATE 
+    TO anon, authenticated 
+    USING (true);
+
+-- Allow deleting quotes
+CREATE POLICY "Allow deleting quotes" 
+    ON public.quotes 
+    FOR DELETE 
     TO anon, authenticated 
     USING (true);
 
@@ -101,12 +115,47 @@ CREATE POLICY "Allow anonymous users to insert orders"
     TO anon, authenticated 
     WITH CHECK (true);
 
+-- Allow reading orders (for Admin portal)
+CREATE POLICY "Allow viewing orders" 
+    ON public.orders 
+    FOR SELECT 
+    TO anon, authenticated 
+    USING (true);
+
+-- Allow updating orders (for Admin portal status changes)
+CREATE POLICY "Allow updating orders" 
+    ON public.orders 
+    FOR UPDATE 
+    TO anon, authenticated 
+    USING (true);
+
+-- Allow deleting orders
+CREATE POLICY "Allow deleting orders" 
+    ON public.orders 
+    FOR DELETE 
+    TO anon, authenticated 
+    USING (true);
+
 -- Allow anonymous visitors to insert order items
 CREATE POLICY "Allow anonymous users to insert order items" 
     ON public.order_items 
     FOR INSERT 
     TO anon, authenticated 
     WITH CHECK (true);
+
+-- Allow reading order items (for Admin portal)
+CREATE POLICY "Allow viewing order items" 
+    ON public.order_items 
+    FOR SELECT 
+    TO anon, authenticated 
+    USING (true);
+
+-- Allow deleting order items
+CREATE POLICY "Allow deleting order items" 
+    ON public.order_items 
+    FOR DELETE 
+    TO anon, authenticated 
+    USING (true);
 
 -- ==============================================================================
 -- 6. Setup Storage Bucket for Customer Artworks (Optional)

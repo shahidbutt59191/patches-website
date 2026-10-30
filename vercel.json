@@ -35,6 +35,10 @@
       "dest": "/api/$1"
     },
     {
+      "src": "/admin",
+      "dest": "/admin.html"
+    },
+    {
       "handle": "filesystem"
     },
     {

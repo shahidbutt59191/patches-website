@@ -260,6 +260,141 @@ class SupabaseService {
     }
   }
 
+  /**
+   * Admin: Fetch all quotes from Supabase
+   */
+  async getAllQuotes() {
+    if (!this.client) return { success: false, data: [] };
+
+    try {
+      const { data, error } = await this.client
+        .from('quotes')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return { success: true, data: data || [] };
+    } catch (err) {
+      console.error('Error fetching quotes:', err);
+      return { success: false, error: err.message, data: [] };
+    }
+  }
+
+  /**
+   * Admin: Update Quote Status
+   */
+  async updateQuoteStatus(quoteId, status) {
+    if (!this.client) return { success: false };
+
+    try {
+      const { data, error } = await this.client
+        .from('quotes')
+        .update({ status })
+        .eq('id', quoteId)
+        .select();
+
+      if (error) throw error;
+      return { success: true, data };
+    } catch (err) {
+      console.error('Error updating quote status:', err);
+      return { success: false, error: err.message };
+    }
+  }
+
+  /**
+   * Admin: Delete Quote
+   */
+  async deleteQuote(quoteId) {
+    if (!this.client) return { success: false };
+
+    try {
+      const { error } = await this.client
+        .from('quotes')
+        .delete()
+        .eq('id', quoteId);
+
+      if (error) throw error;
+      return { success: true };
+    } catch (err) {
+      console.error('Error deleting quote:', err);
+      return { success: false, error: err.message };
+    }
+  }
+
+  /**
+   * Admin: Fetch all orders and their items
+   */
+  async getAllOrders() {
+    if (!this.client) return { success: false, data: [] };
+
+    try {
+      const { data: orders, error: ordersErr } = await this.client
+        .from('orders')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (ordersErr) throw ordersErr;
+
+      const { data: items, error: itemsErr } = await this.client
+        .from('order_items')
+        .select('*');
+
+      if (itemsErr) console.warn('Could not fetch line items:', itemsErr);
+
+      // Attach items to orders
+      const combined = (orders || []).map(o => ({
+        ...o,
+        items: (items || []).filter(item => item.order_ref === o.order_id)
+      }));
+
+      return { success: true, data: combined };
+    } catch (err) {
+      console.error('Error fetching orders:', err);
+      return { success: false, error: err.message, data: [] };
+    }
+  }
+
+  /**
+   * Admin: Update Order Status
+   */
+  async updateOrderStatus(orderId, status) {
+    if (!this.client) return { success: false };
+
+    try {
+      const { data, error } = await this.client
+        .from('orders')
+        .update({ status })
+        .eq('order_id', orderId)
+        .select();
+
+      if (error) throw error;
+      return { success: true, data };
+    } catch (err) {
+      console.error('Error updating order status:', err);
+      return { success: false, error: err.message };
+    }
+  }
+
+  /**
+   * Admin: Delete Order
+   */
+  async deleteOrder(orderId) {
+    if (!this.client) return { success: false };
+
+    try {
+      const { error } = await this.client
+        .from('orders')
+        .delete()
+        .eq('order_id', orderId);
+
+      if (error) throw error;
+      return { success: true };
+    } catch (err) {
+      console.error('Error deleting order:', err);
+      return { success: false, error: err.message };
+    }
+  }
+
   updateStatusPill() {
     const statusPill = document.getElementById('supabase-status-pill');
     const statusText = document.getElementById('supabase-status-text');
