@@ -1,6 +1,17 @@
 import React from 'react';
+import Link from 'next/link';
 
-export default function Footer() {
+interface FooterProps {
+  supportEmail?: string;
+  supportPhone?: string;
+  whatsappNumber?: string;
+}
+
+export default function Footer({
+  supportEmail = 'orders@apexpatches.com',
+  supportPhone = '+1 (800) 555-7282',
+  whatsappNumber = '18005557282',
+}: FooterProps) {
   return (
     <footer className="border-t border-slate-800 bg-slate-950 text-slate-400">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
@@ -52,16 +63,35 @@ export default function Footer() {
             <div className="mt-4 space-y-3 text-xs">
               <p>
                 <span className="block text-slate-500 font-mono">Factory Support:</span>
-                <span className="font-semibold text-white">orders@apexpatches.com</span>
+                <a href={`mailto:${supportEmail}`} className="font-semibold text-white hover:text-amber-400">
+                  {supportEmail}
+                </a>
               </p>
               <p>
                 <span className="block text-slate-500 font-mono">Direct Phone:</span>
-                <span className="font-semibold text-white">+1 (800) 555-7282</span>
+                <a href={`tel:${supportPhone}`} className="font-semibold text-white hover:text-amber-400">
+                  {supportPhone}
+                </a>
               </p>
               <p>
-                <span className="block text-slate-500 font-mono">Turnaround:</span>
-                <span className="text-amber-400 font-mono font-bold">6-Hour Free Digital Tajima Proof</span>
+                <span className="block text-slate-500 font-mono">WhatsApp Desk:</span>
+                <a
+                  href={`https://wa.me/${whatsappNumber}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-emerald-400 hover:text-emerald-300"
+                >
+                  +{whatsappNumber}
+                </a>
               </p>
+              <div className="pt-2">
+                <Link
+                  href="/admin"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-xs font-bold text-amber-400 hover:bg-amber-500/20 transition-colors"
+                >
+                  <span>🔒 Store Manager / Admin Portal</span>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
@@ -74,7 +104,9 @@ export default function Footer() {
             <span>•</span>
             <span>TAJIMA EMBROIDERY SUITE</span>
             <span>•</span>
-            <span>FREE DIGITAL PROOF</span>
+            <Link href="/admin" className="text-amber-400/80 hover:text-amber-400 underline">
+              Admin Portal
+            </Link>
           </div>
         </div>
       </div>

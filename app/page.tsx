@@ -1,20 +1,53 @@
-import React from 'react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Layout/Navbar';
 import Footer from '@/components/Layout/Footer';
 import OrderForm from '@/components/OrderForm';
-
-export const metadata = {
-  title: 'ApexPatches | Custom Physical Patches | Commercial Tajima Embroidery',
-  description:
-    'Custom physical patches engineered with industrial Tajima embroidery, 3D soft PVC, leatherette, and vintage chenille. Free digital proof in 6 hours.',
-};
+import { SiteSettings, DEFAULT_SETTINGS } from '@/lib/settings';
 
 export default function HomePage() {
+  const [settings, setSettings] = useState<SiteSettings>(DEFAULT_SETTINGS);
+
+  useEffect(() => {
+    // 1. Check local storage for instant reactivity
+    try {
+      const local = localStorage.getItem('apex_live_settings');
+      if (local) {
+        setSettings({ ...DEFAULT_SETTINGS, ...JSON.parse(local) });
+      }
+    } catch (e) {
+      console.log('Error reading local settings:', e);
+    }
+
+    // 2. Fetch fresh settings from API
+    fetch('/api/settings')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data) {
+          setSettings({ ...DEFAULT_SETTINGS, ...data });
+        }
+      })
+      .catch((err) => console.log('Settings fetch error:', err));
+  }, []);
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 selection:bg-amber-500 selection:text-black">
-      <Navbar />
+      
+      {/* Dynamic Top Announcement Banner */}
+      {settings.announcementEnabled && settings.announcementText && (
+        <div className="bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 py-2 px-4 text-center text-xs font-bold text-black tracking-wide shadow-md">
+          <span className="mr-2 inline-block rounded-full bg-black px-2 py-0.5 text-[10px] font-black uppercase text-amber-400">
+            Special Offer
+          </span>
+          <span>{settings.announcementText}</span>
+        </div>
+      )}
 
-      {/* Hero Section */}
+      {/* Dynamic Navbar */}
+      <Navbar whatsappNumber={settings.whatsappNumber} />
+
+      {/* Hero Section (Fully Editable from Admin Portal) */}
       <section className="relative overflow-hidden pt-12 pb-20 lg:pt-20 lg:pb-32">
         {/* Glow Effects */}
         <div className="pointer-events-none absolute left-1/2 top-10 -translate-x-1/2 h-[450px] w-[800px] rounded-full bg-amber-500/10 blur-[150px]" />
@@ -22,23 +55,20 @@ export default function HomePage() {
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
             
-            {/* Pill Badge */}
+            {/* Pill Badge (Editable) */}
             <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-1.5 text-xs font-bold text-amber-400">
               <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
-              Direct Tajima Production Facility • No Middlemen
+              <span>{settings.heroBadge}</span>
             </div>
 
-            {/* Main Headline */}
-            <h1 className="mt-6 text-4xl font-black tracking-tight text-white sm:text-6xl sm:leading-none">
-              Custom Physical Patches <br />
-              <span className="bg-gradient-to-r from-amber-400 via-amber-200 to-amber-500 bg-clip-text text-transparent">
-                Engineered to Last Decades.
-              </span>
+            {/* Main Headline (Editable) */}
+            <h1 className="mt-6 text-4xl font-black tracking-tight text-white sm:text-6xl sm:leading-tight">
+              {settings.heroHeadline}
             </h1>
 
-            {/* Sub-headline */}
+            {/* Sub-headline (Editable) */}
             <p className="mt-6 text-base leading-relaxed text-slate-300 sm:text-lg">
-              Military-spec PVC rubber, 100% density Tajima embroidery, laser-cut leatherette, and vintage varsity chenille. Instant wholesale bulk discounts with a guaranteed free digital proof in 6 hours.
+              {settings.heroSubheadline}
             </p>
 
             {/* Hero Action CTAs */}
@@ -47,7 +77,7 @@ export default function HomePage() {
                 href="#order-form"
                 className="w-full rounded-2xl bg-amber-500 px-8 py-4 text-sm font-black uppercase tracking-wider text-black shadow-xl shadow-amber-500/25 transition-all hover:bg-amber-400 hover:scale-105 sm:w-auto"
               >
-                Configure Your Custom Patch
+                {settings.heroCtaText || 'Configure Your Custom Patch'}
               </a>
               <a
                 href="#patch-types"
@@ -89,42 +119,42 @@ export default function HomePage() {
                 title: 'Custom Embroidered',
                 badge: 'Industry Standard',
                 desc: 'Classic raised thread texture woven with ultra-dense Tajima stitches. Ideal for uniforms, workwear, and biker cuts.',
-                price: 'From $1.85 / ea',
+                price: `From $${settings.basePrice.toFixed(2)} / ea`,
                 features: ['Up to 12 Madeira thread colors', 'Merrowed or heat-cut edge', 'Twill fabric backing'],
               },
               {
                 title: '3D Soft PVC Rubber',
                 badge: 'Mil-Spec Waterproof',
                 desc: 'Tactical rubber morale patches with sharp 2D/3D sculpting. Impervious to mud, rain, heat, and heavy combat wear.',
-                price: 'From $2.40 / ea',
+                price: `From $${(settings.basePrice * 1.25).toFixed(2)} / ea`,
                 features: ['Washable & weatherproof', 'Recessed stitching channels', 'Hook & loop backing standard'],
               },
               {
                 title: 'Laser Leatherette',
                 badge: 'Premium Lifestyle',
                 desc: 'Rich caramel and charcoal synthetic leather etched with high-precision fiber lasers. Ideal for trucker hats and jackets.',
-                price: 'From $2.15 / ea',
+                price: `From $${(settings.basePrice * 1.15).toFixed(2)} / ea`,
                 features: ['High-contrast dark etching', 'Clean stitch channel', 'Iron-on adhesive or sew-on'],
               },
               {
                 title: 'Vintage Varsity Chenille',
                 badge: 'Authentic High-Pile',
                 desc: 'Thick, fluffy looped yarn chenille on heavy wool felt backing. Made for varsity letterman jackets and athletic awards.',
-                price: 'From $2.85 / ea',
+                price: `From $${(settings.basePrice * 1.3).toFixed(2)} / ea`,
                 features: ['Thick 3D pile depth', 'Double-layer felt borders', 'Traditional chenille chainstitch'],
               },
               {
                 title: 'Jacquard Woven',
                 badge: 'Ultra-Fine Detail',
                 desc: 'Thin thread count capable of rendering small lettering and intricate gradient graphics that embroidery cannot reproduce.',
-                price: 'From $1.65 / ea',
+                price: `From $${(settings.basePrice * 0.95).toFixed(2)} / ea`,
                 features: ['Crisp small text down to 2mm', 'Flat modern profile', 'Zero snagging surface'],
               },
               {
                 title: 'Dye Sublimated Print',
                 badge: 'Full Color Photographic',
                 desc: 'Full-color continuous tones infused directly into polyester twill fabric. Exact photographic rendering with unlimited colors.',
-                price: 'From $1.50 / ea',
+                price: `From $${(settings.basePrice * 0.9).toFixed(2)} / ea`,
                 features: ['Unlimited gradients & colors', 'Merrowed embroidery edge', 'Fade-resistant pigment infusion'],
               },
             ].map((p, i) => (
@@ -265,7 +295,12 @@ export default function HomePage() {
         </div>
       </section>
 
-      <Footer />
+      {/* Dynamic Footer */}
+      <Footer
+        supportEmail={settings.supportEmail}
+        supportPhone={settings.supportPhone}
+        whatsappNumber={settings.whatsappNumber}
+      />
     </div>
   );
 }
