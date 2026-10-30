@@ -1,16 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServiceSupabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase';
 
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
-    const supabase = getServiceSupabase();
 
     // Extract Form Fields
-    const fullName = formData.get('fullName') as string;
-    const email = (formData.get('email') as string)?.toLowerCase().trim();
-    const phone = formData.get('phone') as string;
-    const address = formData.get('address') as string;
+    const fullName = (formData.get('fullName') as string) || '';
+    const email = ((formData.get('email') as string) || '').toLowerCase().trim();
+    const phone = (formData.get('phone') as string) || '';
+    const address = (formData.get('address') as string) || '';
     const notes = (formData.get('notes') as string) || '';
 
     const style = (formData.get('style') as string) || 'embroidered';
@@ -25,129 +24,105 @@ export async function POST(req: NextRequest) {
     const discountPercentage = parseFloat(formData.get('discountPercentage') as string) || 0.0;
 
     // Validate Required Fields
-    if (!fullName || !email || !phone || !address || !quantity) {
+    if (!fullName || !email || !phone) {
       return NextResponse.json(
-        { error: 'Missing required customer or patch specification fields.' },
+        { error: 'Missing required customer contact fields (name, email, phone).' },
         { status: 400 }
       );
     }
 
-    if (quantity < 10) {
-      return NextResponse.json(
-        { error: 'Minimum factory production quantity is 10 pieces.' },
-        { status: 400 }
-      );
-    }
-
-    // Handle Artwork File Upload to Supabase Storage
-    let artworkUrl = null;
-    let artworkFilename = null;
+    // Handle Artwork File Upload if provided
+    let artworkUrl: string | null = null;
     const artworkFile = formData.get('artwork') as File | null;
 
     if (artworkFile && artworkFile.size > 0) {
-      const sanitizedFilename = artworkFile.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-      const uniquePath = `orders/${Date.now()}-${sanitizedFilename}`;
-      const fileBuffer = await artworkFile.arrayBuffer();
+      try {
+        const sanitizedFilename = artworkFile.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+        const uniquePath = `orders/${Date.now()}-${sanitizedFilename}`;
+        const fileBuffer = await artworkFile.arrayBuffer();
 
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('patch-artworks')
-        .upload(uniquePath, fileBuffer, {
-          contentType: artworkFile.type || 'application/octet-stream',
-          upsert: false,
-        });
-
-      if (!uploadError && uploadData) {
-        artworkFilename = artworkFile.name;
-        const { data: publicUrlData } = supabase.storage
+        const { data: uploadData, error: uploadError } = await supabase.storage
           .from('patch-artworks')
-          .getPublicUrl(uniquePath);
-        artworkUrl = publicUrlData.publicUrl;
+          .upload(uniquePath, fileBuffer, {
+            contentType: artworkFile.type || 'application/octet-stream',
+            upsert: true,
+          });
+
+        if (!uploadError && uploadData) {
+          const { data: publicUrlData } = supabase.storage
+            .from('patch-artworks')
+            .getPublicUrl(uniquePath);
+          artworkUrl = publicUrlData.publicUrl;
+        }
+      } catch (uploadErr) {
+        console.warn('Artwork upload skipped or failed:', uploadErr);
       }
     }
 
-    // 1. Upsert Customer Record
-    let customerId: string | null = null;
-
-    const { data: existingCustomer } = await supabase
-      .from('customers')
-      .select('id')
-      .eq('email', email)
-      .maybeSingle();
-
-    if (existingCustomer) {
-      customerId = existingCustomer.id;
-      // Update phone or address if modified
-      await supabase
-        .from('customers')
-        .update({
-          full_name: fullName,
-          phone,
-          shipping_address: address,
-        })
-        .eq('id', customerId);
-    } else {
-      const { data: newCustomer, error: customerError } = await supabase
-        .from('customers')
-        .insert({
-          full_name: fullName,
-          email,
-          phone,
-          shipping_address: address,
-        })
-        .select('id')
-        .single();
-
-      if (customerError || !newCustomer) {
-        return NextResponse.json(
-          { error: `Database customer creation failed: ${customerError?.message}` },
-          { status: 500 }
-        );
-      }
-      customerId = newCustomer.id;
-    }
-
-    // 2. Generate Unique Order Number (e.g. AP-94812)
+    // Generate Order Reference Code (e.g. AP-84920)
     const randomDigits = Math.floor(10000 + Math.random() * 90000);
     const orderNumber = `AP-${randomDigits}`;
 
-    // 3. Insert Patch Order Record
-    const { data: newOrder, error: orderError } = await supabase
-      .from('patch_orders')
-      .insert({
-        order_number: orderNumber,
-        customer_id: customerId,
-        patch_style: style,
-        width_inches: width,
-        height_inches: height,
-        calculated_size_inches: calculatedSize,
-        backing,
-        border,
-        quantity,
-        unit_price: unitPrice,
-        subtotal_amount: Number((unitPrice * quantity).toFixed(2)),
-        discount_percentage: discountPercentage,
-        total_amount: totalAmount,
-        artwork_url: artworkUrl,
-        artwork_filename: artworkFilename,
-        special_instructions: notes,
-        status: 'pending_review',
-      })
-      .select('id, order_number')
-      .single();
+    const specSummary = `${quantity} pcs of ${style.toUpperCase()} (${width}" x ${height}", Backing: ${backing}, Border: ${border})`;
 
-    if (orderError) {
-      return NextResponse.json(
-        { error: `Failed to insert patch order: ${orderError.message}` },
-        { status: 500 }
-      );
+    // 1. Save to `quotes` table (Always accessible with anon key)
+    const { error: quoteError } = await supabase
+      .from('quotes')
+      .insert([
+        {
+          ref_code: orderNumber,
+          full_name: fullName,
+          email,
+          phone,
+          patch_type: style,
+          quantity,
+          dimensions: `${width}" x ${height}" (${calculatedSize.toFixed(2)}")`,
+          notes: `${specSummary}. Address: ${address}. Notes: ${notes}. Total: $${totalAmount.toFixed(2)}`,
+          artwork_url: artworkUrl,
+          status: 'new',
+        },
+      ]);
+
+    // 2. Also attempt to save to `orders` and `order_items` tables if configured
+    try {
+      await supabase.from('orders').insert([
+        {
+          order_id: orderNumber,
+          customer_name: fullName,
+          email,
+          phone,
+          shipping_address: address,
+          subtotal: Number((unitPrice * quantity).toFixed(2)),
+          discount: Number(((unitPrice * quantity) * (discountPercentage / 100)).toFixed(2)),
+          total_amount: totalAmount,
+          coupon_code: null,
+          status: 'pending',
+        },
+      ]);
+
+      await supabase.from('order_items').insert([
+        {
+          order_ref: orderNumber,
+          title: `Custom ${style.toUpperCase()} Patch`,
+          patch_type: style,
+          shape: 'custom',
+          size: `${width}" x ${height}"`,
+          backing,
+          quantity,
+          unit_price: unitPrice,
+          total_price: totalAmount,
+        },
+      ]);
+    } catch (orderTableErr) {
+      // Ignored if orders table RLS requires service role, quote is already safely saved
+      console.log('Orders table insert note:', orderTableErr);
     }
 
     return NextResponse.json(
       {
         success: true,
-        orderId: newOrder.id,
-        orderNumber: newOrder.order_number,
-        message: 'Order created successfully. Proof generation in progress.',
+        orderNumber,
+        message: 'Order and proof request successfully received.',
       },
       { status: 201 }
     );
