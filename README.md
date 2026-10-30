@@ -35,6 +35,37 @@ The website is fully integrated with **Supabase**! It automatically stores:
 
 ---
 
+## 🚀 Vercel Deployment Guide
+
+Aap is website ko Vercel par 2 tareeqon se live deploy kar sakte hain:
+
+### Method 1: 1-Click Terminal Deploy (Sab se tez)
+1. Folder mein mojood **[`deploy-vercel.bat`](file:///e:/patches%20website/deploy-vercel.bat)** par double click karein (ya terminal mein `npx vercel --prod` chalayein).
+2. Pehli martaba Vercel aap se login (GitHub/Email) mangay ga.
+3. Sawalaat ke liye sirf **Enter** press karte jayein.
+4. Kuch hi seconds mein aap ki website live ho jayegi aur aap ko ek live URL mil jayega (e.g. `https://apexpatches.vercel.app`)!
+
+### Method 2: GitHub se Vercel Connect Karein (Continuous Deployment)
+1. GitHub par naya repository banayein (e.g. `patches-website`).
+2. Apne terminal mein yeh commands chalayein:
+   ```bash
+   git remote add origin https://github.com/YOUR_USERNAME/patches-website.git
+   git branch -M main
+   git push -u origin main
+   ```
+3. [Vercel Dashboard](https://vercel.com/dashboard) par jayein aur **"Add New..." -> "Project"** par click karein.
+4. Apna GitHub repo select kar ke **"Deploy"** par click kar dein!
+
+### 🔑 Vercel Par Supabase Environment Variables Kaise Add Karein?
+Jab aap Vercel par deploy karein:
+1. Vercel project dashboard mein **Settings -> Environment Variables** par jayein.
+2. Yeh 2 variables add karein:
+   - `SUPABASE_URL` = (Aap ka Supabase Project URL)
+   - `SUPABASE_ANON_KEY` = (Aap ka Supabase Anon Key)
+3. Website automatically Vercel environment variables se connect ho jayegi aur live site par Supabase database automatic chalna shuru ho jayega!
+
+---
+
 ## 🌟 Key Features
 
 1. **Interactive Live 2D/3D Patch Designer & Mockup Studio (`#customizer-section`)**:
