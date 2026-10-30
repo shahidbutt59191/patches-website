@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ApexPatches Admin | Operations, Quotes & Production Portal</title>
+  <meta name="robots" content="noindex, nofollow">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              DEFAULT: '#f59e0b',
+              400: '#fbbf24',
+              500: '#f59e0b',
+              600: '#d97706',
+            },
+            tactical: {
+              950: '#06080d',
+              900: '#0b0f17',
+              800: '#111726',
+              700: '#1b2438'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Courier New', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Supabase JS Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="/styles/main.css">
+  <style>
+    @media print {
+      body * { visibility: hidden; }
+      #printable-invoice-modal, #printable-invoice-modal * { visibility: visible; }
+      #printable-invoice-modal { position: absolute; left: 0; top: 0; width: 100%; background: white !important; color: black !important; }
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body class="bg-tactical-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-amber-500 selection:text-black">
+
+  <!-- Toast Container -->
+  <div id="toast-container"></div>
+
+  <!-- PASSCODE LOGIN LOCK SCREEN -->
+  <div id="admin-login-lock" class="fixed inset-0 bg-tactical-950/95 backdrop-blur-xl z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl relative">
+      <div class="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center mx-auto mb-4">
+        <i data-lucide="shield-lock" class="w-8 h-8"></i>
+      </div>
+      <h2 class="text-xl font-black text-white">ApexPatches Admin</h2>
+      <p class="text-xs text-slate-400 mt-1 mb-6">Enter administrative passcode to access orders, quotes & production pipeline.</p>
+
+      <form id="admin-login-form" class="space-y-4">
+        <div>
+          <input 
+            id="admin-passcode-input" 
+            type="password" 
+            placeholder="Enter passcode (Default: admin123)" 
+            required 
+            class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-sm text-center text-white font-mono tracking-widest focus:border-amber-500 outline-none"
+          />
+        </div>
+        <button type="submit" class="w-full py-3.5 bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-sm rounded-xl transition-all shadow-lg shadow-amber-500/20">
+          Unlock Dashboard
+        </button>
+      </form>
+      <div class="text-[11px] text-slate-500 mt-4">
+        Default passcode: <code class="text-amber-400">admin123</code>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN ADMIN CONSOLE (Hidden until logged in) -->
+  <div id="admin-app" class="hidden min-h-screen flex flex-col">
+    
+    <!-- Top Header -->
+    <header class="bg-tactical-900 border-b border-slate-800 sticky top-0 z-40">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        
+        <!-- Left: Brand & Title -->
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-amber-500 text-black font-black flex items-center justify-center font-display text-sm">
+            AP
+          </div>
+          <div>
+            <div class="text-sm font-black text-white flex items-center gap-1.5 font-display">
+              APEX<span class="text-amber-500">PATCHES</span>
+              <span class="text-[10px] bg-slate-800 text-amber-400 px-2 py-0.5 rounded-full font-mono border border-slate-700 uppercase">Ops Portal</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Status & Actions -->
+        <div class="flex items-center gap-3 text-xs">
+          <!-- Supabase Status Badge -->
+          <div id="admin-db-pill" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-700 bg-slate-950 text-slate-300 font-mono text-[11px]">
+            <span id="admin-db-dot" class="w-2 h-2 rounded-full bg-amber-400"></span>
+            <span id="admin-db-text">Database Loading...</span>
+          </div>
+
+          <!-- Refresh Button -->
+          <button id="admin-refresh-btn" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition-colors" title="Refresh Live Data">
+            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+          </button>
+
+          <!-- Back to Storefront Link -->
+          <a href="index.html" class="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 font-medium transition-colors">
+            <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+            <span>View Store</span>
+          </a>
+
+          <!-- Logout Button -->
+          <button id="admin-logout-btn" class="px-3 py-2 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-500/30 font-bold transition-colors">
+            Log Out
+          </button>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- Admin Body Layout: Sidebar + Main Content -->
+    <div class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col md:flex-row gap-8">
+      
+      <!-- Left Sidebar Navigation -->
+      <aside class="w-full md:w-60 shrink-0 space-y-1.5">
+        <button data-nav-tab="overview" class="w-full text-left px-4 py-3 rounded-xl font-bold text-xs flex items-center justify-between transition-all pill-active">
+          <span class="flex items-center gap-2.5">
+            <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+            <span>Overview</span>
+          </span>
+        </button>
+
+        <button data-nav-tab="quotes" class="w-full text-left px-4 py-3 rounded-xl font-bold text-xs flex items-center justify-between text-slate-400 hover:text-white hover:bg-slate-900 transition-all">
+          <span class="flex items-center gap-2.5">
+            <i data-lucide="inbox" class="w-4 h-4"></i>
+            <span>Quote Inquiries</span>
+          </span>
+          <span id="badge-quotes-count" class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-amber-500/20 text-amber-400 border border-amber-500/40">0</span>
+        </button>
+
+        <button data-nav-tab="orders" class="w-full text-left px-4 py-3 rounded-xl font-bold text-xs flex items-center justify-between text-slate-400 hover:text-white hover:bg-slate-900 transition-all">
+          <span class="flex items-center gap-2.5">
+            <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+            <span>Orders & Production</span>
+          </span>
+          <span id="badge-orders-count" class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">0</span>
+        </button>
+
+        <button data-nav-tab="database" class="w-full text-left px-4 py-3 rounded-xl font-bold text-xs flex items-center justify-between text-slate-400 hover:text-white hover:bg-slate-900 transition-all">
+          <span class="flex items-center gap-2.5">
+            <i data-lucide="database" class="w-4 h-4"></i>
+            <span>Supabase Sync</span>
+          </span>
+        </button>
+
+        <div class="pt-6 border-t border-slate-800 space-y-2">
+          <button id="admin-export-quotes-csv" class="w-full text-left px-4 py-2.5 rounded-xl text-xs text-slate-400 hover:text-amber-400 hover:bg-slate-900 transition-colors flex items-center gap-2">
+            <i data-lucide="download" class="w-4 h-4"></i>
+            <span>Export Quotes CSV</span>
+          </button>
+          <button id="admin-export-orders-csv" class="w-full text-left px-4 py-2.5 rounded-xl text-xs text-slate-400 hover:text-amber-400 hover:bg-slate-900 transition-colors flex items-center gap-2">
+            <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+            <span>Export Orders CSV</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- Right Main Panel Views -->
+      <main class="flex-1 min-w-0">
+        
+        <!-- ========================================== -->
+        <!-- VIEW 1: OVERVIEW DASHBOARD -->
+        <!-- ========================================== -->
+        <section id="tab-view-overview" class="space-y-8">
+          
+          <!-- KPI Cards -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+              <div class="text-xs font-mono text-slate-400 uppercase">Total Sales Volume</div>
+              <div id="kpi-total-revenue" class="text-2xl font-black text-amber-400 font-mono mt-1">$0.00</div>
+              <div class="text-[11px] text-emerald-400 mt-1">Confirmed production value</div>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+              <div class="text-xs font-mono text-slate-400 uppercase">Total Orders</div>
+              <div id="kpi-total-orders" class="text-2xl font-black text-white font-mono mt-1">0</div>
+              <div class="text-[11px] text-slate-400 mt-1">Direct bookings</div>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+              <div class="text-xs font-mono text-slate-400 uppercase">Quote Inquiries</div>
+              <div id="kpi-total-quotes" class="text-2xl font-black text-sky-400 font-mono mt-1">0</div>
+              <div class="text-[11px] text-slate-400 mt-1">Customer artwork submissions</div>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+              <div class="text-xs font-mono text-slate-400 uppercase">Avg. Order Value</div>
+              <div id="kpi-avg-order" class="text-2xl font-black text-emerald-400 font-mono mt-1">$0.00</div>
+              <div class="text-[11px] text-slate-400 mt-1">Per custom patch run</div>
+            </div>
+          </div>
+
+          <!-- Production Pipeline Status Strip -->
+          <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-4 flex items-center gap-2">
+              <i data-lucide="activity" class="w-4 h-4 text-amber-500"></i>
+              <span>Live Production Pipeline</span>
+            </h3>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+              <div class="p-4 bg-slate-950 rounded-xl border border-slate-800">
+                <span class="text-xs text-slate-400 block mb-1">New / Digitizing</span>
+                <span id="pipe-digitizing-count" class="text-xl font-black text-amber-400 font-mono">0</span>
+              </div>
+              <div class="p-4 bg-slate-950 rounded-xl border border-slate-800">
+                <span class="text-xs text-slate-400 block mb-1">Proof Approved</span>
+                <span id="pipe-approved-count" class="text-xl font-black text-sky-400 font-mono">0</span>
+              </div>
+              <div class="p-4 bg-slate-950 rounded-xl border border-slate-800">
+                <span class="text-xs text-slate-400 block mb-1">Tajima Machine Craft</span>
+                <span id="pipe-production-count" class="text-xl font-black text-purple-400 font-mono">0</span>
+              </div>
+              <div class="p-4 bg-slate-950 rounded-xl border border-slate-800">
+                <span class="text-xs text-slate-400 block mb-1">Shipped & Delivered</span>
+                <span id="pipe-shipped-count" class="text-xl font-black text-emerald-400 font-mono">0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Quotes Preview -->
+          <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                <i data-lucide="clock" class="w-4 h-4 text-amber-500"></i>
+                <span>Recent Customer Quote Requests</span>
+              </h3>
+              <button onclick="window.ApexAdmin.switchTab('quotes')" class="text-xs text-amber-400 hover:underline">
+                View All Quotes →
+              </button>
+            </div>
+            <div id="overview-recent-quotes" class="space-y-3">
+              <!-- Rendered by admin.js -->
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ========================================== -->
+        <!-- VIEW 2: QUOTE INQUIRIES & ARTWORKS -->
+        <!-- ========================================== -->
+        <section id="tab-view-quotes" class="hidden space-y-6">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h2 class="text-xl font-black text-white">Customer Quote Inquiries</h2>
+              <p class="text-xs text-slate-400 mt-0.5">Digitize customer logos and reply with 6-hour proofs.</p>
+            </div>
+
+            <!-- Search -->
+            <div class="w-full sm:w-64 relative">
+              <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+              <input id="search-quotes-input" type="text" placeholder="Search customer, ref, email..." class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-4 py-2 text-xs text-white focus:border-amber-500 outline-none">
+            </div>
+          </div>
+
+          <!-- Filter Pills -->
+          <div class="flex flex-wrap gap-2 text-xs">
+            <button data-filter-quote="all" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white pill-active">All</button>
+            <button data-filter-quote="new" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white">New</button>
+            <button data-filter-quote="digitizing" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white">In Digitizing</button>
+            <button data-filter-quote="proof_sent" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white">Proof Sent</button>
+            <button data-filter-quote="approved" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white">Approved</button>
+            <button data-filter-quote="rejected" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white">Rejected</button>
+          </div>
+
+          <!-- Quotes Table -->
+          <div class="bg-slate-900/80 border border-slate-800 rounded-2xl overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-950 text-slate-400 font-mono uppercase border-b border-slate-800">
+                  <tr>
+                    <th class="p-4">Reference</th>
+                    <th class="p-4">Customer</th>
+                    <th class="p-4">Type & Qty</th>
+                    <th class="p-4">Artwork</th>
+                    <th class="p-4">Status</th>
+                    <th class="p-4 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="quotes-table-body" class="divide-y divide-slate-800/80 text-slate-300">
+                  <!-- Rendered by admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- VIEW 3: ORDERS & PRODUCTION MANAGEMENT -->
+        <!-- ========================================== -->
+        <section id="tab-view-orders" class="hidden space-y-6">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h2 class="text-xl font-black text-white">Orders & Production Console</h2>
+              <p class="text-xs text-slate-400 mt-0.5">Manage Tajima machine queue, shipping & invoices.</p>
+            </div>
+
+            <!-- Search -->
+            <div class="w-full sm:w-64 relative">
+              <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+              <input id="search-orders-input" type="text" placeholder="Search order ID, name..." class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-4 py-2 text-xs text-white focus:border-amber-500 outline-none">
+            </div>
+          </div>
+
+          <!-- Filter Pills -->
+          <div class="flex flex-wrap gap-2 text-xs">
+            <button data-filter-order="all" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white pill-active">All</button>
+            <button data-filter-order="pending" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white">Pending</button>
+            <button data-filter-order="proof_approved" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white">Proof Approved</button>
+            <button data-filter-order="production" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white">In Production</button>
+            <button data-filter-order="shipped" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white">Shipped</button>
+            <button data-filter-order="completed" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white">Completed</button>
+          </div>
+
+          <!-- Orders Container -->
+          <div id="orders-list-container" class="space-y-4">
+            <!-- Rendered by admin.js -->
+          </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- VIEW 4: SUPABASE DATABASE SETTINGS -->
+        <!-- ========================================== -->
+        <section id="tab-view-database" class="hidden space-y-6">
+          <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center">
+                <i data-lucide="database" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <h3 class="text-xl font-black text-white">Supabase Cloud Database Settings</h3>
+                <p class="text-xs text-slate-400">Configure backend synchronization for quotes and orders.</p>
+              </div>
+            </div>
+
+            <form id="admin-supabase-config-form" class="space-y-4 max-w-xl">
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1.5">Project URL</label>
+                <input id="admin-input-db-url" type="url" placeholder="https://xxxx.supabase.co" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white font-mono focus:border-amber-500 outline-none">
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1.5">Anon Public Key</label>
+                <input id="admin-input-db-key" type="text" placeholder="eyJhbGciOi..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white font-mono focus:border-amber-500 outline-none">
+              </div>
+
+              <div id="admin-db-test-result" class="hidden p-3 rounded-xl text-xs font-mono"></div>
+
+              <div class="flex gap-3 pt-2">
+                <button type="button" id="admin-btn-test-db" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold rounded-xl transition-colors">
+                  Test Connection
+                </button>
+                <button type="submit" class="px-6 py-2.5 bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs rounded-xl shadow-lg transition-transform hover:scale-105">
+                  Save & Sync
+                </button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+      </main>
+    </div>
+
+  </div>
+
+  <!-- QUOTE DETAILS MODAL -->
+  <div id="admin-quote-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-tactical-950 border border-slate-800 rounded-3xl max-w-2xl w-full p-6 sm:p-8 relative shadow-2xl max-h-[90vh] overflow-y-auto">
+      <button id="admin-quote-modal-close" class="absolute top-5 right-5 text-slate-400 hover:text-white p-1">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+      <div id="admin-quote-modal-content">
+        <!-- Rendered by admin.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- PRINTABLE INVOICE / SPEC SHEET MODAL -->
+  <div id="printable-invoice-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full p-8 relative shadow-2xl max-h-[90vh] overflow-y-auto">
+      <button id="invoice-modal-close" class="no-print absolute top-5 right-5 text-slate-400 hover:text-white p-1">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+      <div id="invoice-modal-content">
+        <!-- Rendered by admin.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Script Modules -->
+  <script type="module" src="/js/data.js"></script>
+  <script type="module" src="/js/supabaseConfig.js"></script>
+  <script type="module" src="/js/supabaseClient.js"></script>
+  <script type="module" src="/js/admin.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) window.lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
