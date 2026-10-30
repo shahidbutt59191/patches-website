@@ -1,0 +1,1501 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ApexPatches | Premium Custom Embroidered, PVC & Leather Patches</title>
+  <meta name="description" content="Order custom embroidered patches, PVC morale patches, leather hat patches, and chenille varsity patches. Free digitizing, free digital proofs in 6 hours, fast 7-day turnaround.">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              DEFAULT: '#f59e0b',
+              50: '#fffbeb',
+              100: '#fef3c7',
+              200: '#fde68a',
+              300: '#fcd34d',
+              400: '#fbbf24',
+              500: '#f59e0b',
+              600: '#d97706',
+              700: '#b45309',
+              800: '#92400e',
+              900: '#78350f',
+            },
+            tactical: {
+              950: '#06080d',
+              900: '#0b0f17',
+              800: '#111726',
+              700: '#1b2438',
+              600: '#28344e'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Montserrat', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Supabase JS Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body class="bg-tactical-950 text-slate-100 selection:bg-amber-500 selection:text-black">
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container"></div>
+
+  <!-- Top Announcement Bar -->
+  <div class="bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 text-black py-2 px-4 text-xs font-bold text-center tracking-wide flex items-center justify-center gap-2 shadow-md">
+    <span class="inline-block px-2 py-0.5 bg-black text-amber-400 rounded-full text-[10px] uppercase font-black">Special Offer</span>
+    <span>Use code <span class="underline font-black">WELCOME10</span> for 10% Off • Free Digitizing ($45 Value) • Free Proof in 6 Hours</span>
+    <span class="hidden md:inline">• Express Delivery Worldwide</span>
+  </div>
+
+  <!-- Main Navigation Header -->
+  <header id="main-header" class="sticky top-0 z-40 transition-all duration-300 border-b border-slate-800/80 bg-tactical-900/90 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+        
+        <!-- Logo -->
+        <a href="#" class="flex items-center gap-3 group">
+          <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 p-0.5 shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform">
+            <div class="w-full h-full bg-tactical-950 rounded-[10px] flex items-center justify-center">
+              <svg viewBox="0 0 24 24" class="w-6 h-6 text-amber-400 stroke-current" fill="none" stroke-width="2">
+                <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z" stroke-dasharray="2,1"/>
+                <circle cx="12" cy="12" r="3" fill="#f59e0b"/>
+              </svg>
+            </div>
+          </div>
+          <div>
+            <div class="text-xl font-black tracking-tight text-white flex items-center gap-1.5 font-display">
+              APEX<span class="text-amber-500">PATCHES</span>
+            </div>
+            <div class="text-[10px] text-slate-400 font-mono tracking-widest uppercase">The Custom Patch Studio</div>
+          </div>
+        </a>
+
+        <!-- Desktop Navigation Links -->
+        <nav class="hidden lg:flex items-center gap-8 text-sm font-medium text-slate-300">
+          <a href="#customizer-section" class="hover:text-amber-400 transition-colors flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+            3D Studio
+          </a>
+          <a href="#calculator-section" class="hover:text-amber-400 transition-colors">Instant Calculator</a>
+          <a href="#patch-types-section" class="hover:text-amber-400 transition-colors">Patch Styles</a>
+          <a href="#gallery-section" class="hover:text-amber-400 transition-colors">Portfolio</a>
+          <a href="#backings-section" class="hover:text-amber-400 transition-colors">Backings</a>
+          <a href="#how-it-works" class="hover:text-amber-400 transition-colors">How It Works</a>
+          <a href="#faq-section" class="hover:text-amber-400 transition-colors">FAQ</a>
+        </nav>
+
+        <!-- Right Action Buttons -->
+        <div class="flex items-center gap-3">
+          <!-- Supabase Connection Status Pill -->
+          <button 
+            id="supabase-status-pill" 
+            data-open-supabase-modal 
+            class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-700 bg-slate-900/80 hover:border-amber-500/50 text-slate-300 text-xs font-medium transition-all"
+            title="Configure Supabase Database"
+          >
+            <span id="supabase-status-dot" class="w-2 h-2 rounded-full bg-amber-400"></span>
+            <span id="supabase-status-text" class="text-[11px] font-mono">Connect Supabase</span>
+          </button>
+
+          <!-- WhatsApp Quick Link -->
+          <a 
+            href="https://wa.me/923000000000?text=Hi%20ApexPatches!%20I%20am%20interested%20in%20custom%20patches." 
+            target="_blank"
+            class="hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-950/70 hover:bg-emerald-900/80 text-emerald-400 border border-emerald-500/30 text-xs font-semibold transition-all hover:scale-105"
+            title="Chat on WhatsApp"
+          >
+            <i data-lucide="message-circle" class="w-4 h-4"></i>
+            <span>WhatsApp</span>
+          </a>
+
+          <!-- Cart Drawer Button -->
+          <button 
+            data-open-cart 
+            class="relative p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 transition-colors" 
+            title="View Cart"
+          >
+            <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+            <span 
+              data-cart-badge 
+              class="hidden absolute -top-1.5 -right-1.5 w-5 h-5 bg-amber-500 text-black font-black text-[11px] rounded-full flex items-center justify-center shadow"
+            >0</span>
+          </button>
+
+          <!-- Free Quote CTA -->
+          <a 
+            href="#quote-form-section" 
+            class="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-sm shadow-lg shadow-amber-500/20 hover:shadow-amber-500/30 transition-all hover:scale-105 hidden sm:inline-flex items-center gap-2"
+          >
+            <span>Get Free Proof</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </a>
+
+          <!-- Mobile Hamburger -->
+          <button id="mobile-menu-btn" class="lg:hidden p-2.5 text-slate-400 hover:text-white">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobile-menu" class="hidden lg:hidden border-t border-slate-800 bg-tactical-950/95 backdrop-blur-lg px-6 py-5 space-y-4 text-sm font-medium">
+      <a href="#customizer-section" class="block text-amber-400 font-bold py-1">🚀 3D Customizer Studio</a>
+      <a href="#calculator-section" class="block hover:text-amber-400 py-1">💰 Instant Price Calculator</a>
+      <a href="#patch-types-section" class="block hover:text-amber-400 py-1">🧵 Patch Styles & Materials</a>
+      <a href="#gallery-section" class="block hover:text-amber-400 py-1">🖼️ Portfolio & Gallery</a>
+      <a href="#backings-section" class="block hover:text-amber-400 py-1">🛡️ Backings & Borders Guide</a>
+      <a href="#how-it-works" class="block hover:text-amber-400 py-1">⚡ How It Works</a>
+      <a href="#faq-section" class="block hover:text-amber-400 py-1">❓ Frequently Asked Questions</a>
+      <div class="pt-4 border-t border-slate-800 flex flex-col gap-3">
+        <button data-open-supabase-modal class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 font-medium text-xs rounded-xl flex items-center justify-center gap-2">
+          <i data-lucide="database" class="w-4 h-4 text-emerald-400"></i>
+          <span>Configure Supabase Database</span>
+        </button>
+        <a href="#quote-form-section" class="w-full py-3 bg-amber-500 text-black font-extrabold text-center rounded-xl">
+          Get Free Proof & Quote
+        </a>
+        <a href="https://wa.me/923000000000" target="_blank" class="w-full py-2.5 bg-emerald-600 text-white font-bold text-center rounded-xl flex items-center justify-center gap-2">
+          <i data-lucide="message-circle" class="w-4 h-4"></i> WhatsApp Us Directly
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="relative overflow-hidden pt-12 pb-20 lg:py-24 bg-twill-texture">
+    <!-- Ambient Glow Spots -->
+    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-amber-500/10 blur-[140px] pointer-events-none rounded-full"></div>
+    <div class="absolute top-1/3 right-10 w-[400px] h-[400px] bg-blue-600/10 blur-[130px] pointer-events-none rounded-full"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+        
+        <!-- Left Hero Copy -->
+        <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+          
+          <!-- Trust Badge Pill -->
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/90 border border-amber-500/40 text-amber-400 text-xs font-semibold backdrop-blur shadow-sm">
+            <span class="flex h-2 w-2 relative">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+            </span>
+            <span>Tajima Industrial Precision Embroidery • Over 500,000+ Patches Shipped</span>
+          </div>
+
+          <!-- Headline -->
+          <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.1] font-display">
+            Turn Your Artwork Into <br/>
+            <span class="bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 bg-clip-text text-transparent">
+              Masterpiece Patches
+            </span>
+          </h1>
+
+          <!-- Subhead -->
+          <p class="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto lg:mx-0 font-normal leading-relaxed">
+            Premium custom embroidered, 3D PVC rubber, vintage chenille, and laser-etched leather patches. No minimum order, free professional digitizing, and 100% satisfaction guarantee.
+          </p>
+
+          <!-- Hero CTAs -->
+          <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+            <a 
+              href="#customizer-section" 
+              class="w-full sm:w-auto px-8 py-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-base transition-all duration-300 hover:scale-105 shadow-xl shadow-amber-500/25 flex items-center justify-center gap-2.5 group"
+            >
+              <i data-lucide="palette" class="w-5 h-5"></i>
+              <span>Launch Live 3D Studio</span>
+              <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+            </a>
+
+            <a 
+              href="#calculator-section" 
+              class="w-full sm:w-auto px-7 py-4 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-white font-bold text-base border border-slate-700 hover:border-slate-600 transition-all duration-300 flex items-center justify-center gap-2"
+            >
+              <i data-lucide="calculator" class="w-5 h-5 text-amber-400"></i>
+              <span>Calculate Instant Price</span>
+            </a>
+          </div>
+
+          <!-- Feature Trust Badges -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-slate-800/80">
+            <div class="text-left">
+              <div class="text-amber-400 font-extrabold text-lg sm:text-xl">100% Free</div>
+              <div class="text-slate-400 text-xs">Digitizing & Proofing</div>
+            </div>
+            <div class="text-left">
+              <div class="text-amber-400 font-extrabold text-lg sm:text-xl">No Minimum</div>
+              <div class="text-slate-400 text-xs">Runs as low as 10 pcs</div>
+            </div>
+            <div class="text-left">
+              <div class="text-amber-400 font-extrabold text-lg sm:text-xl">6-Hour</div>
+              <div class="text-slate-400 text-xs">Proof Turnaround</div>
+            </div>
+            <div class="text-left">
+              <div class="text-amber-400 font-extrabold text-lg sm:text-xl">5 Backings</div>
+              <div class="text-slate-400 text-xs">Velcro, Iron, Sew & More</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Hero Interactive Patch Card -->
+        <div class="lg:col-span-5 flex flex-col items-center justify-center">
+          <div class="relative w-full max-w-sm sm:max-w-md">
+            
+            <!-- Floating Decorative Badges -->
+            <div class="absolute -top-4 -left-4 z-20 bg-slate-900/90 border border-amber-500/40 rounded-xl px-3 py-1.5 shadow-xl backdrop-blur flex items-center gap-2 text-xs font-bold text-amber-400 animate-float">
+              <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
+              <span>Tajima Precision Stitched</span>
+            </div>
+
+            <div class="absolute -bottom-4 -right-4 z-20 bg-slate-900/90 border border-slate-700 rounded-xl px-3 py-1.5 shadow-xl backdrop-blur flex items-center gap-2 text-xs font-mono text-slate-300">
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+              <span>Mil-Spec Hook & Loop</span>
+            </div>
+
+            <!-- 3D Card Perspective Box -->
+            <div id="hero-patch-card" class="patch-card-flip-container cursor-pointer transition-transform duration-300 ease-out">
+              <div id="hero-patch-flipper" class="patch-flipper relative w-full aspect-square bg-slate-900/80 rounded-3xl border border-slate-800 p-8 flex items-center justify-center shadow-2xl">
+                
+                <!-- Patch Front -->
+                <div class="patch-front w-full h-full flex flex-col items-center justify-center">
+                  <svg viewBox="0 0 300 300" class="w-72 h-72 select-none filter drop-shadow-2xl">
+                    <defs>
+                      <clipPath id="heroShieldClip">
+                        <path d="M 150 20 L 250 50 L 250 170 C 250 240, 150 280, 150 280 C 150 280, 50 240, 50 170 L 50 50 Z" />
+                      </clipPath>
+                      <path id="heroTopCurve" d="M 65 140 C 75 70, 225 70, 235 140" fill="none" />
+                      <path id="heroBottomCurve" d="M 75 190 C 115 250, 185 250, 225 190" fill="none" />
+                    </defs>
+
+                    <!-- Background Base -->
+                    <g clip-path="url(#heroShieldClip)">
+                      <path d="M 150 20 L 250 50 L 250 170 C 250 240, 150 280, 150 280 C 150 280, 50 240, 50 170 L 50 50 Z" fill="#0b0f17" />
+                      
+                      <!-- Twill Weave Pattern Lines -->
+                      <rect x="0" y="0" width="300" height="300" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1" />
+                      
+                      <!-- Inner Stitched Edge -->
+                      <path d="M 150 20 L 250 50 L 250 170 C 250 240, 150 280, 150 280 C 150 280, 50 240, 50 170 L 50 50 Z" fill="none" stroke="#f59e0b" stroke-width="3" stroke-dasharray="4,2" transform="scale(0.9) translate(15, 15)" opacity="0.9" />
+
+                      <!-- Center Tactical Skull Art -->
+                      <g fill="#f1f5f9" color="#f1f5f9" transform="scale(0.95) translate(8, 0)">
+                        <path d="M110 105 C110 80 190 80 190 105 C190 130 185 150 175 160 L175 190 L125 190 L125 160 C115 150 110 130 110 105 Z" fill="#f1f5f9"/>
+                        <ellipse cx="132" cy="120" rx="10" ry="14" fill="#0b0f17"/>
+                        <ellipse cx="168" cy="120" rx="10" ry="14" fill="#0b0f17"/>
+                        <path d="M146 142 L150 135 L154 142 Z" fill="#0b0f17"/>
+                        <line x1="135" y1="180" x2="135" y2="190" stroke="#0b0f17" stroke-width="3"/>
+                        <line x1="145" y1="180" x2="145" y2="190" stroke="#0b0f17" stroke-width="3"/>
+                        <line x1="155" y1="180" x2="155" y2="190" stroke="#0b0f17" stroke-width="3"/>
+                        <line x1="165" y1="180" x2="165" y2="190" stroke="#0b0f17" stroke-width="3"/>
+                      </g>
+
+                      <!-- Top Embroidered Arc Text -->
+                      <text font-family="'Montserrat', sans-serif" font-weight="900" font-size="14" fill="#f59e0b" letter-spacing="3">
+                        <textPath href="#heroTopCurve" startOffset="50%" text-anchor="middle">
+                          SPECIAL FORCES
+                        </textPath>
+                      </text>
+
+                      <!-- Bottom Embroidered Arc Text -->
+                      <text font-family="'Montserrat', sans-serif" font-weight="800" font-size="12" fill="#ffffff" letter-spacing="2">
+                        <textPath href="#heroBottomCurve" startOffset="50%" text-anchor="middle">
+                          EST. 2026 • APEX
+                        </textPath>
+                      </text>
+                    </g>
+
+                    <!-- Outer Merrowed Stitch Border -->
+                    <path d="M 150 20 L 250 50 L 250 170 C 250 240, 150 280, 150 280 C 150 280, 50 240, 50 170 L 50 50 Z" fill="none" stroke="#000000" stroke-width="12" opacity="0.6" />
+                    <path d="M 150 20 L 250 50 L 250 170 C 250 240, 150 280, 150 280 C 150 280, 50 240, 50 170 L 50 50 Z" fill="none" stroke="#f59e0b" stroke-width="8" stroke-linecap="round" />
+                    <path d="M 150 20 L 250 50 L 250 170 C 250 240, 150 280, 150 280 C 150 280, 50 240, 50 170 L 50 50 Z" fill="none" stroke="#ffffff" stroke-width="2" stroke-dasharray="3,3" opacity="0.8" />
+                  </svg>
+                </div>
+
+                <!-- Patch Back (Velcro Hook & Loop) -->
+                <div class="patch-back w-full h-full flex flex-col items-center justify-center p-6 text-center">
+                  <div class="w-72 h-72 rounded-2xl velcro-texture flex flex-col items-center justify-center border-4 border-dashed border-amber-500/50 p-6 shadow-inner">
+                    <i data-lucide="shield-check" class="w-12 h-12 text-amber-400 mb-3"></i>
+                    <span class="text-sm font-black font-mono tracking-widest text-white uppercase bg-black/80 px-4 py-1.5 rounded-full border border-slate-700">
+                      TACTICAL HOOK & LOOP
+                    </span>
+                    <p class="text-xs text-slate-300 mt-3 max-w-[200px]">
+                      Authentic Mil-Spec Velcro backing ready for plate carriers, helmets, and backpacks.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 1-Click Interactive Flip Button -->
+            <div class="text-center mt-4">
+              <button 
+                id="hero-flip-btn" 
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700 text-xs font-semibold transition-colors shadow"
+              >
+                <i data-lucide="rotate-3d" class="w-4 h-4 text-amber-400"></i>
+                <span>Click to Flip Patch & Inspect Backing</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive 2D/3D Live Patch Designer & Mockup Studio -->
+  <section id="customizer-section" class="py-20 bg-tactical-900 border-t border-b border-slate-800 relative">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Section Header -->
+      <div class="text-center max-w-3xl mx-auto mb-14">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold uppercase tracking-wider mb-3">
+          Interactive Design Studio
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-black text-white font-display tracking-tight">
+          Design Your Custom Patch Live
+        </h2>
+        <p class="text-slate-400 text-sm sm:text-base mt-2">
+          Choose shapes, fabric colors, embroidery thread, upload your logo, or type curved text. Switch between Studio view and realistic apparel mockups!
+        </p>
+      </div>
+
+      <!-- Studio Workstation Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- Left Column: Visual Mockup Canvas & Apparel Stage -->
+        <div class="lg:col-span-6 flex flex-col gap-4">
+          
+          <!-- Mockup Apparel Stage -->
+          <div id="customizer-mockup-stage" class="w-full h-96 relative flex items-center justify-center rounded-2xl overflow-hidden bg-tactical-950 border border-slate-800 shadow-2xl">
+            
+            <!-- Patch Flipper -->
+            <div id="customizer-flipper" class="patch-flipper relative w-72 h-72 flex items-center justify-center">
+              <!-- Front SVG Artwork -->
+              <div id="customizer-svg-container" class="patch-front w-full h-full flex items-center justify-center">
+                <!-- Injected via customizer.js -->
+              </div>
+
+              <!-- Backing Texture -->
+              <div id="customizer-back-texture" class="patch-back w-full h-full flex items-center justify-center">
+                <!-- Injected via customizer.js -->
+              </div>
+            </div>
+
+            <!-- Live Dimension Watermark -->
+            <div class="absolute bottom-3 left-3 bg-black/75 backdrop-blur px-3 py-1 rounded-md text-[11px] font-mono text-slate-300 border border-slate-800">
+              Size: <span id="customizer-size-display" class="text-amber-400 font-bold">3.5"</span> • Live Tajima Preview
+            </div>
+          </div>
+
+          <!-- Stage Controls Toolbar -->
+          <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-900/90 p-4 rounded-xl border border-slate-800">
+            <!-- Mockup Selector -->
+            <div class="flex items-center gap-1.5 text-xs">
+              <span class="text-slate-400 font-medium mr-1">Preview on:</span>
+              <button data-custom-mockup="studio" class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white pill-active">Studio</button>
+              <button data-custom-mockup="backpack" class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white">MOLLE Pack</button>
+              <button data-custom-mockup="jacket" class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white">Denim Vest</button>
+              <button data-custom-mockup="hat" class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white">Cap</button>
+            </div>
+
+            <!-- Backing Flip Toggle -->
+            <button id="btn-flip-patch" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-amber-400 rounded-lg text-xs font-semibold border border-slate-700 transition-colors flex items-center gap-1.5">
+              <i data-lucide="shield-check" class="w-4 h-4"></i>
+              <span>Flip to Backing View</span>
+            </button>
+          </div>
+
+          <!-- Dynamic Pricing Box & Add to Cart -->
+          <div class="bg-gradient-to-r from-slate-900 via-slate-900 to-slate-950 p-6 rounded-2xl border border-amber-500/30 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
+            <div>
+              <div class="text-xs text-slate-400">Estimated Unit Price (50 pcs):</div>
+              <div class="text-3xl font-black text-amber-400 font-mono" id="customizer-unit-price">$2.20</div>
+              <div class="text-xs text-slate-400">Total batch quote: <span id="customizer-total-price" class="text-white font-bold">$110.00</span></div>
+            </div>
+
+            <div class="flex gap-2 w-full sm:w-auto">
+              <button id="btn-customizer-add-cart" class="flex-1 sm:flex-none px-6 py-3.5 bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-sm rounded-xl transition-transform hover:scale-105 shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2">
+                <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+                <span>Add Custom Patch to Cart</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Customizer Controls Panel -->
+        <div class="lg:col-span-6 bg-slate-900/60 p-6 sm:p-8 rounded-2xl border border-slate-800 space-y-6">
+          
+          <!-- 1. Patch Shape -->
+          <div>
+            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2.5">
+              1. Choose Patch Outline Shape
+            </label>
+            <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
+              <button data-custom-shape="shield" class="p-2 text-xs font-bold rounded-xl border border-slate-800 bg-slate-950 text-slate-300 hover:border-amber-500 pill-active">Shield</button>
+              <button data-custom-shape="circle" class="p-2 text-xs font-bold rounded-xl border border-slate-800 bg-slate-950 text-slate-300 hover:border-amber-500">Circle</button>
+              <button data-custom-shape="hexagon" class="p-2 text-xs font-bold rounded-xl border border-slate-800 bg-slate-950 text-slate-300 hover:border-amber-500">Hexagon</button>
+              <button data-custom-shape="rectangle" class="p-2 text-xs font-bold rounded-xl border border-slate-800 bg-slate-950 text-slate-300 hover:border-amber-500">Bar Tape</button>
+              <button data-custom-shape="diamond" class="p-2 text-xs font-bold rounded-xl border border-slate-800 bg-slate-950 text-slate-300 hover:border-amber-500">Diamond</button>
+              <button data-custom-shape="crest" class="p-2 text-xs font-bold rounded-xl border border-slate-800 bg-slate-950 text-slate-300 hover:border-amber-500">Crest</button>
+            </div>
+          </div>
+
+          <!-- 2. Patch Material & Style -->
+          <div>
+            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2.5">
+              2. Patch Material & Construction
+            </label>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <button data-custom-style="embroidered" class="p-2.5 text-xs font-bold rounded-xl border border-slate-800 bg-slate-950 text-slate-300 hover:border-amber-500 pill-active">Embroidered</button>
+              <button data-custom-style="pvc" class="p-2.5 text-xs font-bold rounded-xl border border-slate-800 bg-slate-950 text-slate-300 hover:border-amber-500">3D PVC Rubber</button>
+              <button data-custom-style="leather" class="p-2.5 text-xs font-bold rounded-xl border border-slate-800 bg-slate-950 text-slate-300 hover:border-amber-500">Laser Leather</button>
+              <button data-custom-style="chenille" class="p-2.5 text-xs font-bold rounded-xl border border-slate-800 bg-slate-950 text-slate-300 hover:border-amber-500">Varsity Chenille</button>
+            </div>
+          </div>
+
+          <!-- 3. Size Slider -->
+          <div>
+            <div class="flex justify-between items-center mb-1.5">
+              <label class="text-xs font-bold text-slate-300 uppercase tracking-wider">3. Average Size (Inches)</label>
+              <span class="text-xs font-mono text-amber-400 font-bold">2.0" to 5.0"</span>
+            </div>
+            <input 
+              id="customizer-size-slider" 
+              type="range" 
+              min="2.0" 
+              max="5.0" 
+              step="0.25" 
+              value="3.5" 
+              class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer"
+            >
+          </div>
+
+          <!-- 4. Color Palette Selectors -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <!-- Fabric Twill Color -->
+            <div>
+              <label class="block text-[11px] font-bold text-slate-400 uppercase mb-1.5">Base Fabric</label>
+              <div class="flex items-center gap-2">
+                <input id="input-fabric-color" type="color" value="#0b0f17" class="w-9 h-9 rounded-lg bg-transparent cursor-pointer border border-slate-700">
+                <div class="flex gap-1">
+                  <button data-preset-color="#0b0f17" data-color-target="fabric" class="w-5 h-5 rounded-full bg-[#0b0f17] border border-slate-600" title="Tactical Black"></button>
+                  <button data-preset-color="#1e3a1e" data-color-target="fabric" class="w-5 h-5 rounded-full bg-[#1e3a1e] border border-slate-600" title="OD Green"></button>
+                  <button data-preset-color="#1e293b" data-color-target="fabric" class="w-5 h-5 rounded-full bg-[#1e293b] border border-slate-600" title="Navy"></button>
+                  <button data-preset-color="#78350f" data-color-target="fabric" class="w-5 h-5 rounded-full bg-[#78350f] border border-slate-600" title="Coyote Tan"></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Border Stitch Color -->
+            <div>
+              <label class="block text-[11px] font-bold text-slate-400 uppercase mb-1.5">Merrow Border</label>
+              <div class="flex items-center gap-2">
+                <input id="input-border-color" type="color" value="#f59e0b" class="w-9 h-9 rounded-lg bg-transparent cursor-pointer border border-slate-700">
+                <div class="flex gap-1">
+                  <button data-preset-color="#f59e0b" data-color-target="border" class="w-5 h-5 rounded-full bg-[#f59e0b] border border-slate-600" title="Gold"></button>
+                  <button data-preset-color="#ef4444" data-color-target="border" class="w-5 h-5 rounded-full bg-[#ef4444] border border-slate-600" title="Red"></button>
+                  <button data-preset-color="#10b981" data-color-target="border" class="w-5 h-5 rounded-full bg-[#10b981] border border-slate-600" title="Neon Green"></button>
+                  <button data-preset-color="#ffffff" data-color-target="border" class="w-5 h-5 rounded-full bg-[#ffffff] border border-slate-600" title="White"></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Thread Color -->
+            <div>
+              <label class="block text-[11px] font-bold text-slate-400 uppercase mb-1.5">Center Thread</label>
+              <div class="flex items-center gap-2">
+                <input id="input-thread-color" type="color" value="#f1f5f9" class="w-9 h-9 rounded-lg bg-transparent cursor-pointer border border-slate-700">
+                <div class="flex gap-1">
+                  <button data-preset-color="#f1f5f9" data-color-target="thread" class="w-5 h-5 rounded-full bg-[#f1f5f9] border border-slate-600" title="White"></button>
+                  <button data-preset-color="#f59e0b" data-color-target="thread" class="w-5 h-5 rounded-full bg-[#f59e0b] border border-slate-600" title="Gold"></button>
+                  <button data-preset-color="#38bdf8" data-color-target="thread" class="w-5 h-5 rounded-full bg-[#38bdf8] border border-slate-600" title="Cyan"></button>
+                  <button data-preset-color="#ef4444" data-color-target="thread" class="w-5 h-5 rounded-full bg-[#ef4444] border border-slate-600" title="Crimson"></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Center Graphic & Custom Logo Upload -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <label class="text-xs font-bold text-slate-300 uppercase tracking-wider">
+                5. Center Emblem or Upload Logo
+              </label>
+              <button id="btn-reset-logo" class="hidden text-xs text-rose-400 hover:underline">
+                Remove Custom Logo
+              </button>
+            </div>
+            
+            <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 mb-3">
+              <button data-custom-icon="eagle" class="p-2 text-xs font-semibold rounded-xl border border-amber-500 bg-amber-500/20 text-white flex flex-col items-center">
+                <span>Eagle</span>
+              </button>
+              <button data-custom-icon="skull" class="p-2 text-xs font-semibold rounded-xl border border-slate-800 bg-slate-950 text-slate-300 hover:border-amber-500 flex flex-col items-center">
+                <span>Skull</span>
+              </button>
+              <button data-custom-icon="wolf" class="p-2 text-xs font-semibold rounded-xl border border-slate-800 bg-slate-950 text-slate-300 hover:border-amber-500 flex flex-col items-center">
+                <span>Wolf</span>
+              </button>
+              <button data-custom-icon="wings" class="p-2 text-xs font-semibold rounded-xl border border-slate-800 bg-slate-950 text-slate-300 hover:border-amber-500 flex flex-col items-center">
+                <span>Wings</span>
+              </button>
+              <button data-custom-icon="compass" class="p-2 text-xs font-semibold rounded-xl border border-slate-800 bg-slate-950 text-slate-300 hover:border-amber-500 flex flex-col items-center">
+                <span>Peak</span>
+              </button>
+              <button data-custom-icon="tiger" class="p-2 text-xs font-semibold rounded-xl border border-slate-800 bg-slate-950 text-slate-300 hover:border-amber-500 flex flex-col items-center">
+                <span>Tiger</span>
+              </button>
+            </div>
+
+            <!-- Upload Custom File -->
+            <label class="flex items-center justify-center gap-2 p-3 rounded-xl border border-dashed border-slate-700 hover:border-amber-500 bg-slate-950/60 cursor-pointer text-xs text-slate-300 transition-colors">
+              <i data-lucide="upload" class="w-4 h-4 text-amber-400"></i>
+              <span>Or Upload Your Own Logo File (PNG / JPG)</span>
+              <input id="input-custom-logo-file" type="file" accept="image/*" class="hidden">
+            </label>
+          </div>
+
+          <!-- 6. Custom Curved Stitched Text -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Top Arc Text</label>
+              <input 
+                id="input-top-text" 
+                type="text" 
+                maxlength="20" 
+                value="TACTICAL UNIT" 
+                class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white font-mono uppercase focus:border-amber-500 outline-none"
+              >
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Bottom Arc Text</label>
+              <input 
+                id="input-bottom-text" 
+                type="text" 
+                maxlength="20" 
+                value="EST. 2026" 
+                class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white font-mono uppercase focus:border-amber-500 outline-none"
+              >
+            </div>
+          </div>
+
+          <!-- 7. Backing Options -->
+          <div>
+            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2.5">
+              7. Select Patch Backing
+            </label>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              <button data-custom-backing="velcro" class="p-2.5 text-xs font-bold rounded-xl border border-amber-500 bg-amber-500/20 text-white flex items-center justify-center gap-1.5">
+                <i data-lucide="shield-check" class="w-3.5 h-3.5 text-amber-400"></i> Hook & Loop
+              </button>
+              <button data-custom-backing="iron-on" class="p-2.5 text-xs font-bold rounded-xl border border-slate-800 bg-slate-950 text-slate-300 hover:border-amber-500 flex items-center justify-center gap-1.5">
+                <i data-lucide="flame" class="w-3.5 h-3.5 text-amber-400"></i> Iron-On
+              </button>
+              <button data-custom-backing="sew-on" class="p-2.5 text-xs font-bold rounded-xl border border-slate-800 bg-slate-950 text-slate-300 hover:border-amber-500 flex items-center justify-center gap-1.5">
+                <i data-lucide="scissors" class="w-3.5 h-3.5 text-amber-400"></i> Sew-On
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Instant Dynamic Bulk Price Calculator -->
+  <section id="calculator-section" class="py-20 bg-tactical-950 relative">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Section Header -->
+      <div class="text-center max-w-3xl mx-auto mb-14">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold uppercase tracking-wider mb-3">
+          100% Transparent Factory Pricing
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-black text-white font-display tracking-tight">
+          Instant Patch Price Calculator
+        </h2>
+        <p class="text-slate-400 text-sm sm:text-base mt-2">
+          Adjust dimensions, quantity tiers, and upgrades to see your exact factory-direct quote in real-time. No hidden setup fees.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- Calculator Inputs -->
+        <div class="lg:col-span-7 bg-slate-900/60 p-6 sm:p-8 rounded-2xl border border-slate-800 space-y-6">
+          
+          <!-- Patch Type Dropdown -->
+          <div>
+            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Patch Type</label>
+            <select id="calc-patch-type" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white font-medium focus:border-amber-500 outline-none">
+              <option value="embroidered">Custom Embroidered (Most Popular)</option>
+              <option value="pvc">3D Molded PVC Rubber</option>
+              <option value="leather">Laser Engraved Leather</option>
+              <option value="chenille">Vintage Varsity Chenille</option>
+              <option value="woven">Ultra-Fine Jacquard Woven</option>
+              <option value="printed">Sublimated Full-Color Hybrid</option>
+            </select>
+          </div>
+
+          <!-- Dimensions Sliders (Width & Height) -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <div class="flex justify-between text-xs mb-1.5">
+                <span class="text-slate-300 font-bold uppercase">Patch Width</span>
+                <span id="calc-width-val" class="font-mono text-amber-400 font-bold">3.00"</span>
+              </div>
+              <input id="calc-width-slider" type="range" min="1.5" max="6.0" step="0.25" value="3.0" class="w-full h-2 bg-slate-800 rounded-lg cursor-pointer">
+            </div>
+
+            <div>
+              <div class="flex justify-between text-xs mb-1.5">
+                <span class="text-slate-300 font-bold uppercase">Patch Height</span>
+                <span id="calc-height-val" class="font-mono text-amber-400 font-bold">3.00"</span>
+              </div>
+              <input id="calc-height-slider" type="range" min="1.5" max="6.0" step="0.25" value="3.0" class="w-full h-2 bg-slate-800 rounded-lg cursor-pointer">
+            </div>
+          </div>
+
+          <!-- Average Size Indicator -->
+          <div class="bg-slate-950/70 p-3 rounded-xl border border-slate-800/80 flex items-center justify-between text-xs font-mono">
+            <span class="text-slate-400">Industry Standard Size (W + H) / 2:</span>
+            <span id="calc-avg-size" class="text-white font-bold text-sm">3.00"</span>
+          </div>
+
+          <!-- Embroidery Coverage -->
+          <div>
+            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Embroidery Coverage</label>
+            <div class="grid grid-cols-3 gap-2">
+              <button data-calc-coverage="50" class="p-2.5 text-xs font-bold rounded-xl border border-slate-800 bg-slate-950 text-slate-300 hover:border-amber-500">50% Coverage</button>
+              <button data-calc-coverage="75" class="p-2.5 text-xs font-bold rounded-xl border border-slate-800 bg-slate-950 text-slate-300 hover:border-amber-500 pill-active">75% (Standard)</button>
+              <button data-calc-coverage="100" class="p-2.5 text-xs font-bold rounded-xl border border-slate-800 bg-slate-950 text-slate-300 hover:border-amber-500">100% Full Thread</button>
+            </div>
+          </div>
+
+          <!-- Quantity Slider & Volume Presets -->
+          <div>
+            <div class="flex justify-between text-xs mb-2">
+              <span class="text-slate-300 font-bold uppercase">Quantity (Volume Tier)</span>
+              <span id="calc-qty-val" class="font-mono text-amber-400 font-bold text-sm">100 pcs</span>
+            </div>
+            <input id="calc-qty-slider" type="range" min="10" max="1000" step="10" value="100" class="w-full h-2 bg-slate-800 rounded-lg cursor-pointer mb-3">
+            
+            <div class="flex flex-wrap gap-1.5">
+              <button data-calc-qty-preset="10" class="px-2.5 py-1 text-xs rounded-lg bg-slate-950 border border-slate-800 text-slate-300 hover:border-amber-500">10</button>
+              <button data-calc-qty-preset="25" class="px-2.5 py-1 text-xs rounded-lg bg-slate-950 border border-slate-800 text-slate-300 hover:border-amber-500">25</button>
+              <button data-calc-qty-preset="50" class="px-2.5 py-1 text-xs rounded-lg bg-slate-950 border border-slate-800 text-slate-300 hover:border-amber-500">50</button>
+              <button data-calc-qty-preset="100" class="px-2.5 py-1 text-xs rounded-lg bg-slate-950 border border-slate-800 text-slate-300 hover:border-amber-500 pill-active">100</button>
+              <button data-calc-qty-preset="250" class="px-2.5 py-1 text-xs rounded-lg bg-slate-950 border border-slate-800 text-slate-300 hover:border-amber-500">250</button>
+              <button data-calc-qty-preset="500" class="px-2.5 py-1 text-xs rounded-lg bg-slate-950 border border-slate-800 text-slate-300 hover:border-amber-500">500</button>
+              <button data-calc-qty-preset="1000" class="px-2.5 py-1 text-xs rounded-lg bg-slate-950 border border-slate-800 text-slate-300 hover:border-amber-500">1000+</button>
+            </div>
+          </div>
+
+          <!-- Backing Dropdown -->
+          <div>
+            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Backing Style</label>
+            <select id="calc-backing-select" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white font-medium focus:border-amber-500 outline-none">
+              <option value="velcro">Hook & Loop (Velcro Tactical) [+$0.45/ea]</option>
+              <option value="iron-on">Iron-On Heat Seal Film [+$0.25/ea]</option>
+              <option value="sew-on">Traditional Sew-On Twill [$0.00]</option>
+              <option value="peel-stick">3M Peel & Stick Adhesive [+$0.35/ea]</option>
+              <option value="magnetic">Neodymium Magnetic Backing [+$0.95/ea]</option>
+            </select>
+          </div>
+
+          <!-- Special Options Checkboxes -->
+          <div class="pt-2 border-t border-slate-800 space-y-2.5 text-xs text-slate-300">
+            <label class="flex items-center gap-2.5 cursor-pointer">
+              <input id="calc-opt-metallic" type="checkbox" class="w-4 h-4 rounded bg-slate-950 border-slate-700 accent-amber-500">
+              <span>Add Metallic Gold / Silver Embroidery Thread (+ $0.20/pc)</span>
+            </label>
+            <label class="flex items-center gap-2.5 cursor-pointer">
+              <input id="calc-opt-glow" type="checkbox" class="w-4 h-4 rounded bg-slate-950 border-slate-700 accent-amber-500">
+              <span>Add Glow-in-the-Dark Photoluminescent Thread (+ $0.35/pc)</span>
+            </label>
+            <label class="flex items-center gap-2.5 cursor-pointer">
+              <input id="calc-opt-rush" type="checkbox" class="w-4 h-4 rounded bg-slate-950 border-slate-700 accent-amber-500">
+              <span class="text-amber-400 font-semibold">3-Day Express Rush Production (+ 25%)</span>
+            </label>
+          </div>
+
+        </div>
+
+        <!-- Quote Summary Card -->
+        <div class="lg:col-span-5 bg-gradient-to-b from-slate-900 to-tactical-950 p-8 rounded-3xl border border-amber-500/40 shadow-2xl relative">
+          
+          <div class="flex items-center justify-between mb-6">
+            <span class="text-xs font-mono font-bold tracking-widest text-slate-400 uppercase">Live Pricing Breakdown</span>
+            <span id="calc-savings-badge" class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold">
+              Save 48% (Volume Tier)
+            </span>
+          </div>
+
+          <!-- Unit Price Banner -->
+          <div class="bg-slate-950/80 p-5 rounded-2xl border border-slate-800 mb-6 text-center">
+            <div class="text-xs text-slate-400 font-medium uppercase tracking-wider mb-1">Unit Price Per Patch</div>
+            <div id="calc-unit-price" class="text-4xl sm:text-5xl font-black text-amber-400 font-mono tracking-tight">$2.45</div>
+            <div class="text-[11px] text-slate-500 mt-1">Guaranteed all-inclusive price per unit</div>
+          </div>
+
+          <!-- Order Summary Details -->
+          <div class="space-y-3 text-xs font-mono text-slate-300 border-b border-slate-800 pb-6 mb-6">
+            <div class="flex justify-between">
+              <span class="text-slate-400">Tajima Digitizing & Setup:</span>
+              <span class="text-emerald-400 font-bold">FREE ($45 Value)</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-400">Digital Artwork Proof:</span>
+              <span class="text-emerald-400 font-bold">FREE in 6 Hours</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-400">Estimated Delivery Date:</span>
+              <span id="calc-est-delivery" class="text-white font-bold">Nov 08, 2026</span>
+            </div>
+            <div class="flex justify-between text-sm pt-2 border-t border-slate-800/80">
+              <span class="text-white font-bold">Total Batch Price:</span>
+              <span id="calc-total-price" class="text-amber-400 font-extrabold text-lg">$245.00</span>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="space-y-3">
+            <button 
+              id="calc-btn-add-cart" 
+              class="w-full py-4 bg-amber-500 hover:bg-amber-400 text-black font-black text-sm rounded-xl transition-transform hover:scale-105 shadow-xl shadow-amber-500/20 flex items-center justify-center gap-2"
+            >
+              <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+              <span>Add Calculated Spec to Cart</span>
+            </button>
+
+            <button 
+              id="calc-btn-request-proof" 
+              class="w-full py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm rounded-xl border border-slate-700 transition-colors flex items-center justify-center gap-2"
+            >
+              <i data-lucide="mail-check" class="w-4 h-4 text-amber-400"></i>
+              <span>Auto-Fill Free Artwork Proof Form</span>
+            </button>
+          </div>
+
+          <div class="mt-6 flex items-center justify-center gap-4 text-[11px] text-slate-400">
+            <span class="flex items-center gap-1"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-400"></i> 100% Guarantee</span>
+            <span class="flex items-center gap-1"><i data-lucide="truck" class="w-3.5 h-3.5 text-amber-400"></i> Express Tracked</span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Patch Styles & Materials Explorer -->
+  <section id="patch-types-section" class="py-20 bg-tactical-900 border-t border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-3xl mx-auto mb-14">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold uppercase tracking-wider mb-3">
+          Superior Craftsmanship
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-black text-white font-display tracking-tight">
+          Explore Patch Styles & Materials
+        </h2>
+        <p class="text-slate-400 text-sm sm:text-base mt-2">
+          From traditional Tajima embroidered thread to 3D molded rubber and vintage varsity chenille, we offer every commercial patch style imaginable.
+        </p>
+      </div>
+
+      <!-- Dynamically Rendered Grid -->
+      <div id="patch-types-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Rendered by app.js -->
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Visual Backings & Borders Comprehensive Guide -->
+  <section id="backings-section" class="py-20 bg-tactical-950 border-t border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-3xl mx-auto mb-14">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold uppercase tracking-wider mb-3">
+          Hardware & Attachment
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-black text-white font-display tracking-tight">
+          Backings & Borders Guide
+        </h2>
+        <p class="text-slate-400 text-sm sm:text-base mt-2">
+          Choose the ideal backing mechanism and border finish engineered for your garment and field requirements.
+        </p>
+      </div>
+
+      <!-- Backings Cards Grid -->
+      <div id="backings-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-12">
+        <!-- Rendered by app.js -->
+      </div>
+
+      <!-- Border Comparison Card -->
+      <div class="bg-slate-900/60 border border-slate-800 rounded-3xl p-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+        <!-- Merrowed Border -->
+        <div class="space-y-3">
+          <div class="flex items-center gap-2 text-amber-400 font-bold text-sm">
+            <i data-lucide="circle-dot" class="w-4 h-4"></i>
+            <span>Option A: Merrowed Stitched Border</span>
+          </div>
+          <h3 class="text-xl font-bold text-white">Classic 3D Rolled Overlock Edge</h3>
+          <p class="text-slate-300 text-xs leading-relaxed">
+            A thick 1/8" thread piping wrapped around the patch edge. This is the traditional look seen on military name tags, Boy Scout patches, and NASA badges. Ideal for standard shapes like circles, shields, and rectangles.
+          </p>
+          <div class="text-xs text-emerald-400 font-mono">✓ Free of charge on all standard shapes</div>
+        </div>
+
+        <!-- Laser Cut Border -->
+        <div class="space-y-3 border-t md:border-t-0 md:border-l border-slate-800 pt-6 md:pt-0 md:pl-8">
+          <div class="flex items-center gap-2 text-amber-400 font-bold text-sm">
+            <i data-lucide="zap" class="w-4 h-4"></i>
+            <span>Option B: Laser-Cut (Heat Cut) Edge</span>
+          </div>
+          <h3 class="text-xl font-bold text-white">Sharp Precision Die-Cut Edge</h3>
+          <p class="text-slate-300 text-xs leading-relaxed">
+            Industrial CNC laser cut that heat-seals the synthetic fabric border to prevent fraying. Essential for intricate custom silhouettes, wings, skulls, flames, and tactical hook & loop patches that lay perfectly flush on gear.
+          </p>
+          <div class="text-xs text-amber-400 font-mono">✓ Perfect for complex outlines & custom die cuts</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Filterable Portfolio & Gallery -->
+  <section id="gallery-section" class="py-20 bg-tactical-900 border-t border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-3xl mx-auto mb-10">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold uppercase tracking-wider mb-3">
+          Client Showcase
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-black text-white font-display tracking-tight">
+          Recent Custom Patch Productions
+        </h2>
+        <p class="text-slate-400 text-sm sm:text-base mt-2">
+          Click any design to inspect macro thread stitching, dimensions, and backing options, or load it straight into our 3D Studio to customize.
+        </p>
+      </div>
+
+      <!-- Filters & Search Bar -->
+      <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
+        <!-- Filter Tabs -->
+        <div class="flex flex-wrap items-center gap-2 text-xs font-bold">
+          <button data-gallery-filter="all" class="px-3.5 py-1.5 rounded-xl bg-slate-800 text-slate-300 hover:text-white pill-active">All Styles</button>
+          <button data-gallery-filter="tactical" class="px-3.5 py-1.5 rounded-xl bg-slate-800 text-slate-300 hover:text-white">Tactical & Military</button>
+          <button data-gallery-filter="biker" class="px-3.5 py-1.5 rounded-xl bg-slate-800 text-slate-300 hover:text-white">Biker & MC</button>
+          <button data-gallery-filter="lifestyle" class="px-3.5 py-1.5 rounded-xl bg-slate-800 text-slate-300 hover:text-white">Leather & Hats</button>
+          <button data-gallery-filter="sports" class="px-3.5 py-1.5 rounded-xl bg-slate-800 text-slate-300 hover:text-white">Varsity Chenille</button>
+          <button data-gallery-filter="corporate" class="px-3.5 py-1.5 rounded-xl bg-slate-800 text-slate-300 hover:text-white">Woven Brands</button>
+        </div>
+
+        <!-- Search Input -->
+        <div class="relative w-full md:w-64">
+          <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+          <input 
+            id="gallery-search" 
+            type="text" 
+            placeholder="Search patch designs..." 
+            class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-4 py-2 text-xs text-white focus:border-amber-500 outline-none"
+          >
+        </div>
+      </div>
+
+      <!-- Gallery Grid -->
+      <div id="gallery-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Rendered by gallery.js -->
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 4-Step Easy Ordering Process -->
+  <section id="how-it-works" class="py-20 bg-tactical-950 border-t border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold uppercase tracking-wider mb-3">
+          Seamless Workflow
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-black text-white font-display tracking-tight">
+          How It Works in 4 Simple Steps
+        </h2>
+        <p class="text-slate-400 text-sm sm:text-base mt-2">
+          From rough napkin sketch to factory precision embroidery delivered right to your door.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative">
+        
+        <!-- Step 1 -->
+        <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 relative">
+          <div class="w-12 h-12 rounded-xl bg-amber-500 text-black font-black text-lg flex items-center justify-center mb-4 shadow-lg shadow-amber-500/20">
+            01
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">Submit Your Idea</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Send us your logo, rough sketch, or pick from our studio templates. Any file format: PNG, JPG, PDF, SVG, AI, or EPS.
+          </p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 relative">
+          <div class="w-12 h-12 rounded-xl bg-slate-800 border border-slate-700 text-amber-400 font-black text-lg flex items-center justify-center mb-4">
+            02
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">Free Proof in 6 Hrs</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Our master digitizers create a photo-realistic digital proof showing exact thread colors, stitch counts, and size specs. Unlimited free revisions!
+          </p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 relative">
+          <div class="w-12 h-12 rounded-xl bg-slate-800 border border-slate-700 text-amber-400 font-black text-lg flex items-center justify-center mb-4">
+            03
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">Tajima Crafting</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Once approved, your patches are stitched on industrial Tajima embroidery machines with high-sheen rayon threads and genuine backings.
+          </p>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 relative">
+          <div class="w-12 h-12 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 font-black text-lg flex items-center justify-center mb-4">
+            04
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">Express Delivery</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Quality control inspected, heat-trimmed, sealed, and shipped straight to your doorstep with real-time tracking via DHL / FedEx.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Interactive Free Quote Form -->
+  <section id="quote-form-section" class="py-20 bg-tactical-900 border-t border-slate-800 relative">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="bg-gradient-to-b from-slate-900 to-tactical-950 border border-amber-500/30 rounded-3xl p-8 sm:p-12 shadow-2xl relative overflow-hidden">
+        
+        <div class="text-center max-w-2xl mx-auto mb-10">
+          <span class="px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold uppercase tracking-wider">
+            No Obligation • 100% Free
+          </span>
+          <h2 class="text-3xl sm:text-4xl font-black text-white font-display tracking-tight mt-2">
+            Request Your Free Artwork Proof & Quote
+          </h2>
+          <p class="text-slate-400 text-sm mt-1.5">
+            Fill out this quick form. Our art department will digitize your artwork and email you a free digital sample proof in 6 hours.
+          </p>
+        </div>
+
+        <form id="free-quote-form" class="space-y-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Your Full Name *</label>
+              <input id="quote-name" type="text" required placeholder="John Doe" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:border-amber-500 outline-none">
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Email Address *</label>
+              <input id="quote-email" type="email" required placeholder="john@company.com" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:border-amber-500 outline-none">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div>
+              <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Phone / WhatsApp *</label>
+              <input id="quote-phone" type="tel" required placeholder="+1 (555) 000-0000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:border-amber-500 outline-none">
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Patch Type</label>
+              <select id="quote-patch-type" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:border-amber-500 outline-none">
+                <option value="Embroidered">Custom Embroidered</option>
+                <option value="PVC Rubber">3D Molded PVC Rubber</option>
+                <option value="Leather">Laser Leatherette</option>
+                <option value="Chenille">Varsity Chenille</option>
+                <option value="Woven">Jacquard Woven</option>
+                <option value="Sublimated">Sublimated Print</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Quantity Needed</label>
+              <input id="quote-quantity" type="number" min="10" value="50" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:border-amber-500 outline-none">
+            </div>
+          </div>
+
+          <!-- Drag and Drop Artwork Upload -->
+          <div>
+            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Upload Artwork or Sketch (Optional)</label>
+            <div id="quote-dropzone" class="border-2 border-dashed border-slate-800 hover:border-amber-500/60 bg-slate-950/70 rounded-2xl p-8 text-center cursor-pointer transition-colors group">
+              <input id="quote-file-upload" type="file" class="hidden" accept=".png,.jpg,.jpeg,.svg,.pdf,.ai,.eps">
+              <div id="quote-file-label" class="space-y-1">
+                <i data-lucide="upload-cloud" class="w-8 h-8 text-amber-400 mx-auto mb-2 group-hover:scale-110 transition-transform"></i>
+                <span class="text-slate-200 font-medium text-sm">Click to upload artwork</span> or drag & drop<br/>
+                <span class="text-[11px] text-slate-500">PNG, JPG, PDF, SVG, AI, EPS up to 25MB</span>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Special Instructions & Dimensions</label>
+            <textarea id="quote-notes" rows="3" placeholder="Provide dimensions (e.g. 3.5 inches), desired backing (Velcro, Iron-On), border style, or deadline..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:border-amber-500 outline-none"></textarea>
+          </div>
+
+          <button type="submit" class="w-full py-4 bg-amber-500 hover:bg-amber-400 text-black font-black text-base rounded-xl transition-transform hover:scale-[1.01] shadow-xl shadow-amber-500/25 flex items-center justify-center gap-2">
+            <i data-lucide="send" class="w-5 h-5"></i>
+            <span>Submit for Free 6-Hour Digital Proof</span>
+          </button>
+        </form>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Customer Testimonials -->
+  <section class="py-20 bg-tactical-950 border-t border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-3xl mx-auto mb-14">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold uppercase tracking-wider mb-3">
+          Verified Reviews
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-black text-white font-display tracking-tight">
+          Trusted by 5,000+ Brands, Clubs & Teams
+        </h2>
+        <div class="flex items-center justify-center gap-2 mt-3 text-amber-400 text-sm font-bold">
+          <span>★★★★★</span>
+          <span class="text-slate-300 font-medium">4.9 / 5 Rating across 1,480+ Reviews</span>
+        </div>
+      </div>
+
+      <div id="testimonials-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Rendered by app.js -->
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section id="faq-section" class="py-20 bg-tactical-900 border-t border-slate-800">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-2xl mx-auto mb-14">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold uppercase tracking-wider mb-3">
+          Got Questions?
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-black text-white font-display tracking-tight">
+          Frequently Asked Questions
+        </h2>
+        <p class="text-slate-400 text-sm mt-1.5">
+          Everything you need to know about custom patch manufacturing, turnaround times, and free digitizing proofs.
+        </p>
+      </div>
+
+      <div id="faq-accordion" class="space-y-3">
+        <!-- Rendered by app.js -->
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Slide-Over Shopping Cart Drawer -->
+  <div id="cart-backdrop" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden transition-opacity"></div>
+  <div id="cart-drawer" class="fixed top-0 right-0 h-full w-full sm:w-[420px] bg-tactical-950 border-l border-slate-800 z-50 transform translate-x-full transition-transform duration-300 flex flex-col justify-between">
+    
+    <!-- Drawer Header -->
+    <div class="p-6 border-b border-slate-800 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <i data-lucide="shopping-bag" class="w-5 h-5 text-amber-500"></i>
+        <h3 class="text-lg font-bold text-white">Your Patch Order</h3>
+      </div>
+      <button id="cart-close-btn" class="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-900">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+    </div>
+
+    <!-- Drawer Body -->
+    <div class="p-6 overflow-y-auto flex-1">
+      
+      <!-- Empty State -->
+      <div id="cart-empty-state" class="py-16 text-center text-slate-400">
+        <i data-lucide="package-open" class="w-12 h-12 mx-auto mb-3 opacity-30"></i>
+        <p class="text-base font-bold text-slate-300">Your cart is empty</p>
+        <p class="text-xs text-slate-400 mt-1 mb-6">Design a patch in our 3D Studio or calculate bulk pricing!</p>
+        <a href="#customizer-section" onclick="window.ApexCart.closeCart()" class="px-5 py-2.5 bg-amber-500 text-black font-bold text-xs rounded-xl inline-flex items-center gap-2">
+          <i data-lucide="palette" class="w-4 h-4"></i> Open 3D Studio
+        </a>
+      </div>
+
+      <!-- Items List -->
+      <div id="cart-items-list" class="space-y-4 hidden">
+        <!-- Rendered by cart.js -->
+      </div>
+
+    </div>
+
+    <!-- Drawer Footer -->
+    <div class="p-6 border-t border-slate-800 bg-slate-950/80 space-y-4">
+      
+      <!-- Promo Code Input -->
+      <div>
+        <div class="flex gap-2">
+          <input id="cart-coupon-input" type="text" placeholder="Promo code (WELCOME10)" class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white uppercase focus:border-amber-500 outline-none">
+          <button id="cart-apply-coupon-btn" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs rounded-xl border border-slate-700 transition-colors">Apply</button>
+        </div>
+        <div id="cart-coupon-msg"></div>
+      </div>
+
+      <!-- Totals Breakdown -->
+      <div class="space-y-1.5 text-xs font-mono text-slate-300 border-t border-slate-800/60 pt-3">
+        <div class="flex justify-between">
+          <span class="text-slate-400">Subtotal:</span>
+          <span id="cart-subtotal" class="font-bold text-white">$0.00</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-400">Discount:</span>
+          <span id="cart-discount" class="text-emerald-400 font-bold">$0.00</span>
+        </div>
+        <div class="flex justify-between text-base font-bold pt-2 border-t border-slate-800">
+          <span class="text-white">Total Quoted:</span>
+          <span id="cart-total" class="text-amber-400 font-black font-mono">$0.00</span>
+        </div>
+      </div>
+
+      <!-- Checkout Button -->
+      <button id="cart-checkout-btn" class="w-full py-4 bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-sm rounded-xl transition-transform hover:scale-105 shadow-xl shadow-amber-500/20 flex items-center justify-center gap-2">
+        <i data-lucide="check-check" class="w-4 h-4"></i>
+        <span>Proceed to Instant Checkout</span>
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- Checkout Modal -->
+  <div id="checkout-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-tactical-950 border border-slate-800 rounded-3xl max-w-lg w-full p-6 sm:p-8 relative">
+      <button id="checkout-close-btn" class="absolute top-5 right-5 text-slate-400 hover:text-white p-1">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="mb-6">
+        <span class="text-xs font-mono text-amber-400 uppercase font-bold">Fast Order Booking</span>
+        <h3 class="text-2xl font-black text-white">Complete Your Order</h3>
+        <p class="text-xs text-slate-400 mt-1">Total Due: <strong id="checkout-modal-total" class="text-amber-400 font-mono text-sm">$0.00</strong> (Includes Free Proof & Shipping)</p>
+      </div>
+
+      <form id="checkout-form" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Full Name *</label>
+          <input id="checkout-name" type="text" required placeholder="Alex Turner" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:border-amber-500 outline-none">
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Email *</label>
+            <input id="checkout-email" type="email" required placeholder="alex@gmail.com" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:border-amber-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 uppercase mb-1">WhatsApp / Phone *</label>
+            <input id="checkout-phone" type="tel" required placeholder="+1 555-0192" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:border-amber-500 outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Delivery Address *</label>
+          <textarea id="checkout-address" required rows="2" placeholder="Street, City, Country, Postal Code" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:border-amber-500 outline-none"></textarea>
+        </div>
+
+        <button type="submit" class="w-full py-4 bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-sm rounded-xl transition-transform hover:scale-105 shadow-xl shadow-amber-500/20 flex items-center justify-center gap-2">
+          <i data-lucide="shield-check" class="w-4 h-4"></i>
+          <span>Confirm Booking & Receive Art Proof</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Order Success Modal -->
+  <div id="order-success-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div id="order-success-content" class="bg-tactical-950 border border-emerald-500/40 rounded-3xl max-w-lg w-full p-8 shadow-2xl relative">
+      <!-- Rendered by cart.js -->
+    </div>
+  </div>
+
+  <!-- Quote Form Success Modal -->
+  <div id="quote-success-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-tactical-950 border border-amber-500/40 rounded-3xl max-w-lg w-full p-8 text-center shadow-2xl relative">
+      <div class="w-16 h-16 bg-amber-500/20 text-amber-400 border border-amber-500/40 rounded-full flex items-center justify-center mx-auto mb-4">
+        <i data-lucide="check" class="w-8 h-8"></i>
+      </div>
+      <h3 class="text-2xl font-black text-white">Quote Request Received!</h3>
+      <p class="text-xs font-mono text-amber-400 mt-1 mb-2">Reference Code: #<span id="quote-modal-ref">QT-00000</span></p>
+      <div id="quote-db-indicator" class="text-xs font-mono mb-4 text-slate-400"></div>
+      <p class="text-sm text-slate-300 mb-6">
+        Our digitizing specialists will render your free proof and email your quote breakdown within 6 hours.
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-3">
+        <a id="quote-modal-whatsapp" href="#" target="_blank" class="flex-1 py-3 px-4 bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-sm rounded-xl flex items-center justify-center gap-2">
+          <i data-lucide="message-circle" class="w-4 h-4"></i> Chat on WhatsApp Now
+        </a>
+        <button id="quote-modal-done" class="py-3 px-6 bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm rounded-xl border border-slate-700">
+          Done
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supabase Settings Modal -->
+  <div id="supabase-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-tactical-950 border border-slate-800 rounded-3xl max-w-xl w-full p-6 sm:p-8 relative shadow-2xl">
+      <button id="supabase-modal-close" class="absolute top-5 right-5 text-slate-400 hover:text-white p-1">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center">
+          <i data-lucide="database" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h3 class="text-xl font-black text-white">Supabase Database Integration</h3>
+          <p class="text-xs text-slate-400">Save quotes, orders & customer artworks automatically</p>
+        </div>
+      </div>
+
+      <!-- Quick Guidance -->
+      <div class="bg-slate-900/70 border border-slate-800 rounded-xl p-4 text-xs text-slate-300 space-y-1.5 mb-5 font-mono">
+        <div class="text-amber-400 font-bold mb-1">Quick 2-Step Setup:</div>
+        <div>1. Run the SQL script from <code class="text-amber-300 bg-slate-950 px-1.5 py-0.5 rounded">supabase-schema.sql</code> in your Supabase SQL Editor.</div>
+        <div>2. Copy your <strong>Project URL</strong> & <strong>anon public API Key</strong> from Supabase Dashboard -> Project Settings -> API.</div>
+      </div>
+
+      <form id="supabase-settings-form" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+            Supabase Project URL *
+          </label>
+          <input 
+            id="input-supabase-url" 
+            type="url" 
+            placeholder="https://xyzabcdefghijklmnop.supabase.co" 
+            class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white font-mono focus:border-amber-500 outline-none"
+          />
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+            Supabase Anon Public API Key *
+          </label>
+          <input 
+            id="input-supabase-key" 
+            type="text" 
+            placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." 
+            class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white font-mono focus:border-amber-500 outline-none"
+          />
+        </div>
+
+        <!-- Connection Test Feedback -->
+        <div id="supabase-test-result" class="hidden p-3 rounded-xl text-xs font-mono"></div>
+
+        <div class="flex flex-col sm:flex-row gap-3 pt-2">
+          <button 
+            type="button" 
+            id="btn-test-supabase" 
+            class="py-3 px-5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold rounded-xl transition-colors flex items-center justify-center gap-1.5"
+          >
+            <i data-lucide="radio" class="w-4 h-4 text-emerald-400"></i>
+            <span>Test Connection</span>
+          </button>
+
+          <button 
+            type="submit" 
+            class="flex-1 py-3 px-6 bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs rounded-xl transition-transform hover:scale-[1.01] shadow-lg shadow-amber-500/20 flex items-center justify-center gap-1.5"
+          >
+            <i data-lucide="check" class="w-4 h-4"></i>
+            <span>Save & Connect Database</span>
+          </button>
+        </div>
+
+        <div class="flex items-center justify-between pt-2 border-t border-slate-800/80 text-[11px] text-slate-500">
+          <span>Settings persist in browser & can also be set in <code class="text-slate-400">js/supabaseConfig.js</code></span>
+          <button type="button" id="btn-clear-supabase" class="text-rose-400 hover:underline">Clear</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Gallery Lightbox Modal -->
+  <div id="gallery-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-tactical-950 border border-slate-800 rounded-3xl max-w-3xl w-full p-6 sm:p-8 relative shadow-2xl">
+      <button id="gallery-modal-close" class="absolute top-5 right-5 text-slate-400 hover:text-white p-1">
+        <i data-lucide="x" class="w-6 h-6"></i>
+      </button>
+      <div id="gallery-modal-content">
+        <!-- Injected via gallery.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating WhatsApp & Back to Top Buttons -->
+  <div class="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-3">
+    <a 
+      href="https://wa.me/923000000000?text=Hello%20ApexPatches!%20I%20want%20a%20custom%20patch%20quote." 
+      target="_blank" 
+      class="w-14 h-14 bg-emerald-500 hover:bg-emerald-400 text-black rounded-full flex items-center justify-center shadow-2xl shadow-emerald-500/40 hover:scale-110 transition-transform group" 
+      title="Live WhatsApp Support"
+    >
+      <i data-lucide="message-circle" class="w-7 h-7 fill-black text-black"></i>
+    </a>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-tactical-950 border-t border-slate-800/80 pt-16 pb-12 text-slate-400 text-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-12">
+        
+        <!-- Brand Info -->
+        <div class="lg:col-span-2 space-y-4">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-lg bg-amber-500 text-black font-black flex items-center justify-center font-display text-lg">
+              AP
+            </div>
+            <span class="text-xl font-black text-white font-display tracking-tight">APEX<span class="text-amber-500">PATCHES</span></span>
+          </div>
+          <p class="text-slate-400 leading-relaxed max-w-sm">
+            Industrial Tajima embroidery, 3D soft PVC rubber, vintage chenille, and laser engraved leather patches. Engineered for tactical operators, biker clubs, streetwear brands, and athletic teams worldwide.
+          </p>
+          <div class="flex items-center gap-3 pt-2 text-slate-300">
+            <span class="flex items-center gap-1.5"><i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i> ISO-9001 Certified Factory</span>
+            <span class="flex items-center gap-1.5"><i data-lucide="truck" class="w-4 h-4 text-amber-400"></i> Worldwide Express</span>
+          </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="space-y-3">
+          <h4 class="text-sm font-bold text-white uppercase tracking-wider">Patch Styles</h4>
+          <ul class="space-y-2">
+            <li><a href="#patch-types-section" class="hover:text-amber-400 transition-colors">Custom Embroidered</a></li>
+            <li><a href="#patch-types-section" class="hover:text-amber-400 transition-colors">3D PVC Rubber Morale</a></li>
+            <li><a href="#patch-types-section" class="hover:text-amber-400 transition-colors">Laser Leatherette</a></li>
+            <li><a href="#patch-types-section" class="hover:text-amber-400 transition-colors">Vintage Varsity Chenille</a></li>
+            <li><a href="#patch-types-section" class="hover:text-amber-400 transition-colors">Jacquard Woven Patches</a></li>
+            <li><a href="#patch-types-section" class="hover:text-amber-400 transition-colors">Sublimated Full Color</a></li>
+          </ul>
+        </div>
+
+        <!-- Attachment Hardware -->
+        <div class="space-y-3">
+          <h4 class="text-sm font-bold text-white uppercase tracking-wider">Backings & Edge</h4>
+          <ul class="space-y-2">
+            <li><a href="#backings-section" class="hover:text-amber-400 transition-colors">Mil-Spec Hook & Loop</a></li>
+            <li><a href="#backings-section" class="hover:text-amber-400 transition-colors">Heat Seal Iron-On Film</a></li>
+            <li><a href="#backings-section" class="hover:text-amber-400 transition-colors">Reinforced Sew-On Edge</a></li>
+            <li><a href="#backings-section" class="hover:text-amber-400 transition-colors">3M Pressure Adhesive</a></li>
+            <li><a href="#backings-section" class="hover:text-amber-400 transition-colors">Overlocked Merrow Border</a></li>
+            <li><a href="#backings-section" class="hover:text-amber-400 transition-colors">Laser-Cut Heat Edge</a></li>
+          </ul>
+        </div>
+
+        <!-- Contact & Support -->
+        <div class="space-y-3">
+          <h4 class="text-sm font-bold text-white uppercase tracking-wider">Customer Care</h4>
+          <ul class="space-y-2.5">
+            <li class="flex items-center gap-2 text-slate-300">
+              <i data-lucide="mail" class="w-4 h-4 text-amber-500"></i>
+              <span>support@apexpatches.com</span>
+            </li>
+            <li class="flex items-center gap-2 text-slate-300">
+              <i data-lucide="phone" class="w-4 h-4 text-amber-500"></i>
+              <span>+1 (800) 555-PATCH</span>
+            </li>
+            <li class="flex items-center gap-2 text-slate-300">
+              <i data-lucide="message-circle" class="w-4 h-4 text-emerald-400"></i>
+              <span>WhatsApp: +92 300 0000000</span>
+            </li>
+            <li class="flex items-center gap-2 text-slate-300">
+              <i data-lucide="clock" class="w-4 h-4 text-slate-400"></i>
+              <span>Mon - Sat: 24/6 Support</span>
+            </li>
+            <li class="pt-2">
+              <button data-open-supabase-modal class="text-xs text-amber-400 hover:text-amber-300 flex items-center gap-1.5 transition-colors">
+                <i data-lucide="database" class="w-3.5 h-3.5 text-emerald-400"></i>
+                <span>Database Settings (Supabase)</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Copyright & Payment Badges -->
+      <div class="pt-8 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-slate-500">
+        <div>
+          © 2026 ApexPatches Co. All rights reserved. Tajima is a registered trademark of Tokai Industrial Sewing Machine Co.
+        </div>
+        <div class="flex items-center gap-4 text-xs font-mono text-slate-400">
+          <span>VISA</span>
+          <span>MASTERCARD</span>
+          <span>PAYPAL</span>
+          <span>APPLE PAY</span>
+          <span>STRIPE</span>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- Load Modules -->
+  <script type="module" src="js/data.js"></script>
+  <script type="module" src="js/customizer.js"></script>
+  <script type="module" src="js/calculator.js"></script>
+  <script type="module" src="js/gallery.js"></script>
+  <script type="module" src="js/cart.js"></script>
+  <script type="module" src="js/app.js"></script>
+  <script>
+    // Initialize Lucide icons on page ready
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) window.lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
