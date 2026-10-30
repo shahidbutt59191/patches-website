@@ -2,7 +2,7 @@
  * ApexPatches - Main Application Engine
  */
 
-import { PATCH_TYPES, BACKINGS, BORDER_TYPES, TESTIMONIALS, FAQS } from './data.js';
+import { PATCH_TYPES, BACKINGS, BORDER_TYPES, TESTIMONIALS, FAQS, getSiteSettings } from './data.js';
 import { SupabaseManager } from './supabaseClient.js';
 
 class ApexApp {
@@ -11,6 +11,7 @@ class ApexApp {
   }
 
   init() {
+    this.applySiteSettings();
     this.renderDynamicSections();
     this.setupNavigation();
     this.setupFAQ();
@@ -18,6 +19,18 @@ class ApexApp {
     this.setupHeroPatchInteractions();
     this.setupScrollEffects();
     this.setupSupabaseModal();
+  }
+
+  applySiteSettings() {
+    const s = getSiteSettings();
+    // Update WhatsApp links
+    if (s.whatsappRaw) {
+      document.querySelectorAll('a[href*="wa.me"]').forEach(link => {
+        const url = new URL(link.href);
+        const text = url.searchParams.get('text') || '';
+        link.href = `https://wa.me/${s.whatsappRaw}${text ? '?text=' + encodeURIComponent(text) : ''}`;
+      });
+    }
   }
 
   // Toast System

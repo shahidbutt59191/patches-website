@@ -391,3 +391,51 @@ export const FAQS = [
     a: 'Absolutely! For every single order, we create a high-resolution digital mock proof for your approval first. For large production orders (250+ patches), we can also sew a real physical production sample patch and email you macro high-def photos before running the complete batch.'
   }
 ];
+
+// Dynamic Gallery Storage
+export function getGalleryItems() {
+  try {
+    const custom = localStorage.getItem('apex_custom_gallery');
+    if (custom) {
+      const parsed = JSON.parse(custom);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch (e) {
+    console.warn('Error reading custom gallery:', e);
+  }
+  return GALLERY_ITEMS;
+}
+
+export function saveGalleryItems(items) {
+  try {
+    localStorage.setItem('apex_custom_gallery', JSON.stringify(items));
+  } catch (e) {
+    console.error('Error saving gallery items:', e);
+  }
+}
+
+// Site Settings
+export const DEFAULT_SITE_SETTINGS = {
+  companyName: 'ApexPatches',
+  tagline: 'The Custom Patch Studio',
+  whatsappRaw: '923000000000',
+  whatsappDisplay: '+92 300 0000000',
+  supportEmail: 'support@apexpatches.com',
+  phone: '+1 (800) 555-PATCH',
+  announcement: '⭐ FLASH SALE: 10% OFF with code WELCOME10 • 🚀 FREE Artwork Proof in 6 Hours • 📦 Free Global Shipping on $100+',
+  basePrice: 2.20
+};
+
+export function getSiteSettings() {
+  try {
+    const saved = localStorage.getItem('apex_site_settings');
+    if (saved) return { ...DEFAULT_SITE_SETTINGS, ...JSON.parse(saved) };
+  } catch (e) {}
+  return DEFAULT_SITE_SETTINGS;
+}
+
+export function saveSiteSettings(settings) {
+  try {
+    localStorage.setItem('apex_site_settings', JSON.stringify(settings));
+  } catch (e) {}
+}

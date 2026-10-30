@@ -2,11 +2,11 @@
  * ApexPatches - Filterable Gallery & Portfolio Showcase
  */
 
-import { GALLERY_ITEMS, SHAPES, BADGE_ICONS } from './data.js';
+import { getGalleryItems, SHAPES, BADGE_ICONS } from './data.js';
 
 class PatchGallery {
   constructor() {
-    this.items = GALLERY_ITEMS;
+    this.items = getGalleryItems();
     this.activeFilter = 'all';
     this.searchQuery = '';
     this.activeItem = null;
@@ -64,6 +64,14 @@ class PatchGallery {
   }
 
   generatePatchSVG(item) {
+    if (item.customImgUrl) {
+      return `
+        <div class="w-full h-full p-4 flex items-center justify-center transition-transform duration-500 group-hover:scale-105">
+          <img src="${item.customImgUrl}" alt="${item.title}" class="max-w-[220px] max-h-[220px] object-contain filter drop-shadow-2xl rounded-xl" />
+        </div>
+      `;
+    }
+
     const shape = SHAPES.find(s => s.id === item.shape) || SHAPES[0];
     const iconObj = BADGE_ICONS.find(i => i.id === item.icon) || BADGE_ICONS[0];
 
