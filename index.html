@@ -107,7 +107,18 @@
         </nav>
 
         <!-- Right Action Buttons -->
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2 sm:gap-3">
+          <!-- Admin Portal Link (Prominent Navbar Button) -->
+          <a 
+            href="/admin" 
+            target="_blank"
+            class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-amber-400 hover:text-amber-300 border border-amber-500/40 hover:border-amber-400 text-xs font-bold transition-all hover:scale-105 shadow-sm"
+            title="Open Store Manager & Admin Portal"
+          >
+            <i data-lucide="shield-check" class="w-4 h-4 text-amber-400"></i>
+            <span class="inline">Admin<span class="hidden sm:inline"> Portal</span></span>
+          </a>
+
           <!-- WhatsApp Quick Link -->
           <a 
             href="https://wa.me/923000000000?text=Hi%20ApexPatches!%20I%20am%20interested%20in%20custom%20patches." 
@@ -142,7 +153,7 @@
           </a>
 
           <!-- Mobile Hamburger -->
-          <button id="mobile-menu-btn" class="lg:hidden p-2.5 text-slate-400 hover:text-white">
+          <button id="mobile-menu-btn" class="lg:hidden p-2.5 text-slate-400 hover:text-white" title="Menu">
             <i data-lucide="menu" class="w-6 h-6"></i>
           </button>
         </div>
@@ -151,6 +162,16 @@
 
     <!-- Mobile Navigation Drawer -->
     <div id="mobile-menu" class="hidden lg:hidden border-t border-slate-800 bg-tactical-950/95 backdrop-blur-lg px-6 py-5 space-y-4 text-sm font-medium">
+      <!-- Admin Portal Mobile Quick Button -->
+      <a 
+        href="/admin" 
+        target="_blank"
+        class="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-slate-900 border border-amber-500/50 text-amber-400 font-extrabold text-sm uppercase tracking-wider shadow-lg hover:bg-slate-800 transition-colors"
+      >
+        <i data-lucide="shield-check" class="w-5 h-5 text-amber-400"></i>
+        <span>Admin Portal (Store Manager)</span>
+      </a>
+
       <a href="#customizer-section" class="block text-amber-400 font-bold py-1">🚀 3D Customizer Studio</a>
       <a href="#calculator-section" class="block hover:text-amber-400 py-1">💰 Instant Price Calculator</a>
       <a href="#patch-types-section" class="block hover:text-amber-400 py-1">🧵 Patch Styles & Materials</a>
@@ -1442,7 +1463,13 @@
               <span>Mon - Sat: 24/6 Support</span>
             </li>
             <li class="pt-2">
-              <button data-open-supabase-modal class="text-xs text-amber-400 hover:text-amber-300 flex items-center gap-1.5 transition-colors">
+              <a href="/admin" target="_blank" class="text-xs text-amber-400 hover:text-amber-300 font-bold flex items-center gap-1.5 transition-colors">
+                <i data-lucide="shield-check" class="w-3.5 h-3.5 text-amber-400"></i>
+                <span>Admin Portal (Store Manager)</span>
+              </a>
+            </li>
+            <li class="pt-1">
+              <button data-open-supabase-modal class="text-xs text-slate-400 hover:text-amber-300 flex items-center gap-1.5 transition-colors">
                 <i data-lucide="database" class="w-3.5 h-3.5 text-emerald-400"></i>
                 <span>Database Settings (Supabase)</span>
               </button>
@@ -1455,7 +1482,7 @@
       <!-- Copyright & Payment Badges -->
       <div class="pt-8 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-slate-500">
         <div>
-          © 2026 ApexPatches Co. All rights reserved. • <a href="admin.html" class="hover:text-slate-400 transition-colors">Admin Portal</a>
+          © 2026 ApexPatches Co. All rights reserved. • <a href="/admin" target="_blank" class="text-amber-400 hover:text-amber-300 font-bold underline transition-colors">Admin Portal</a>
         </div>
         <div class="flex items-center gap-4 text-xs font-mono text-slate-400">
           <span>VISA</span>
@@ -1470,12 +1497,12 @@
   </footer>
 
   <!-- Load Modules -->
-  <script type="module" src="js/data.js"></script>
-  <script type="module" src="js/customizer.js"></script>
-  <script type="module" src="js/calculator.js"></script>
-  <script type="module" src="js/gallery.js"></script>
-  <script type="module" src="js/cart.js"></script>
-  <script type="module" src="js/app.js"></script>
+  <script type="module" src="js/data.js?v=2.2"></script>
+  <script type="module" src="js/customizer.js?v=2.2"></script>
+  <script type="module" src="js/calculator.js?v=2.2"></script>
+  <script type="module" src="js/gallery.js?v=2.2"></script>
+  <script type="module" src="js/cart.js?v=2.2"></script>
+  <script type="module" src="js/app.js?v=2.2"></script>
   <script>
     // Initialize Lucide icons on page ready
     document.addEventListener('DOMContentLoaded', () => {

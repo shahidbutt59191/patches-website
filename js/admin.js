@@ -23,6 +23,8 @@ class StoreAdminManager {
     this.orders = [];
     this.productCatFilter = 'all';
     this.productSearch = '';
+    this.quoteSearch = '';
+    this.orderSearch = '';
     this.uploadedImageBase64 = null;
 
     this.init();
@@ -146,6 +148,22 @@ class StoreAdminManager {
       });
     }
 
+    // Search quotes
+    if (this.searchQuotesInput) {
+      this.searchQuotesInput.addEventListener('input', (e) => {
+        this.quoteSearch = e.target.value.toLowerCase().trim();
+        this.renderQuotes();
+      });
+    }
+
+    // Search orders
+    if (this.searchOrdersInput) {
+      this.searchOrdersInput.addEventListener('input', (e) => {
+        this.orderSearch = e.target.value.toLowerCase().trim();
+        this.renderOrders();
+      });
+    }
+
     // Open Add Patch Modal
     if (this.btnAddNewPatch) {
       this.btnAddNewPatch.addEventListener('click', () => this.openPatchEditor());
@@ -153,10 +171,15 @@ class StoreAdminManager {
 
     // Close Modal
     if (this.modalPatchClose) {
-      this.modalPatchClose.addEventListener('click', () => this.modalPatch.classList.add('hidden'));
+      this.modalPatchClose.addEventListener('click', () => this.closePatchEditor());
     }
     if (this.btnCancelPatch) {
-      this.btnCancelPatch.addEventListener('click', () => this.modalPatch.classList.add('hidden'));
+      this.btnCancelPatch.addEventListener('click', () => this.closePatchEditor());
+    }
+    if (this.modalPatch) {
+      this.modalPatch.addEventListener('click', (e) => {
+        if (e.target === this.modalPatch) this.closePatchEditor();
+      });
     }
 
     // Image file upload in editor
@@ -235,7 +258,12 @@ class StoreAdminManager {
 
     // Close invoice modal
     if (this.modalInvoiceClose) {
-      this.modalInvoiceClose.addEventListener('click', () => this.modalInvoice.classList.add('hidden'));
+      this.modalInvoiceClose.addEventListener('click', () => this.closeWorkOrder());
+    }
+    if (this.modalInvoice) {
+      this.modalInvoice.addEventListener('click', (e) => {
+        if (e.target === this.modalInvoice) this.closeWorkOrder();
+      });
     }
 
     // Exports
@@ -261,7 +289,9 @@ class StoreAdminManager {
 
     Object.keys(this.panels).forEach(key => {
       if (this.panels[key]) {
-        this.panels[key].classList.toggle('hidden', key !== tab);
+        const isCurrent = key === tab;
+        this.panels[key].classList.toggle('hidden', !isCurrent);
+        this.panels[key].style.display = isCurrent ? 'block' : 'none';
       }
     });
 
@@ -505,8 +535,25 @@ class StoreAdminManager {
       if (this.inputPatchDesc) this.inputPatchDesc.value = '';
     }
 
-    if (this.modalPatch) this.modalPatch.classList.remove('hidden');
+    if (this.modalPatch) {
+      this.modalPatch.classList.remove('hidden');
+      this.modalPatch.style.display = 'flex';
+    }
     if (window.lucide) window.lucide.createIcons();
+  }
+
+  closePatchEditor() {
+    if (this.modalPatch) {
+      this.modalPatch.classList.add('hidden');
+      this.modalPatch.style.display = 'none';
+    }
+  }
+
+  closeWorkOrder() {
+    if (this.modalInvoice) {
+      this.modalInvoice.classList.add('hidden');
+      this.modalInvoice.style.display = 'none';
+    }
   }
 
   savePatchProduct() {
@@ -569,7 +616,7 @@ class StoreAdminManager {
     saveGalleryItems(this.products);
     this.renderProducts();
     this.updateCounters();
-    if (this.modalPatch) this.modalPatch.classList.add('hidden');
+    this.closePatchEditor();
   }
 
   deletePatchProduct(id) {
@@ -693,16 +740,23 @@ class StoreAdminManager {
   renderOrders() {
     if (!this.ordersList) return;
 
-    if (this.orders.length === 0) {
+    const filtered = this.orders.filter(o => {
+      if (!this.orderSearch) return true;
+      return (o.order_id && o.order_id.toLowerCase().includes(this.orderSearch)) ||
+             (o.customer_name && o.customer_name.toLowerCase().includes(this.orderSearch)) ||
+             (o.email && o.email.toLowerCase().includes(this.orderSearch));
+    });
+
+    if (filtered.length === 0) {
       this.ordersList.innerHTML = `
         <div class="bg-[#0d1322] border border-[#1e293f] rounded-2xl p-8 text-center text-slate-500 font-mono text-xs">
-          No orders received yet. Test orders from the cart will show up here.
+          No orders found matching search criteria.
         </div>
       `;
       return;
     }
 
-    this.ordersList.innerHTML = this.orders.map(o => {
+    this.ordersList.innerHTML = filtered.map(o => {
       const cleanPhone = (o.phone || '').replace(/[^0-9]/g, '');
       const dateStr = o.created_at ? new Date(o.created_at).toLocaleDateString() : 'Recent';
 
@@ -840,7 +894,7 @@ class StoreAdminManager {
           <button onclick="window.print()" class="flex-1 py-3 bg-amber-500 text-black font-extrabold text-xs rounded-xl">
             Print Work Order
           </button>
-          <button onclick="window.ApexAdmin.modalInvoice.classList.add('hidden')" class="py-3 px-6 bg-slate-800 text-white rounded-xl">
+          <button onclick="window.ApexAdmin.closeWorkOrder()" class="py-3 px-6 bg-slate-800 text-white rounded-xl">
             Close
           </button>
         </div>
@@ -848,6 +902,7 @@ class StoreAdminManager {
     `;
 
     this.modalInvoice.classList.remove('hidden');
+    this.modalInvoice.style.display = 'flex';
   }
 
   // ===========================================================================

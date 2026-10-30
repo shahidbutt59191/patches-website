@@ -31,6 +31,10 @@ class ApexApp {
         link.href = `https://wa.me/${s.whatsappRaw}${text ? '?text=' + encodeURIComponent(text) : ''}`;
       });
     }
+    if (s.announcement) {
+      const banner = document.querySelector('[data-announcement-text]');
+      if (banner) banner.textContent = s.announcement;
+    }
   }
 
   // Toast System
