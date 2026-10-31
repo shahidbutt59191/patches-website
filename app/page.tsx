@@ -3,6 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Layout/Navbar';
 import Footer from '@/components/Layout/Footer';
+import PatchCustomizerStudio from '@/components/PatchCustomizerStudio';
+import BulkPricingCalculator from '@/components/BulkPricingCalculator';
+import BackingsGuide from '@/components/BackingsGuide';
+import PortfolioGallery from '@/components/PortfolioGallery';
+import TestimonialsSection from '@/components/TestimonialsSection';
 import OrderForm from '@/components/OrderForm';
 import { SiteSettings, DEFAULT_SETTINGS } from '@/lib/settings';
 
@@ -36,7 +41,7 @@ export default function HomePage() {
       
       {/* Dynamic Top Announcement Banner */}
       {settings.announcementEnabled && settings.announcementText && (
-        <div className="bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 py-2 px-4 text-center text-xs font-bold text-black tracking-wide shadow-md">
+        <div className="bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 py-2.5 px-4 text-center text-xs font-bold text-black tracking-wide shadow-md">
           <span className="mr-2 inline-block rounded-full bg-black px-2 py-0.5 text-[10px] font-black uppercase text-amber-400">
             Special Offer
           </span>
@@ -47,80 +52,98 @@ export default function HomePage() {
       {/* Dynamic Navbar */}
       <Navbar whatsappNumber={settings.whatsappNumber} />
 
-      {/* Hero Section (Fully Editable from Admin Portal) */}
-      <section className="relative overflow-hidden pt-12 pb-20 lg:pt-20 lg:pb-32">
+      {/* Hero Section (Editable from Admin Portal) */}
+      <section className="relative overflow-hidden pt-16 pb-24 lg:pt-24 lg:pb-32">
         {/* Glow Effects */}
-        <div className="pointer-events-none absolute left-1/2 top-10 -translate-x-1/2 h-[450px] w-[800px] rounded-full bg-amber-500/10 blur-[150px]" />
+        <div className="pointer-events-none absolute left-1/2 top-10 -translate-x-1/2 h-[500px] w-[900px] rounded-full bg-amber-500/10 blur-[160px]" />
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-3xl text-center">
+          <div className="mx-auto max-w-4xl text-center">
             
-            {/* Pill Badge (Editable) */}
+            {/* Pill Badge */}
             <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-1.5 text-xs font-bold text-amber-400">
               <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
               <span>{settings.heroBadge}</span>
             </div>
 
-            {/* Main Headline (Editable) */}
-            <h1 className="mt-6 text-4xl font-black tracking-tight text-white sm:text-6xl sm:leading-tight">
+            {/* Main Headline */}
+            <h1 className="mt-6 text-4xl font-black tracking-tight text-white sm:text-6xl lg:text-7xl sm:leading-tight">
               {settings.heroHeadline}
             </h1>
 
-            {/* Sub-headline (Editable) */}
-            <p className="mt-6 text-base leading-relaxed text-slate-300 sm:text-lg">
+            {/* Sub-headline */}
+            <p className="mt-6 text-base leading-relaxed text-slate-300 sm:text-lg max-w-3xl mx-auto">
               {settings.heroSubheadline}
             </p>
 
             {/* Hero Action CTAs */}
-            <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <a
-                href="#order-form"
-                className="w-full rounded-2xl bg-amber-500 px-8 py-4 text-sm font-black uppercase tracking-wider text-black shadow-xl shadow-amber-500/25 transition-all hover:bg-amber-400 hover:scale-105 sm:w-auto"
+                href="#customizer-studio"
+                className="w-full rounded-2xl bg-amber-500 px-8 py-4 text-sm font-black uppercase tracking-wider text-black shadow-xl shadow-amber-500/25 transition-all hover:bg-amber-400 hover:scale-105 sm:w-auto flex items-center justify-center gap-2"
               >
-                {settings.heroCtaText || 'Configure Your Custom Patch'}
+                <span>✨ Launch 3D Patch Studio</span>
               </a>
               <a
-                href="#patch-types"
-                className="w-full rounded-2xl border border-slate-800 bg-slate-900/80 px-8 py-4 text-sm font-bold text-slate-300 transition-colors hover:border-slate-700 hover:text-white sm:w-auto"
+                href="#calculator-section"
+                className="w-full rounded-2xl border border-slate-700 bg-slate-900/90 px-8 py-4 text-sm font-bold text-slate-200 transition-colors hover:border-amber-500 hover:text-white sm:w-auto"
               >
-                Explore Patch Styles
+                Instant Pricing Calculator
+              </a>
+              <a
+                href="#order-form"
+                className="w-full rounded-2xl border border-amber-500/40 bg-amber-500/10 px-8 py-4 text-sm font-bold text-amber-400 transition-colors hover:bg-amber-500/20 sm:w-auto"
+              >
+                Direct Order Form ↓
               </a>
             </div>
 
             {/* Trust Badges */}
-            <div className="mt-12 grid grid-cols-2 gap-4 border-t border-slate-800/80 pt-8 sm:grid-cols-4 text-xs font-mono text-slate-400">
-              <div>⚡ 6-Hour Free Digital Proof</div>
-              <div>🧵 100% Madeira Thread</div>
-              <div>🛡️ Mil-Spec Velcro Available</div>
-              <div>✈️ Worldwide Express Air</div>
+            <div className="mt-14 grid grid-cols-2 gap-4 border-t border-slate-800/80 pt-8 sm:grid-cols-4 text-xs font-mono text-slate-400">
+              <div className="p-2 rounded-xl bg-slate-900/40 border border-slate-800/50">⚡ 6-Hour Free Proof</div>
+              <div className="p-2 rounded-xl bg-slate-900/40 border border-slate-800/50">🧵 100% Madeira Thread</div>
+              <div className="p-2 rounded-xl bg-slate-900/40 border border-slate-800/50">🛡️ Mil-Spec Tactical Velcro</div>
+              <div className="p-2 rounded-xl bg-slate-900/40 border border-slate-800/50">✈️ Worldwide Express Air</div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Types of Patches Section */}
-      <section id="patch-types" className="border-t border-slate-800/80 bg-slate-900/40 py-20">
+      {/* ===================================================================== */}
+      {/* 1. INTERACTIVE 3D LIVE PATCH CUSTOMIZER STUDIO */}
+      {/* ===================================================================== */}
+      <PatchCustomizerStudio />
+
+      {/* ===================================================================== */}
+      {/* 2. INSTANT BULK PRICING CALCULATOR WITH SLIDERS */}
+      {/* ===================================================================== */}
+      <BulkPricingCalculator />
+
+      {/* ===================================================================== */}
+      {/* 3. TYPES OF PATCHES MATERIAL LINEUP */}
+      {/* ===================================================================== */}
+      <section id="patch-types" className="border-t border-slate-800/80 bg-slate-900/40 py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h2 className="text-xs font-extrabold uppercase tracking-widest text-amber-400">
+          <div className="text-center max-w-3xl mx-auto">
+            <h2 className="text-xs font-extrabold uppercase tracking-widest text-amber-400 font-mono">
               Complete Material Lineup
             </h2>
-            <h3 className="mt-2 text-3xl font-black text-white sm:text-4xl">
+            <h3 className="mt-2 text-3xl font-black text-white sm:text-5xl tracking-tight">
               Types of Custom Patches We Manufacture
             </h3>
-            <p className="mt-3 text-sm text-slate-400">
+            <p className="mt-4 text-sm sm:text-base text-slate-400">
               Every style engineered to exact military, athletic, and streetwear specifications.
             </p>
           </div>
 
-          <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {[
               {
                 title: 'Custom Embroidered',
                 badge: 'Industry Standard',
                 desc: 'Classic raised thread texture woven with ultra-dense Tajima stitches. Ideal for uniforms, workwear, and biker cuts.',
                 price: `From $${settings.basePrice.toFixed(2)} / ea`,
-                features: ['Up to 12 Madeira thread colors', 'Merrowed or heat-cut edge', 'Twill fabric backing'],
+                features: ['Up to 12 Madeira thread colors', 'Merrowed or laser-cut edge', 'Twill fabric backing'],
               },
               {
                 title: '3D Soft PVC Rubber',
@@ -132,7 +155,7 @@ export default function HomePage() {
               {
                 title: 'Laser Leatherette',
                 badge: 'Premium Lifestyle',
-                desc: 'Rich caramel and charcoal synthetic leather etched with high-precision fiber lasers. Ideal for trucker hats and jackets.',
+                desc: 'Rich caramel and charcoal synthetic leather etched with high-precision fiber lasers. Ideal for trucker snapbacks and jackets.',
                 price: `From $${(settings.basePrice * 1.15).toFixed(2)} / ea`,
                 features: ['High-contrast dark etching', 'Clean stitch channel', 'Iron-on adhesive or sew-on'],
               },
@@ -191,19 +214,26 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* How to Order (3-Step Process) */}
-      <section id="how-to-order" className="py-20">
+      {/* ===================================================================== */}
+      {/* 4. BACKINGS & HARDWARE ATTACHMENT GUIDE */}
+      {/* ===================================================================== */}
+      <BackingsGuide />
+
+      {/* ===================================================================== */}
+      {/* 5. HOW TO ORDER IN 3 FAST STEPS */}
+      {/* ===================================================================== */}
+      <section id="how-to-order" className="py-24 border-t border-slate-800/80">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h2 className="text-xs font-extrabold uppercase tracking-widest text-amber-400">
+          <div className="text-center max-w-3xl mx-auto">
+            <h2 className="text-xs font-extrabold uppercase tracking-widest text-amber-400 font-mono">
               Simple Production Pipeline
             </h2>
-            <h3 className="mt-2 text-3xl font-black text-white sm:text-4xl">
+            <h3 className="mt-2 text-3xl font-black text-white sm:text-5xl tracking-tight">
               How To Order in 3 Fast Steps
             </h3>
           </div>
 
-          <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-3">
+          <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-3">
             {[
               {
                 step: '01',
@@ -223,7 +253,7 @@ export default function HomePage() {
             ].map((s, i) => (
               <div
                 key={i}
-                className="relative rounded-3xl border border-slate-800 bg-slate-900/60 p-8 text-center"
+                className="relative rounded-3xl border border-slate-800 bg-slate-900/60 p-8 text-center hover:border-slate-700 transition-colors"
               >
                 <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/10 font-mono text-xl font-black text-amber-400 border border-amber-500/30">
                   {s.step}
@@ -236,18 +266,30 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Interactive Order Form Section */}
-      <section className="border-t border-slate-800/80 bg-slate-900/30 py-20">
+      {/* ===================================================================== */}
+      {/* 6. PRODUCTION PORTFOLIO SHOWCASE */}
+      {/* ===================================================================== */}
+      <PortfolioGallery />
+
+      {/* ===================================================================== */}
+      {/* 7. VERIFIED CUSTOMER REVIEWS (5.0★) */}
+      {/* ===================================================================== */}
+      <TestimonialsSection />
+
+      {/* ===================================================================== */}
+      {/* 8. INTERACTIVE ORDER & INSTANT QUOTE FORM */}
+      {/* ===================================================================== */}
+      <section id="order-form" className="border-t border-slate-800/80 bg-slate-900/30 py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-10 text-center">
-            <h2 className="text-xs font-extrabold uppercase tracking-widest text-amber-400">
+          <div className="mb-12 text-center max-w-3xl mx-auto">
+            <h2 className="text-xs font-extrabold uppercase tracking-widest text-amber-400 font-mono">
               Instant Order Studio
             </h2>
-            <h3 className="mt-2 text-3xl font-black text-white sm:text-4xl">
+            <h3 className="mt-2 text-3xl font-black text-white sm:text-5xl tracking-tight">
               Build Your Custom Patch Order
             </h3>
-            <p className="mt-2 text-sm text-slate-400">
-              Instant volume price calculations with zero hidden fees.
+            <p className="mt-3 text-sm text-slate-400">
+              Submit your patch specifications with artwork attachment. Free digital proof delivered in 6 hours.
             </p>
           </div>
 
@@ -255,19 +297,21 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section id="faq" className="border-t border-slate-800/80 py-20">
+      {/* ===================================================================== */}
+      {/* 9. FAQ SECTION */}
+      {/* ===================================================================== */}
+      <section id="faq" className="border-t border-slate-800/80 py-24">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h2 className="text-xs font-extrabold uppercase tracking-widest text-amber-400">
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <h2 className="text-xs font-extrabold uppercase tracking-widest text-amber-400 font-mono">
               Got Questions?
             </h2>
-            <h3 className="mt-2 text-3xl font-black text-white">
+            <h3 className="mt-2 text-3xl font-black text-white sm:text-4xl">
               Frequently Asked Questions
             </h3>
           </div>
 
-          <div className="mt-10 space-y-4">
+          <div className="space-y-4">
             {[
               {
                 q: 'What is the minimum order quantity (MOQ)?',

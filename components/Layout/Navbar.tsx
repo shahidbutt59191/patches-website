@@ -35,22 +35,25 @@ export default function Navbar({ whatsappNumber = '18005557282' }: NavbarProps) 
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden items-center gap-8 text-sm font-semibold text-slate-300 md:flex">
-          <a href="#order-form" className="flex items-center gap-2 hover:text-amber-400 transition-colors">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75"></span>
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-amber-500"></span>
-            </span>
-            Instant Order Builder
+        <nav className="hidden items-center gap-6 text-sm font-semibold text-slate-300 lg:flex">
+          <a href="#customizer-studio" className="flex items-center gap-1.5 hover:text-amber-400 transition-colors">
+            <span className="h-2 w-2 rounded-full bg-amber-500 animate-ping" />
+            3D Studio
+          </a>
+          <a href="#calculator-section" className="hover:text-amber-400 transition-colors">
+            Calculator
           </a>
           <a href="#patch-types" className="hover:text-amber-400 transition-colors">
-            Patch Types
+            Patch Styles
           </a>
-          <a href="#how-to-order" className="hover:text-amber-400 transition-colors">
-            How It Works
+          <a href="#backings-section" className="hover:text-amber-400 transition-colors">
+            Backings
           </a>
-          <a href="#faq" className="hover:text-amber-400 transition-colors">
-            FAQ & Specs
+          <a href="#gallery-section" className="hover:text-amber-400 transition-colors">
+            Portfolio
+          </a>
+          <a href="#order-form" className="hover:text-amber-400 transition-colors">
+            Order Form
           </a>
         </nav>
 
@@ -91,7 +94,7 @@ export default function Navbar({ whatsappNumber = '18005557282' }: NavbarProps) 
           {/* Mobile Hamburger Toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 text-slate-400 hover:text-white md:hidden"
+            className="p-2 text-slate-400 hover:text-white lg:hidden"
             aria-label="Toggle Menu"
           >
             <svg className="h-6 w-6 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2">
@@ -105,52 +108,69 @@ export default function Navbar({ whatsappNumber = '18005557282' }: NavbarProps) 
         </div>
       </div>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="border-b border-slate-800 bg-slate-950/95 px-6 py-6 space-y-4 md:hidden">
-          <Link
-            href="/admin"
-            onClick={() => setMobileMenuOpen(false)}
-            className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-slate-900 border border-amber-500/50 text-amber-400 font-extrabold text-xs uppercase tracking-wider shadow-lg"
-          >
-            <span>🔒 Admin Portal (Store Manager)</span>
-          </Link>
+        <div className="border-b border-slate-800 bg-slate-950 px-4 pt-3 pb-6 lg:hidden space-y-3">
           <a
-            href="#order-form"
+            href="#customizer-studio"
             onClick={() => setMobileMenuOpen(false)}
-            className="block text-base font-bold text-amber-400"
+            className="block py-2 text-sm font-semibold text-amber-400"
           >
-            ⚡ Instant Order Builder
+            ✨ 3D Interactive Patch Studio
+          </a>
+          <a
+            href="#calculator-section"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block py-2 text-sm font-semibold text-slate-300 hover:text-white"
+          >
+            ⚡ Bulk Pricing Calculator
           </a>
           <a
             href="#patch-types"
             onClick={() => setMobileMenuOpen(false)}
-            className="block text-sm font-semibold text-slate-300 hover:text-white"
+            className="block py-2 text-sm font-semibold text-slate-300 hover:text-white"
           >
-            🧵 Patch Styles & Materials
+            🧵 Patch Styles
           </a>
           <a
-            href="#how-to-order"
+            href="#backings-section"
             onClick={() => setMobileMenuOpen(false)}
-            className="block text-sm font-semibold text-slate-300 hover:text-white"
+            className="block py-2 text-sm font-semibold text-slate-300 hover:text-white"
           >
-            🚀 How To Order (3 Steps)
+            🧲 Backings & Hardware
           </a>
           <a
-            href="#faq"
+            href="#gallery-section"
             onClick={() => setMobileMenuOpen(false)}
-            className="block text-sm font-semibold text-slate-300 hover:text-white"
+            className="block py-2 text-sm font-semibold text-slate-300 hover:text-white"
           >
-            ❓ Frequently Asked Questions
+            🖼️ Production Portfolio
           </a>
           <a
-            href={`https://wa.me/${whatsappNumber}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block py-2.5 bg-emerald-600 text-white font-bold text-center rounded-xl text-xs"
+            href="#order-form"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block py-2 text-sm font-semibold text-slate-300 hover:text-white"
           >
-            WhatsApp Support
+            📦 Instant Order Form
           </a>
+
+          <div className="pt-3 border-t border-slate-800 flex flex-col gap-2">
+            <Link
+              href="/admin"
+              onClick={() => setMobileMenuOpen(false)}
+              className="py-2.5 rounded-xl border border-amber-500/40 bg-slate-900 text-center font-bold text-amber-400 text-xs"
+            >
+              🔒 VIP Admin Portal (Store Manager)
+            </Link>
+            <a
+              href={`https://wa.me/${whatsappNumber}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="py-2.5 rounded-xl bg-emerald-600 text-center font-bold text-white text-xs"
+            >
+              Chat on WhatsApp
+            </a>
+          </div>
         </div>
       )}
     </header>
