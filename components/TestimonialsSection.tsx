@@ -9,7 +9,7 @@ const REVIEWS = [
     org: 'Task Force Apex Apparel',
     rating: 5,
     order: '500 pcs 3D PVC Morale Patches',
-    text: 'ApexPatches exceeded our squadron standards. The 3D PVC mold precision is razor sharp, the coyote tan matches our OCP uniform specs flawlessly, and the hook-and-loop backing holds tight through combat training.',
+    text: 'EmbroidPatches exceeded our squadron standards. The 3D PVC mold precision is razor sharp, the coyote tan matches our OCP uniform specs flawlessly, and the hook-and-loop backing holds tight through combat training.',
   },
   {
     name: 'Marcus Vance',
@@ -39,18 +39,19 @@ const REVIEWS = [
 
 export default function TestimonialsSection() {
   return (
-    <section id="reviews-section" className="py-24 bg-tactical-950/80 border-t border-slate-800/80 relative">
+    <section id="reviews-section" className="py-20 sm:py-28 bg-[#070913] border-b border-white/10 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Title */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-1.5 text-xs font-bold text-amber-400 font-mono uppercase tracking-widest mb-3">
-            <span>5.0★ Verified Customer Trust</span>
-          </div>
-          <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
+        <div className="flex flex-col gap-2.5 text-center items-center mb-16">
+          <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border text-[11px] font-bold uppercase tracking-[0.16em] bg-indigo-500/10 text-indigo-300 border-indigo-500/30 font-mono">
+            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
+            5.0★ Verified Customer Trust
+          </span>
+          <h2 className="text-3xl sm:text-5xl font-extrabold tracking-[-0.035em] text-white leading-[1.12] max-w-3xl">
             Backed by 420+ Verified Wholesale Buyers
           </h2>
-          <p className="mt-4 text-sm sm:text-base text-slate-400">
+          <p className="text-sm sm:text-base leading-relaxed text-slate-400 max-w-2xl mx-auto">
             From tactical military units and emergency first responders to collegiate varsity teams and international streetwear brands.
           </p>
         </div>
@@ -60,7 +61,7 @@ export default function TestimonialsSection() {
           {REVIEWS.map((r, i) => (
             <div
               key={i}
-              className="rounded-3xl border border-slate-800 bg-slate-900/60 p-8 flex flex-col justify-between shadow-xl relative"
+              className="rounded-3xl border border-white/10 bg-[#0c1020] p-7 flex flex-col justify-between shadow-xl relative hover:border-indigo-500/30 transition-all"
             >
               <div>
                 <div className="flex items-center justify-between mb-4">
@@ -77,12 +78,12 @@ export default function TestimonialsSection() {
                 </p>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between">
+              <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between">
                 <div>
                   <div className="text-sm font-bold text-white">{r.name}</div>
                   <div className="text-[11px] font-mono text-slate-400">{r.role} • {r.org}</div>
                 </div>
-                <div className="text-right text-[10px] font-mono text-amber-400 font-bold">
+                <div className="text-right text-[10px] font-mono text-indigo-400 font-bold">
                   {r.order}
                 </div>
               </div>

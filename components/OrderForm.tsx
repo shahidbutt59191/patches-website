@@ -140,7 +140,7 @@ export default function OrderForm() {
 
   if (orderSuccessNumber) {
     return (
-      <div className="rounded-3xl border border-emerald-500/40 bg-slate-900/90 p-8 text-center shadow-2xl backdrop-blur-xl md:p-12">
+      <div className="rounded-3xl border border-emerald-500/40 bg-[#0c1020] p-8 text-center shadow-2xl backdrop-blur-xl md:p-12">
         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-500/20 text-emerald-400">
           <svg className="h-8 w-8 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2.5">
             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -150,7 +150,7 @@ export default function OrderForm() {
         <p className="mt-2 text-sm text-slate-300">
           Your factory reference number is:
         </p>
-        <div className="mx-auto my-4 max-w-xs rounded-xl border border-amber-500/40 bg-slate-950 px-4 py-3 font-mono text-xl font-black text-amber-400">
+        <div className="mx-auto my-4 max-w-xs rounded-xl border border-indigo-500/40 bg-[#070913] px-4 py-3 font-mono text-xl font-black text-indigo-400">
           {orderSuccessNumber}
         </div>
         <p className="mx-auto max-w-lg text-xs leading-relaxed text-slate-400">
@@ -161,7 +161,7 @@ export default function OrderForm() {
             setOrderSuccessNumber(null);
             setArtworkFile(null);
           }}
-          className="mt-6 rounded-xl bg-amber-500 px-6 py-3 text-xs font-bold uppercase tracking-wider text-black hover:bg-amber-400 transition-colors"
+          className="mt-6 rounded-xl bg-gradient-to-r from-[#5448ea] to-[#7c3aed] px-6 py-3 text-xs font-bold uppercase tracking-wider text-white shadow-lg hover:shadow-indigo-500/25 transition-all"
         >
           Build Another Patch Order
         </button>
@@ -171,9 +171,9 @@ export default function OrderForm() {
 
   return (
     <form
-      id="order-form"
+      id="order"
       onSubmit={handleSubmit}
-      className="rounded-3xl border border-slate-800 bg-slate-900/60 p-6 shadow-2xl backdrop-blur-xl sm:p-10"
+      className="rounded-3xl border border-white/10 bg-[#0c1020] p-6 shadow-2xl sm:p-10 scroll-mt-24"
     >
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-12">
         
@@ -200,12 +200,12 @@ export default function OrderForm() {
                   onClick={() => setStyle(item.id)}
                   className={`flex flex-col justify-between rounded-xl border p-3 text-left transition-all ${
                     style === item.id
-                      ? 'border-amber-500 bg-amber-500/10 text-white shadow-md shadow-amber-500/10'
-                      : 'border-slate-800 bg-slate-950/60 text-slate-400 hover:border-slate-700 hover:text-slate-200'
+                      ? 'border-indigo-500 bg-indigo-500/15 text-white shadow-md shadow-indigo-500/10'
+                      : 'border-white/10 bg-[#070913] text-slate-400 hover:border-white/20 hover:text-slate-200'
                   }`}
                 >
                   <span className="text-xs font-bold">{item.name}</span>
-                  <span className="mt-1 text-[10px] font-mono text-amber-400/80">{item.badge}</span>
+                  <span className="mt-1 text-[10px] font-mono text-indigo-400/90">{item.badge}</span>
                 </button>
               ))}
             </div>
@@ -217,7 +217,7 @@ export default function OrderForm() {
               <label className="text-xs font-extrabold uppercase tracking-wider text-slate-300">
                 2. Dimensions (Inches)
               </label>
-              <span className="font-mono text-xs text-amber-400">
+              <span className="font-mono text-xs text-indigo-400 font-bold">
                 Calculated Size: {pricing.avgSize}&quot;
               </span>
             </div>
@@ -231,7 +231,7 @@ export default function OrderForm() {
                   step="0.25"
                   value={width}
                   onChange={(e) => setWidth(parseFloat(e.target.value))}
-                  className="mt-2 w-full accent-amber-500"
+                  className="mt-2 w-full accent-indigo-500"
                 />
               </div>
               <div>
@@ -243,7 +243,7 @@ export default function OrderForm() {
                   step="0.25"
                   value={height}
                   onChange={(e) => setHeight(parseFloat(e.target.value))}
-                  className="mt-2 w-full accent-amber-500"
+                  className="mt-2 w-full accent-indigo-500"
                 />
               </div>
             </div>
@@ -258,7 +258,7 @@ export default function OrderForm() {
               <select
                 value={backing}
                 onChange={(e) => setBacking(e.target.value)}
-                className="mt-2.5 w-full rounded-xl border border-slate-800 bg-slate-950 px-3.5 py-2.5 text-xs font-semibold text-white outline-none focus:border-amber-500"
+                className="mt-2.5 w-full rounded-xl border border-white/10 bg-[#070913] px-3.5 py-2.5 text-xs font-semibold text-white outline-none focus:border-indigo-500"
               >
                 <option value="velcro_hook_loop">Mil-Spec Hook & Loop (Velcro) (+$0.50)</option>
                 <option value="iron_on">Heat-Seal Iron-On Film (+$0.25)</option>
@@ -275,7 +275,7 @@ export default function OrderForm() {
               <select
                 value={border}
                 onChange={(e) => setBorder(e.target.value)}
-                className="mt-2.5 w-full rounded-xl border border-slate-800 bg-slate-950 px-3.5 py-2.5 text-xs font-semibold text-white outline-none focus:border-amber-500"
+                className="mt-2.5 w-full rounded-xl border border-white/10 bg-[#070913] px-3.5 py-2.5 text-xs font-semibold text-white outline-none focus:border-indigo-500"
               >
                 <option value="merrowed">Classic Overlocked Merrowed Edge</option>
                 <option value="laser_cut_heat_seal">Precision Laser-Cut Edge (Complex Shapes)</option>
@@ -304,8 +304,8 @@ export default function OrderForm() {
                   onClick={() => setQuantity(qtyPreset)}
                   className={`rounded-lg px-3.5 py-1.5 text-xs font-mono font-bold transition-colors ${
                     quantity === qtyPreset
-                      ? 'bg-amber-500 text-black'
-                      : 'border border-slate-800 bg-slate-950 text-slate-300 hover:border-slate-700'
+                      ? 'bg-gradient-to-r from-[#5448ea] to-[#7c3aed] text-white shadow-md'
+                      : 'border border-white/10 bg-[#070913] text-slate-300 hover:border-white/20'
                   }`}
                 >
                   {qtyPreset} pcs
@@ -319,7 +319,7 @@ export default function OrderForm() {
               max="50000"
               value={quantity}
               onChange={(e) => setQuantity(Math.max(10, parseInt(e.target.value) || 10))}
-              className="mt-3 w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2.5 font-mono text-sm text-white outline-none focus:border-amber-500"
+              className="mt-3 w-full rounded-xl border border-white/10 bg-[#070913] px-4 py-2.5 font-mono text-sm text-white outline-none focus:border-indigo-500"
             />
           </div>
 
@@ -328,13 +328,13 @@ export default function OrderForm() {
             <label className="block text-xs font-extrabold uppercase tracking-wider text-slate-300">
               6. Artwork / Logo Upload
             </label>
-            <div className="mt-2.5 flex items-center justify-center rounded-2xl border-2 border-dashed border-slate-800 bg-slate-950/60 p-6 transition-colors hover:border-amber-500/40">
+            <div className="mt-2.5 flex items-center justify-center rounded-2xl border-2 border-dashed border-white/10 bg-[#070913]/60 p-6 transition-colors hover:border-indigo-500/40">
               <div className="text-center">
                 <svg className="mx-auto h-8 w-8 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                 </svg>
                 <div className="mt-2 text-xs text-slate-300">
-                  <label className="cursor-pointer font-bold text-amber-400 hover:underline">
+                  <label className="cursor-pointer font-bold text-indigo-400 hover:underline">
                     <span>Click to select file</span>
                     <input
                       type="file"
@@ -349,7 +349,7 @@ export default function OrderForm() {
                   Supported: AI, PDF, PNG, JPG, PSD, SVG (Max 25MB)
                 </p>
                 {artworkFile && (
-                  <div className="mt-2 inline-flex items-center gap-1.5 rounded-md bg-amber-500/10 px-2.5 py-1 text-xs font-mono text-amber-400">
+                  <div className="mt-2 inline-flex items-center gap-1.5 rounded-md bg-indigo-500/10 px-2.5 py-1 text-xs font-mono text-indigo-400">
                     <span>✓ Loaded: {artworkFile.name}</span>
                   </div>
                 )}
@@ -362,7 +362,7 @@ export default function OrderForm() {
         <div className="flex flex-col justify-between space-y-6 lg:col-span-5">
           
           {/* Customer Details Form */}
-          <div className="space-y-4 rounded-2xl border border-slate-800 bg-slate-950 p-6">
+          <div className="space-y-4 rounded-2xl border border-white/10 bg-[#070913] p-6">
             <h4 className="text-xs font-bold uppercase tracking-wider text-white">
               Customer & Shipping Details
             </h4>
@@ -374,7 +374,7 @@ export default function OrderForm() {
                 placeholder="Full Name *"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="w-full rounded-xl border border-slate-800 bg-slate-900 px-3.5 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-amber-500"
+                className="w-full rounded-xl border border-white/10 bg-[#0c1020] px-3.5 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-indigo-500"
               />
             </div>
 
@@ -385,7 +385,7 @@ export default function OrderForm() {
                 placeholder="Work / Personal Email *"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-xl border border-slate-800 bg-slate-900 px-3.5 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-amber-500"
+                className="w-full rounded-xl border border-white/10 bg-[#0c1020] px-3.5 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-indigo-500"
               />
               <input
                 type="tel"
@@ -393,7 +393,7 @@ export default function OrderForm() {
                 placeholder="Phone (WhatsApp/SMS) *"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="w-full rounded-xl border border-slate-800 bg-slate-900 px-3.5 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-amber-500"
+                className="w-full rounded-xl border border-white/10 bg-[#0c1020] px-3.5 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-indigo-500"
               />
             </div>
 
@@ -404,7 +404,7 @@ export default function OrderForm() {
                 placeholder="Complete Shipping Address (Street, City, Zip, Country) *"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
-                className="w-full rounded-xl border border-slate-800 bg-slate-900 px-3.5 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-amber-500"
+                className="w-full rounded-xl border border-white/10 bg-[#0c1020] px-3.5 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-indigo-500"
               />
             </div>
 
@@ -414,18 +414,18 @@ export default function OrderForm() {
                 placeholder="Special Thread / PMS Color Codes / Notes"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                className="w-full rounded-xl border border-slate-800 bg-slate-900 px-3.5 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-amber-500"
+                className="w-full rounded-xl border border-white/10 bg-[#0c1020] px-3.5 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-indigo-500"
               />
             </div>
           </div>
 
           {/* Pricing Summary Card */}
-          <div className="rounded-2xl border border-amber-500/30 bg-gradient-to-b from-slate-900 to-slate-950 p-6 shadow-xl">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-              Tajima Factory Price Breakdown
+          <div className="rounded-2xl border border-indigo-500/30 bg-gradient-to-b from-[#10152c] to-[#070913] p-6 shadow-xl">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-indigo-300">
+              Commercial Factory Price Breakdown
             </h4>
 
-            <div className="mt-4 space-y-2 border-b border-slate-800 pb-4 text-xs font-mono">
+            <div className="mt-4 space-y-2 border-b border-white/10 pb-4 text-xs font-mono">
               <div className="flex justify-between text-slate-300">
                 <span>Unit Price ({quantity} pcs tier):</span>
                 <span className="font-bold text-white">${pricing.unitPrice.toFixed(2)} / ea</span>
@@ -452,7 +452,7 @@ export default function OrderForm() {
 
             <div className="mt-4 flex items-baseline justify-between">
               <span className="text-xs font-bold uppercase text-white">Total Order Value:</span>
-              <span className="font-mono text-2xl font-black text-amber-400">
+              <span className="font-mono text-2xl font-black text-indigo-300">
                 ${pricing.totalAmount.toFixed(2)}
               </span>
             </div>
@@ -466,21 +466,21 @@ export default function OrderForm() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-amber-500 py-3.5 text-xs font-black uppercase tracking-wider text-black shadow-lg shadow-amber-500/25 transition-all hover:bg-amber-400 hover:scale-[1.02] disabled:opacity-50"
+              className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#5448ea] to-[#7c3aed] py-3.5 text-xs font-black uppercase tracking-wider text-white shadow-lg shadow-indigo-500/25 transition-all hover:scale-[1.02] disabled:opacity-50"
             >
               {isSubmitting ? (
                 <>
-                  <svg className="h-4 w-4 animate-spin text-black" viewBox="0 0 24 24" fill="none">
+                  <svg className="h-4 w-4 animate-spin text-white" viewBox="0 0 24 24" fill="none">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
                   </svg>
                   <span>Processing Factory Order...</span>
                 </>
               ) : (
-                <span>Submit Order & Receive Digital Proof</span>
+                <span>Submit Order & Receive Digital Proof →</span>
               )}
             </button>
-            <p className="mt-2 text-center text-[10px] text-slate-500">
+            <p className="mt-2 text-center text-[10px] text-slate-400 font-mono">
               No immediate charge. Pay only after approving your digital stitch proof.
             </p>
           </div>

@@ -69,18 +69,19 @@ export default function BackingsGuide() {
   const [activeTab, setActiveTab] = useState('velcro');
 
   return (
-    <section id="backings-section" className="py-24 bg-tactical-950/60 border-t border-slate-800/80 relative">
+    <section id="backings" className="py-20 sm:py-28 bg-[#070913] border-b border-white/10 relative scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-1.5 text-xs font-bold text-amber-400 font-mono uppercase tracking-widest mb-3">
-            <span>Attachment Hardware Guide</span>
-          </div>
-          <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
-            Backing Types & Border Finishes
+        {/* Header matching EmbroidPro */}
+        <div className="flex flex-col gap-2.5 text-center items-center mb-16">
+          <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border text-[11px] font-bold uppercase tracking-[0.16em] bg-indigo-500/10 text-indigo-300 border-indigo-500/30 font-mono">
+            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
+            Attachment Hardware Guide
+          </span>
+          <h2 className="text-3xl sm:text-5xl font-extrabold tracking-[-0.035em] text-white leading-[1.12] max-w-3xl">
+            Backing Types &amp; Border Finishes
           </h2>
-          <p className="mt-4 text-sm sm:text-base text-slate-400">
+          <p className="text-sm sm:text-base leading-relaxed max-w-2xl text-slate-400 mx-auto">
             Choose the ideal attachment mechanism engineered for your specific uniform, tactical gear, or apparel fabric.
           </p>
         </div>
@@ -92,37 +93,37 @@ export default function BackingsGuide() {
               key={item.id}
               className={`p-6 rounded-3xl border transition-all duration-300 flex flex-col justify-between ${
                 activeTab === item.id
-                  ? 'border-amber-500/60 bg-slate-900/90 shadow-xl shadow-amber-500/10 -translate-y-1'
-                  : 'border-slate-800 bg-slate-950/80 hover:border-slate-700'
+                  ? 'border-indigo-500/60 bg-[#0e1326] shadow-xl shadow-indigo-500/15 -translate-y-1'
+                  : 'border-white/10 bg-[#0c1020] hover:border-white/20'
               }`}
               onClick={() => setActiveTab(item.id)}
             >
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-3xl">{item.icon}</span>
-                  <span className="text-[10px] font-mono font-bold uppercase px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30">
+                  <span className="text-[10px] font-mono font-bold uppercase px-2.5 py-1 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/30">
                     {item.badge}
                   </span>
                 </div>
 
                 <h3 className="text-lg font-black text-white">{item.name}</h3>
-                <div className="text-xs font-mono font-bold text-amber-400 mt-0.5">{item.extraCost}</div>
+                <div className="text-xs font-mono font-bold text-indigo-400 mt-0.5">{item.extraCost}</div>
                 
                 <p className="text-xs text-slate-400 mt-3 leading-relaxed">
                   {item.desc}
                 </p>
 
-                <div className="mt-4 pt-4 border-t border-slate-800/80 space-y-1.5 text-xs text-slate-300">
+                <div className="mt-4 pt-4 border-t border-white/10 space-y-1.5 text-xs text-slate-300 font-mono">
                   {item.pros.map((p, pi) => (
-                    <div key={pi} className="flex items-center gap-2 text-[11px] font-mono">
-                      <span className="text-amber-400">✓</span>
+                    <div key={pi} className="flex items-center gap-2 text-[11px]">
+                      <span className="text-indigo-400">✓</span>
                       <span>{p}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="mt-6 pt-3 border-t border-slate-800/80 text-[11px] font-mono text-slate-400">
+              <div className="mt-6 pt-3 border-t border-white/10 text-[11px] font-mono text-slate-400">
                 <strong className="text-white">Best For:</strong> {item.bestFor}
               </div>
             </div>

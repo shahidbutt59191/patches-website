@@ -251,7 +251,7 @@ const SAMPLE_PATCH_ORDERS: PatchOrderItem[] = [
 export default function AdminPortalPage() {
   // Navigation Sidebar State - Every item has a real view!
   const [activeMenu, setActiveMenu] = useState<
-    'dashboard' | 'orders' | 'inbox' | 'whatsapp' | 'accounts' | 'rates' | 'homepage' | 'gallery' | 'reviews' | 'pricing'
+    'dashboard' | 'orders' | 'inbox' | 'whatsapp' | 'accounts' | 'rates' | 'homepage' | 'gallery' | 'reviews' | 'pricing' | 'whatsapp-api'
   >('dashboard');
 
   // Filter & Queue State
@@ -280,6 +280,27 @@ export default function AdminPortalPage() {
   // Modals
   const [selectedOrder, setSelectedOrder] = useState<PatchOrderItem | null>(null);
   const [showNewOfferModal, setShowNewOfferModal] = useState(false);
+  const [showAddPortfolioModal, setShowAddPortfolioModal] = useState(false);
+  const [showAddReviewModal, setShowAddReviewModal] = useState(false);
+
+  const [newPortfolioItem, setNewPortfolioItem] = useState({
+    name: '',
+    category: 'Embroidered' as PortfolioPatchItem['category'],
+    icon: '🧵',
+    specs: '',
+    backing: 'Velcro Hook & Loop',
+    turnaround: '5-7 Days',
+    minQty: 25,
+    basePrice: 1.95,
+  });
+
+  const [newReviewItem, setNewReviewItem] = useState({
+    author: '',
+    company: '',
+    rating: 5,
+    verifiedOrder: 'AP-45000',
+    comment: '',
+  });
   const [newOffer, setNewOffer] = useState({
     clientName: '',
     phone: '',
@@ -296,6 +317,16 @@ export default function AdminPortalPage() {
       if (sRes.ok) {
         const sData = await sRes.json();
         setSettings(sData);
+      }
+
+      // Check persistent portfolio & reviews in local storage
+      try {
+        const localPort = localStorage.getItem('apex_portfolio');
+        if (localPort) setPortfolio(JSON.parse(localPort));
+        const localRev = localStorage.getItem('apex_reviews');
+        if (localRev) setReviews(JSON.parse(localRev));
+      } catch (locErr) {
+        console.log('Local store parse note:', locErr);
       }
 
       const oRes = await fetch('/api/admin/orders');
@@ -404,18 +435,98 @@ export default function AdminPortalPage() {
     }
   };
 
-  // Toggle Portfolio Item
+  // Toggle Portfolio Item & Persist
   const togglePortfolioActive = (id: string) => {
-    setPortfolio((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, active: !item.active } : item))
-    );
+    setPortfolio((prev) => {
+      const updated = prev.map((item) => (item.id === id ? { ...item, active: !item.active } : item));
+      try { localStorage.setItem('apex_portfolio', JSON.stringify(updated)); } catch (e) { console.log(e); }
+      return updated;
+    });
+    setSettingsSavedToast(true);
+    setTimeout(() => setSettingsSavedToast(false), 3000);
   };
 
-  // Toggle Review Featured
+  // Add New Custom Portfolio Style
+  const handleAddPortfolioItem = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newPortfolioItem.name) return;
+    const newItem: PortfolioPatchItem = {
+      id: 'p_' + Date.now(),
+      name: newPortfolioItem.name,
+      category: newPortfolioItem.category,
+      icon: newPortfolioItem.icon || '🧵',
+      specs: newPortfolioItem.specs || 'High-density commercial standard',
+      backing: newPortfolioItem.backing,
+      turnaround: newPortfolioItem.turnaround,
+      minQty: Number(newPortfolioItem.minQty) || 25,
+      basePrice: Number(newPortfolioItem.basePrice) || 2.0,
+      active: true,
+    };
+    const updated = [newItem, ...portfolio];
+    setPortfolio(updated);
+    try { localStorage.setItem('apex_portfolio', JSON.stringify(updated)); } catch (err) { console.log(err); }
+    setShowAddPortfolioModal(false);
+    setNewPortfolioItem({
+      name: '',
+      category: 'Embroidered',
+      icon: '🧵',
+      specs: '',
+      backing: 'Velcro Hook & Loop',
+      turnaround: '5-7 Days',
+      minQty: 25,
+      basePrice: 1.95,
+    });
+    setSettingsSavedToast(true);
+    setTimeout(() => setSettingsSavedToast(false), 3000);
+  };
+
+  // Toggle Review Featured & Persist
   const toggleReviewFeatured = (id: string) => {
-    setReviews((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, featured: !r.featured } : r))
-    );
+    setReviews((prev) => {
+      const updated = prev.map((r) => (r.id === id ? { ...r, featured: !r.featured } : r));
+      try { localStorage.setItem('apex_reviews', JSON.stringify(updated)); } catch (e) { console.log(e); }
+      return updated;
+    });
+    setSettingsSavedToast(true);
+    setTimeout(() => setSettingsSavedToast(false), 3000);
+  };
+
+  // Delete Customer Review & Persist
+  const handleDeleteReview = (id: string) => {
+    const updated = reviews.filter((r) => r.id !== id);
+    setReviews(updated);
+    try { localStorage.setItem('apex_reviews', JSON.stringify(updated)); } catch (e) { console.log(e); }
+    setSettingsSavedToast(true);
+    setTimeout(() => setSettingsSavedToast(false), 3000);
+  };
+
+  // Add New Customer Review
+  const handleAddCustomerReview = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newReviewItem.author || !newReviewItem.comment) return;
+    const newRev: CustomerReviewItem = {
+      id: 'r_' + Date.now(),
+      author: newReviewItem.author,
+      company: newReviewItem.company || 'Direct Buyer',
+      rating: Number(newReviewItem.rating) || 5,
+      verifiedOrder: newReviewItem.verifiedOrder || 'AP-Verified',
+      comment: newReviewItem.comment,
+      date: 'Just now',
+      featured: true,
+    };
+    const updated = [newRev, ...reviews];
+    setReviews(updated);
+    try { localStorage.setItem('apex_reviews', JSON.stringify(updated)); } catch (err) { console.log(err); }
+    setShowAddReviewModal(false);
+    setNewReviewItem({
+      author: '',
+      company: '',
+      rating: 5,
+      verifiedOrder: 'AP-50000',
+      comment: '',
+    });
+    setSettingsSavedToast(true);
+    setTimeout(() => setSettingsSavedToast(false), 3000);
   };
 
   // Physical Patch Factory Stats Calculations
@@ -717,9 +828,9 @@ export default function AdminPortalPage() {
                 </button>
 
                 <button
-                  onClick={() => setActiveMenu('whatsapp')}
+                  onClick={() => setActiveMenu('whatsapp-api')}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-lg font-semibold transition-colors ${
-                    activeMenu === 'whatsapp'
+                    activeMenu === 'whatsapp-api'
                       ? 'bg-blue-50 text-blue-700 font-bold border border-blue-200/80 shadow-xs'
                       : 'text-slate-600 hover:bg-slate-100'
                   }`}
@@ -1844,21 +1955,31 @@ export default function AdminPortalPage() {
         {/* =================================================================== */}
         {activeMenu === 'gallery' && (
           <main className="p-6 sm:p-8 space-y-6 max-w-[1600px] w-full mx-auto">
-            <div className="flex items-center justify-between pb-4 border-b border-slate-200">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-200 gap-3">
               <div>
                 <span className="text-[10px] font-bold font-mono text-blue-600 uppercase tracking-wider">
                   STUDIO SHOWCASE
                 </span>
                 <h1 className="text-2xl font-black text-slate-900 tracking-tight">
-                  Physical Patch Portfolio (11 Factory Styles)
+                  Physical Patch Portfolio ({portfolio.length} Factory Styles)
                 </h1>
                 <p className="text-xs text-slate-500 mt-0.5">
                   Manage the showcase patch types displayed on the public website and custom patch builder.
                 </p>
               </div>
 
-              <div className="text-xs font-mono text-slate-500">
-                Active on Site: <span className="font-bold text-emerald-600">{portfolio.filter(p => p.active).length} / {portfolio.length}</span>
+              <div className="flex items-center gap-3">
+                <div className="text-xs font-mono text-slate-500">
+                  Active on Site: <span className="font-bold text-emerald-600">{portfolio.filter(p => p.active).length} / {portfolio.length}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowAddPortfolioModal(true)}
+                  className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow-xs flex items-center gap-1.5 transition-all"
+                >
+                  <span>+</span>
+                  <span>Add New Patch Style</span>
+                </button>
               </div>
             </div>
 
@@ -1913,22 +2034,32 @@ export default function AdminPortalPage() {
         {/* =================================================================== */}
         {activeMenu === 'reviews' && (
           <main className="p-6 sm:p-8 space-y-6 max-w-[1600px] w-full mx-auto">
-            <div className="flex items-center justify-between pb-4 border-b border-slate-200">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-200 gap-3">
               <div>
                 <span className="text-[10px] font-bold font-mono text-amber-600 uppercase tracking-wider">
                   SOCIAL PROOF & RATINGS
                 </span>
                 <h1 className="text-2xl font-black text-slate-900 tracking-tight">
-                  Verified Customer Reviews (5.0★ Rating)
+                  Verified Customer Reviews ({reviews.length} Client Testimonials)
                 </h1>
                 <p className="text-xs text-slate-500 mt-0.5">
                   Real verified feedback from military, police, schools, and motorcycle club clients.
                 </p>
               </div>
 
-              <div className="flex items-center gap-1 text-amber-500 text-sm font-black">
-                <span>★★★★★</span>
-                <span className="text-slate-700 text-xs font-mono ml-1">5.0 / 5.0 (428 reviews)</span>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1 text-amber-500 text-sm font-black">
+                  <span>★★★★★</span>
+                  <span className="text-slate-700 text-xs font-mono ml-1">5.0 / 5.0</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowAddReviewModal(true)}
+                  className="px-3.5 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-lg text-xs font-bold shadow-xs flex items-center gap-1.5 transition-all"
+                >
+                  <span>+</span>
+                  <span>Add Customer Review</span>
+                </button>
               </div>
             </div>
 
@@ -1937,7 +2068,7 @@ export default function AdminPortalPage() {
                 <div key={r.id} className="bg-white rounded-xl border border-slate-200 p-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div className="space-y-1 max-w-2xl">
                     <div className="flex items-center gap-2">
-                      <span className="text-amber-500 text-xs">★★★★★</span>
+                      <span className="text-amber-500 text-xs">{'★'.repeat(r.rating || 5)}</span>
                       <span className="font-bold text-xs text-slate-900">{r.author}</span>
                       <span className="text-xs text-slate-400">• {r.company}</span>
                       <span className="bg-emerald-100 text-emerald-700 text-[9px] font-bold font-mono px-1.5 py-0.2 rounded">
@@ -1964,10 +2095,10 @@ export default function AdminPortalPage() {
                     </button>
 
                     <button
-                      onClick={() => alert(`Review verified from ${r.author}`)}
-                      className="px-3 py-1.5 bg-[#0d1322] text-white rounded-lg text-xs font-bold hover:bg-blue-700 transition-colors"
+                      onClick={() => handleDeleteReview(r.id)}
+                      className="px-3 py-1.5 bg-rose-50 text-rose-700 border border-rose-200 rounded-lg text-xs font-bold hover:bg-rose-100 transition-colors"
                     >
-                      Verified
+                      Delete
                     </button>
                   </div>
                 </div>
@@ -2141,6 +2272,129 @@ export default function AdminPortalPage() {
                   <div className="text-blue-700 text-[11px] font-bold mt-0.5">52% Maximum Discount (${(settings.basePrice * 0.48).toFixed(2)}/ea) + Free Mould / Free Setup</div>
                 </div>
               </div>
+            </div>
+          </main>
+        )}
+
+        {/* =================================================================== */}
+        {/* VIEW 11: DISPATCH WHATSAPP API & FACTORY SETTINGS */}
+        {/* =================================================================== */}
+        {activeMenu === 'whatsapp-api' && (
+          <main className="p-6 sm:p-8 max-w-4xl w-full mx-auto space-y-6">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-200">
+              <div>
+                <span className="text-[10px] font-bold font-mono text-emerald-600 uppercase tracking-wider">
+                  COMMUNICATION GATEWAY
+                </span>
+                <h1 className="text-2xl font-black text-slate-900 tracking-tight">
+                  Dispatch WhatsApp API & Automated Notifications
+                </h1>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Configure the primary business WhatsApp number for customer order confirmations and live support.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => handleSaveSettings()}
+                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow-xs flex items-center gap-1.5"
+              >
+                <span>💾</span>
+                <span>Save WhatsApp Config</span>
+              </button>
+            </div>
+
+            <div className="bg-white rounded-xl border border-slate-200 p-6 space-y-5 shadow-xs">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 font-mono">
+                Storefront WhatsApp Connection Settings
+              </h3>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[11px] text-slate-500 font-mono mb-1">
+                    WhatsApp International Number (Numbers Only)
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.whatsappNumber}
+                    onChange={(e) => setSettings({ ...settings, whatsappNumber: e.target.value.replace(/[^0-9]/g, '') })}
+                    className="w-full rounded-lg border border-slate-200 p-2.5 text-xs font-mono font-bold text-slate-800 outline-none focus:border-emerald-500"
+                    placeholder="e.g. 18005557282"
+                  />
+                  <span className="text-[10px] text-slate-400 mt-1 block">Used by customer wa.me click buttons across the storefront.</span>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] text-slate-500 font-mono mb-1">
+                    Display Phone Format (Shown on Website & Header)
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.whatsappDisplay}
+                    onChange={(e) => setSettings({ ...settings, whatsappDisplay: e.target.value })}
+                    className="w-full rounded-lg border border-slate-200 p-2.5 text-xs font-mono font-bold text-slate-800 outline-none focus:border-emerald-500"
+                    placeholder="+1 (800) 555-7282"
+                  />
+                  <span className="text-[10px] text-slate-400 mt-1 block">Formatted text displayed in Navbar and Footer.</span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => handleSaveSettings()}
+                className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl shadow-md transition-all"
+              >
+                Save & Update Live WhatsApp Buttons
+              </button>
+            </div>
+
+            {/* Test WhatsApp Message Dispatch Box */}
+            <div className="bg-white rounded-xl border border-slate-200 p-6 space-y-4 shadow-xs">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 font-mono flex items-center gap-2">
+                <span>💬</span>
+                <span>Send WhatsApp Dispatch Test</span>
+              </h3>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[11px] text-slate-500 font-mono mb-1">Customer Phone Number</label>
+                  <input
+                    type="text"
+                    id="wa-dispatch-phone"
+                    defaultValue="923001234567"
+                    className="w-full rounded-lg border border-slate-200 p-2.5 text-xs font-mono text-slate-800"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] text-slate-500 font-mono mb-1">Select Trigger Event</label>
+                  <select
+                    id="wa-dispatch-template"
+                    className="w-full rounded-lg border border-slate-200 p-2.5 text-xs font-mono text-slate-800"
+                  >
+                    <option value="proof">🎨 Digital Stitch Proof Ready</option>
+                    <option value="production">🧵 Looms Running (Tajima Multi-Head)</option>
+                    <option value="qc">🔍 Quality Check Passed & Backing Stitched</option>
+                    <option value="dispatch">📦 Express Courier Dispatched with Tracking</option>
+                  </select>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => {
+                  const phone = (document.getElementById('wa-dispatch-phone') as HTMLInputElement)?.value || settings.whatsappNumber;
+                  const type = (document.getElementById('wa-dispatch-template') as HTMLSelectElement)?.value || 'proof';
+                  let msg = `Assalam-o-Alaikum! Your EmbroidPatches digital stitch proof is ready for approval.`;
+                  if (type === 'production') msg = `Good news! Your custom patch order has started production on our commercial Tajima looms.`;
+                  if (type === 'qc') msg = `Your patches have passed 100% factory inspection. Backing & borders are attached.`;
+                  if (type === 'dispatch') msg = `Your custom patches are packed and dispatched via courier. Tracking will arrive shortly.`;
+                  window.open(`https://wa.me/${phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(msg)}`, '_blank');
+                }}
+                className="w-full py-3 bg-[#0d1322] hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl shadow-md transition-all flex items-center justify-center gap-2"
+              >
+                <span>Launch WhatsApp Web Chat ↗</span>
+              </button>
             </div>
           </main>
         )}
@@ -2351,6 +2605,252 @@ export default function AdminPortalPage() {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ===================================================================== */}
+      {/* ADD NEW PATCH STYLE MODAL */}
+      {/* ===================================================================== */}
+      {showAddPortfolioModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs">
+          <div className="w-full max-w-lg bg-white rounded-2xl border border-slate-200 p-6 shadow-2xl relative">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+              <div>
+                <span className="font-mono text-xs text-blue-600 font-bold uppercase tracking-wider">
+                  PORTFOLIO CATALOG
+                </span>
+                <h3 className="text-lg font-black text-slate-900">
+                  Add New Custom Patch Style
+                </h3>
+              </div>
+              <button
+                onClick={() => setShowAddPortfolioModal(false)}
+                className="text-slate-400 hover:text-slate-700 text-lg font-bold p-1"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleAddPortfolioItem} className="space-y-4 text-xs font-mono">
+              <div>
+                <label className="block text-slate-600 mb-1 font-bold">Patch Style Name *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Tactical Glow PVC Patch"
+                  value={newPortfolioItem.name}
+                  onChange={(e) => setNewPortfolioItem({ ...newPortfolioItem, name: e.target.value })}
+                  className="w-full rounded-lg border border-slate-200 p-2.5 text-xs text-slate-800 outline-none focus:border-blue-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-600 mb-1 font-bold">Category</label>
+                  <select
+                    value={newPortfolioItem.category}
+                    onChange={(e) => setNewPortfolioItem({ ...newPortfolioItem, category: e.target.value as PortfolioPatchItem['category'] })}
+                    className="w-full rounded-lg border border-slate-200 p-2.5 text-xs text-slate-800 outline-none"
+                  >
+                    <option value="Embroidered">Embroidered</option>
+                    <option value="PVC Rubber">PVC Rubber</option>
+                    <option value="Chenille">Chenille</option>
+                    <option value="Leatherette">Leatherette</option>
+                    <option value="Woven">Woven</option>
+                    <option value="Specialty">Specialty</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-slate-600 mb-1 font-bold">Icon Emoji</label>
+                  <input
+                    type="text"
+                    value={newPortfolioItem.icon}
+                    onChange={(e) => setNewPortfolioItem({ ...newPortfolioItem, icon: e.target.value })}
+                    className="w-full rounded-lg border border-slate-200 p-2.5 text-xs text-slate-800 outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-slate-600 mb-1 font-bold">Technical Specifications</label>
+                <input
+                  type="text"
+                  placeholder="e.g. 3D embossed liquid PVC, waterproof, recessed stitch canal"
+                  value={newPortfolioItem.specs}
+                  onChange={(e) => setNewPortfolioItem({ ...newPortfolioItem, specs: e.target.value })}
+                  className="w-full rounded-lg border border-slate-200 p-2.5 text-xs text-slate-800 outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-600 mb-1 font-bold">Default Backing</label>
+                  <input
+                    type="text"
+                    value={newPortfolioItem.backing}
+                    onChange={(e) => setNewPortfolioItem({ ...newPortfolioItem, backing: e.target.value })}
+                    className="w-full rounded-lg border border-slate-200 p-2.5 text-xs text-slate-800 outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-slate-600 mb-1 font-bold">Turnaround</label>
+                  <input
+                    type="text"
+                    value={newPortfolioItem.turnaround}
+                    onChange={(e) => setNewPortfolioItem({ ...newPortfolioItem, turnaround: e.target.value })}
+                    className="w-full rounded-lg border border-slate-200 p-2.5 text-xs text-slate-800 outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-600 mb-1 font-bold">Min Quantity (pcs)</label>
+                  <input
+                    type="number"
+                    value={newPortfolioItem.minQty}
+                    onChange={(e) => setNewPortfolioItem({ ...newPortfolioItem, minQty: parseInt(e.target.value) || 10 })}
+                    className="w-full rounded-lg border border-slate-200 p-2.5 text-xs text-slate-800 outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-slate-600 mb-1 font-bold">Base Price ($/ea)</label>
+                  <input
+                    type="number"
+                    step="0.05"
+                    value={newPortfolioItem.basePrice}
+                    onChange={(e) => setNewPortfolioItem({ ...newPortfolioItem, basePrice: parseFloat(e.target.value) || 1.95 })}
+                    className="w-full rounded-lg border border-slate-200 p-2.5 text-xs text-slate-800 outline-none font-bold"
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-2 pt-3 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setShowAddPortfolioModal(false)}
+                  className="w-1/3 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold hover:bg-slate-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="w-2/3 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold"
+                >
+                  Save Patch Style
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ===================================================================== */}
+      {/* ADD CUSTOMER REVIEW MODAL */}
+      {/* ===================================================================== */}
+      {showAddReviewModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs">
+          <div className="w-full max-w-lg bg-white rounded-2xl border border-slate-200 p-6 shadow-2xl relative">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+              <div>
+                <span className="font-mono text-xs text-amber-600 font-bold uppercase tracking-wider">
+                  SOCIAL PROOF
+                </span>
+                <h3 className="text-lg font-black text-slate-900">
+                  Add Verified Customer Review
+                </h3>
+              </div>
+              <button
+                onClick={() => setShowAddReviewModal(false)}
+                className="text-slate-400 hover:text-slate-700 text-lg font-bold p-1"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleAddCustomerReview} className="space-y-4 text-xs font-mono">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-600 mb-1 font-bold">Author Name *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Major Sarah Jenkins"
+                    value={newReviewItem.author}
+                    onChange={(e) => setNewReviewItem({ ...newReviewItem, author: e.target.value })}
+                    className="w-full rounded-lg border border-slate-200 p-2.5 text-xs text-slate-800 outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-slate-600 mb-1 font-bold">Company / Org</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Tactical Air Wing"
+                    value={newReviewItem.company}
+                    onChange={(e) => setNewReviewItem({ ...newReviewItem, company: e.target.value })}
+                    className="w-full rounded-lg border border-slate-200 p-2.5 text-xs text-slate-800 outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-600 mb-1 font-bold">Rating (Stars)</label>
+                  <select
+                    value={newReviewItem.rating}
+                    onChange={(e) => setNewReviewItem({ ...newReviewItem, rating: parseInt(e.target.value) || 5 })}
+                    className="w-full rounded-lg border border-slate-200 p-2.5 text-xs text-slate-800 outline-none"
+                  >
+                    <option value="5">★★★★★ (5 Stars)</option>
+                    <option value="4">★★★★☆ (4 Stars)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-slate-600 mb-1 font-bold">Verified Order Reference</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. AP-48190 (300 pcs PVC)"
+                    value={newReviewItem.verifiedOrder}
+                    onChange={(e) => setNewReviewItem({ ...newReviewItem, verifiedOrder: e.target.value })}
+                    className="w-full rounded-lg border border-slate-200 p-2.5 text-xs text-slate-800 outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-slate-600 mb-1 font-bold">Customer Testimonial Comment *</label>
+                <textarea
+                  rows={3}
+                  required
+                  placeholder="Review comment..."
+                  value={newReviewItem.comment}
+                  onChange={(e) => setNewReviewItem({ ...newReviewItem, comment: e.target.value })}
+                  className="w-full rounded-lg border border-slate-200 p-2.5 text-xs text-slate-800 outline-none"
+                />
+              </div>
+
+              <div className="flex gap-2 pt-3 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setShowAddReviewModal(false)}
+                  className="w-1/3 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold hover:bg-slate-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="w-2/3 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black"
+                >
+                  Save Review
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
