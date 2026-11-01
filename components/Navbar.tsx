@@ -150,9 +150,6 @@ export default function Navbar({
             <a href="#comparison" className="hover:text-orange-500 transition-colors">
               Compare Materials
             </a>
-            <a href="#backings" className="hover:text-orange-500 transition-colors">
-              Backings
-            </a>
             <a href="#portfolio" className="hover:text-orange-500 transition-colors">
               Portfolio
             </a>
@@ -221,13 +218,6 @@ export default function Navbar({
                 className="hover:text-orange-500"
               >
                 Compare Materials
-              </a>
-              <a
-                href="#backings"
-                onClick={() => setMobileMenuOpen(false)}
-                className="hover:text-orange-500"
-              >
-                Backings &amp; Borders
               </a>
               <a
                 href="#portfolio"

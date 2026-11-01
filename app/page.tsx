@@ -7,7 +7,6 @@ import Services from '@/components/Services';
 import BeforeAfterSlider from '@/components/BeforeAfterSlider';
 import LivePatchStudio from '@/components/LivePatchStudio';
 import ComparisonTable from '@/components/ComparisonTable';
-import Backings from '@/components/Backings';
 import WhyChooseUs from '@/components/WhyChooseUs';
 import Process from '@/components/Process';
 import Portfolio from '@/components/Portfolio';
@@ -130,10 +129,7 @@ export default function HomePage() {
         {/* 6. Side-by-Side Materials Comparison Matrix */}
         <ComparisonTable onOpenQuote={handleOpenQuote} />
 
-        {/* 7. Fasteners & Edge Finishes Guide (Backings & Borders) */}
-        <Backings onOpenQuote={() => handleOpenQuote()} />
-
-        {/* 8. Why Choose BDigitizing?: 4 Feature Icons + Stats + Stitched "CUSTOM PATCHES" Banner */}
+        {/* 7. Why Choose BDigitizing?: 4 Feature Icons + Stats + Stitched "CUSTOM PATCHES" Banner */}
         <WhyChooseUs />
 
         {/* 9. Simple Ordering Process: 4 Connected Numbered Steps with Timing Badges */}
