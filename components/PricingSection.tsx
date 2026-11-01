@@ -1,11 +1,12 @@
 'use client';
 
 import React from 'react';
+import { Check, Sparkles, ArrowRight } from 'lucide-react';
 
 const PRICING_TIERS = [
   {
     name: 'Small Squad & Samples',
-    tagline: 'Ideal for tactical teams, squad runs, and test batches.',
+    tagline: 'Ideal for tactical teams, test batches, and boutique streetwear launches.',
     qty: '10 – 49 pcs',
     unitPrice: '$2.15',
     popular: false,
@@ -14,7 +15,7 @@ const PRICING_TIERS = [
       'Free Tajima digitizing ($45 value)',
       '6-hour digital proof simulation',
       'Up to 9 Madeira thread colors',
-      'Merrowed or heat-cut edge included',
+      'Merrowed or laser-cut edge included',
       'Velcro Hook & Loop or Iron-On ready',
       'Standard 5-7 business day dispatch',
     ],
@@ -22,19 +23,19 @@ const PRICING_TIERS = [
   },
   {
     name: 'Wholesale Standard',
-    tagline: 'The sweet spot for clothing brands, clubs, and agencies.',
+    tagline: 'The sweet spot for clothing brands, clubs, and uniform outfitting.',
     qty: '50 – 249 pcs',
     unitPrice: '$1.65',
     popular: true,
-    badge: 'Most Popular for Brands',
+    badge: '⭐ Most Popular for Brands',
     features: [
-      '26% Wholesale Volume Discount',
+      '26% Wholesale Volume Savings',
       'Free 6-hour digital stitch proof',
       'Free Tajima digitizing & vector cleanup',
-      'All 5 backing types available (Velcro, Iron-On, Peel&Stick)',
+      'All 5 backing types available',
       'Custom laser-cut die-cut contours',
       'Dedicated multi-head loom queue',
-      'Free domestic shipping included',
+      'Free express tracked shipping',
     ],
     buttonText: 'Order Wholesale Tier',
   },
@@ -48,10 +49,10 @@ const PRICING_TIERS = [
     features: [
       '44% Bulk Production Discount',
       'Free Physical Sew-Out Sample Photo',
-      'Custom Pantone PMS thread & PVC dye match',
+      'Custom Pantone PMS thread & PVC match',
       'Priority machine loom scheduling',
-      'Individual poly bagging included',
-      'Express DHL / FedEx delivery',
+      'Individual protective poly bagging',
+      'Express DHL / FedEx Priority delivery',
     ],
     buttonText: 'Order Commercial Batch',
   },
@@ -61,7 +62,7 @@ const PRICING_TIERS = [
     qty: '1,000+ pcs',
     unitPrice: '$0.95',
     popular: false,
-    badge: '52% Max Discount',
+    badge: '52% Max Wholesale Rate',
     features: [
       '52% Maximum Factory Direct Rate',
       'Free 3D Steel Mold casting (PVC)',
@@ -78,24 +79,24 @@ export default function PricingSection() {
   return (
     <section id="pricing" className="py-20 sm:py-28 bg-[#070913] border-b border-white/10 relative scroll-mt-20">
       
-      {/* Background Glow */}
+      {/* Background Ambient Glow */}
       <div className="absolute inset-0 -z-10 pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-[#5448ea]/8 rounded-full blur-[140px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-indigo-600/8 rounded-full blur-[140px]" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Section Header matching EmbroidPro */}
+        {/* Section Header */}
         <div className="flex flex-col gap-2.5 text-center items-center mb-16">
-          <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border text-[11px] font-bold uppercase tracking-[0.16em] bg-[#5448ea]/10 text-indigo-300 border-[#5448ea]/30 font-mono">
-            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
-            Clear & Transparent
+          <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border text-[11px] font-bold uppercase tracking-[0.16em] bg-indigo-500/10 text-indigo-300 border-indigo-500/30 font-mono">
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+            Transparent Wholesale Tiers
           </span>
           <h2 className="text-3xl sm:text-5xl font-extrabold tracking-[-0.035em] text-white leading-[1.12] max-w-3xl">
-            Simple, upfront pricing
+            Factory-Direct Pricing with Zero Hidden Fees
           </h2>
           <p className="text-sm sm:text-base leading-relaxed max-w-2xl text-slate-400 mx-auto">
-            Transparent starting rates with volume savings, free digitizing, and active promotional discounts automatically applied.
+            Volume savings automatically applied with free digitizing, unlimited proof edits, and free shipping on qualifying runs.
           </p>
         </div>
 
@@ -106,14 +107,14 @@ export default function PricingSection() {
               key={idx}
               className={`rounded-3xl p-6 sm:p-7 flex flex-col justify-between transition-all duration-300 relative ${
                 tier.popular
-                  ? 'bg-gradient-to-b from-[#10152c] to-[#0a0d1e] border-2 border-[#5448ea] shadow-[0_20px_44px_-18px_rgba(84,72,234,0.45)] -translate-y-1.5'
+                  ? 'bg-gradient-to-b from-[#11162e] to-[#0a0d1e] border-2 border-indigo-500 shadow-[0_20px_44px_-18px_rgba(79,70,229,0.45)] -translate-y-1.5'
                   : 'bg-[#0c1020]/90 border border-white/10 hover:border-white/20'
               }`}
             >
               {/* Popular Badge */}
               {tier.popular && (
                 <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                  <span className="bg-gradient-to-r from-[#5448ea] to-[#7c3aed] text-white text-[10px] font-extrabold uppercase px-3 py-1 rounded-full shadow-md font-mono tracking-wider">
+                  <span className="bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 text-[10px] font-extrabold uppercase px-3.5 py-1 rounded-full shadow-lg font-mono tracking-wider">
                     {tier.badge}
                   </span>
                 </div>
@@ -143,10 +144,12 @@ export default function PricingSection() {
                 </div>
 
                 {/* Features List */}
-                <ul className="mt-6 space-y-2.5 text-xs text-slate-300">
+                <ul className="mt-6 space-y-2.5 text-xs text-slate-300 font-mono">
                   {tier.features.map((f, fi) => (
                     <li key={fi} className="flex items-start gap-2">
-                      <span className="text-[#5448ea] font-bold mt-0.5">✓</span>
+                      <span className="w-4 h-4 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-[10px] shrink-0 mt-0.5">
+                        ✓
+                      </span>
                       <span>{f}</span>
                     </li>
                   ))}
@@ -157,13 +160,14 @@ export default function PricingSection() {
               <div className="mt-8 pt-4 border-t border-white/10">
                 <a
                   href="#order"
-                  className={`w-full py-3 rounded-xl font-bold text-xs uppercase tracking-wider text-center block transition-all ${
+                  className={`w-full py-3 rounded-xl font-bold text-xs uppercase tracking-wider text-center flex items-center justify-center gap-1.5 transition-all ${
                     tier.popular
                       ? 'btn-primary-gradient text-white shadow-lg'
                       : 'bg-white/5 border border-white/10 hover:bg-white/10 text-white'
                   }`}
                 >
-                  {tier.buttonText} →
+                  <span>{tier.buttonText}</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </a>
               </div>
 

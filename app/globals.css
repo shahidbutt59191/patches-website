@@ -2,54 +2,94 @@
 
 :root {
   --foreground-rgb: 248, 250, 252;
-  --background-start-rgb: 7, 9, 19;
-  --background-end-rgb: 11, 15, 26;
+  --background-start: #080a12;
+  --background-card: #0e1222;
+  --accent-gold: #f59e0b;
+  --accent-indigo: #6366f1;
 }
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: #070913;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background-color: #080a12;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   overflow-x: hidden;
+  letter-spacing: -0.01em;
 }
 
-/* EmbroidPro Dot Matrix Background Pattern */
+/* Subtle Industrial Dot Pattern */
 .dot-pattern {
-  background-image: radial-gradient(circle at 1px 1px, rgba(84, 72, 234, 0.18) 1px, transparent 0);
-  background-size: 22px 22px;
+  background-image: radial-gradient(circle at 1px 1px, rgba(99, 102, 241, 0.12) 1px, transparent 0);
+  background-size: 24px 24px;
 }
 
-/* Glassmorphism Card Effect */
-.glass-card {
-  background: rgba(15, 20, 36, 0.7);
-  backdrop-filter: blur(16px);
+/* Subtle Carbon Fiber Grid Texture */
+.carbon-grid {
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Executive Glass Surface */
+.glass-panel {
+  background: rgba(14, 18, 34, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* Primary Indigo Gradient Button */
-.btn-primary-gradient {
-  background: linear-gradient(135deg, #5448ea 0%, #7c3aed 100%);
-  color: #ffffff;
-  box-shadow: 0 4px 20px rgba(84, 72, 234, 0.35);
-  transition: all 0.2s ease-in-out;
+.glass-panel-hover {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.btn-primary-gradient:hover {
-  box-shadow: 0 6px 28px rgba(84, 72, 234, 0.5);
-  filter: brightness(1.1);
-  transform: translateY(-1px);
+.glass-panel-hover:hover {
+  border-color: rgba(99, 102, 241, 0.35);
+  box-shadow: 0 12px 40px -10px rgba(0, 0, 0, 0.5), 0 0 20px -5px rgba(99, 102, 241, 0.15);
+  transform: translateY(-2px);
 }
 
-/* Custom Scrollbar */
+/* Primary High-Converting Indigo Gradient Button */
+.btn-primary-gradient {
+  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 50%, #7c3aed 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 24px rgba(79, 70, 229, 0.35);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-primary-gradient:hover {
+  box-shadow: 0 8px 32px rgba(79, 70, 229, 0.5);
+  filter: brightness(1.1);
+  transform: translateY(-1.5px);
+}
+
+/* Luxury Gold Accent Button */
+.btn-gold-gradient {
+  background: linear-gradient(135deg, #d97706 0%, #f59e0b 50%, #fbbf24 100%);
+  color: #0b0f19;
+  font-weight: 700;
+  box-shadow: 0 4px 20px rgba(245, 158, 11, 0.3);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-gold-gradient:hover {
+  box-shadow: 0 8px 30px rgba(245, 158, 11, 0.45);
+  filter: brightness(1.08);
+  transform: translateY(-1.5px);
+}
+
+/* Realistic Merrowed Stitch Border Effect */
+.stitch-border {
+  border: 3px dashed rgba(255, 255, 255, 0.25);
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.6);
+}
+
+/* Smooth Modern Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #070913;
+  background: #080a12;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1e243d;
+  background: #1c2237;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #5448ea;
+  background: #4f46e5;
 }
