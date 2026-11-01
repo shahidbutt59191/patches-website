@@ -116,48 +116,35 @@ export default function QuoteModal({
     setErrorMsg('');
 
     try {
-      let artworkUrl = '';
+      const formData = new FormData();
+      formData.append('fullName', fullName);
+      formData.append('email', email);
+      formData.append('phone', phone);
+      formData.append('address', 'Free Courier Delivery (Confirmed upon digital proof)');
+      formData.append('notes', notes);
+      formData.append('style', style);
+      formData.append('width', String(width));
+      formData.append('height', String(height));
+      formData.append('backing', backing);
+      formData.append('border', 'merrowed');
+      formData.append('quantity', String(quantity));
+      formData.append('unitPrice', pricing.unitPrice);
+      formData.append('totalAmount', pricing.totalPrice);
+      formData.append('discountPercentage', String(pricing.discountPercent));
 
-      // Upload artwork if present
       if (artworkFile) {
-        const formData = new FormData();
-        formData.append('file', artworkFile);
-        const uploadRes = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData,
-        });
-        if (uploadRes.ok) {
-          const uploadData = await uploadRes.json();
-          artworkUrl = uploadData.url || '';
-        }
+        formData.append('artwork', artworkFile);
       }
 
-      // Submit Order
       const res = await fetch('/api/orders', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          fullName,
-          email,
-          phone,
-          shippingAddress: 'Free Courier Delivery (Confirmed upon digital proof)',
-          patchStyle: style,
-          sizeWidth: width,
-          sizeHeight: height,
-          backing,
-          border: 'merrowed',
-          quantity,
-          unitPrice: parseFloat(pricing.unitPrice),
-          totalPrice: parseFloat(pricing.totalPrice),
-          notes,
-          artworkUrl,
-        }),
+        body: formData,
       });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to submit quote request');
 
-      setOrderSuccess(data.order);
+      setOrderSuccess(data.order || { id: data.orderNumber, ref_code: data.orderNumber });
     } catch (err: any) {
       setErrorMsg(err.message || 'Something went wrong. Please try again.');
     } finally {
@@ -212,7 +199,7 @@ export default function QuoteModal({
               <p className="text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
                 Thank you, <strong>{fullName}</strong>. Your custom quote reference is{' '}
                 <span className="font-mono font-bold text-orange-600">
-                  #{orderSuccess.id?.slice(0, 8) || 'BD-CONFIRMED'}
+                  #{orderSuccess.id?.slice(0, 8) || orderSuccess.ref_code || 'BD-CONFIRMED'}
                 </span>
                 . Our digitizers will prepare your 6-hour digital embroidery proof and contact you at{' '}
                 <strong>{email}</strong>.
@@ -230,7 +217,7 @@ export default function QuoteModal({
                   Close Window
                 </button>
                 <a
-                  href={`https://wa.me/18005557282?text=Hi%20BDigitizing!%20I%20just%20submitted%20quote%20request%20%23${orderSuccess.id?.slice(0, 8)}`}
+                  href={`https://wa.me/18005557282?text=Hi%20BDigitizing!%20I%20just%20submitted%20quote%20request%20%23${orderSuccess.id?.slice(0, 8) || orderSuccess.ref_code}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-6 py-3 rounded-full border border-emerald-500 text-emerald-700 bg-emerald-50 text-xs font-bold hover:bg-emerald-100 flex items-center gap-2"
@@ -390,7 +377,8 @@ export default function QuoteModal({
                   />
                   <input
                     type="tel"
-                    placeholder="Phone / WhatsApp Number"
+                    required
+                    placeholder="Phone / WhatsApp Number *"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     className="p-2.5 rounded-xl border border-slate-200 text-xs font-medium focus:border-orange-500 outline-none sm:col-span-2"
@@ -398,7 +386,7 @@ export default function QuoteModal({
                 </div>
 
                 {errorMsg && (
-                  <div className="p-3 rounded-xl bg-red-50 text-red-700 text-xs font-bold">
+                  <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-bold">
                     {errorMsg}
                   </div>
                 )}
