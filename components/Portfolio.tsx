@@ -3,22 +3,11 @@
 import React, { useState } from 'react';
 import { Camera, Sparkles, Check, ArrowRight, Eye, X, Layers, ExternalLink } from 'lucide-react';
 
+import { PortfolioItem } from '@/lib/settings';
+
 interface PortfolioProps {
   onOpenQuote?: (styleId?: string) => void;
-}
-
-export interface PortfolioItem {
-  id: number;
-  title: string;
-  category: 'tactical' | 'headwear' | 'biker' | 'varsity';
-  styleId: string;
-  badge: string;
-  specs: string;
-  batch: string;
-  desc: string;
-  badgeClass: string;
-  image: string;
-  altText: string;
+  items?: PortfolioItem[];
 }
 
 export const PORTFOLIO_ITEMS: PortfolioItem[] = [
@@ -102,13 +91,15 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
   },
 ];
 
-export default function Portfolio({ onOpenQuote }: PortfolioProps) {
+export default function Portfolio({ onOpenQuote, items }: PortfolioProps) {
   const [filter, setFilter] = useState('all');
   const [lightboxItem, setLightboxItem] = useState<PortfolioItem | null>(null);
 
+  const displayItems = items && items.length > 0 ? items : PORTFOLIO_ITEMS;
+
   const filteredItems = filter === 'all'
-    ? PORTFOLIO_ITEMS
-    : PORTFOLIO_ITEMS.filter((item) => item.category === filter);
+    ? displayItems
+    : displayItems.filter((item) => item.category === filter);
 
   return (
     <section id="portfolio" className="py-16 sm:py-24 bg-white border-b border-slate-100">

@@ -6,9 +6,15 @@ import { GoldenCrownPatch } from './PatchVisuals';
 
 interface FaqAndCtaProps {
   onOpenQuote?: () => void;
+  promoCode?: string;
+  discountRate?: number;
 }
 
-export default function FaqAndCta({ onOpenQuote }: FaqAndCtaProps) {
+export default function FaqAndCta({
+  onOpenQuote,
+  promoCode = 'BDIGITIZE15',
+  discountRate = 15,
+}: FaqAndCtaProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   const [filterCategory, setFilterCategory] = useState<string>('all');
 
@@ -145,7 +151,7 @@ export default function FaqAndCta({ onOpenQuote }: FaqAndCtaProps) {
               <div className="relative z-10">
                 <div className="inline-flex items-center gap-1.5 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-[11px] font-bold text-white mb-4 border border-white/20">
                   <Tag className="w-3.5 h-3.5" />
-                  <span>Limited Offer: 15% Off Code: BDIGITIZE15</span>
+                  <span>Limited Offer: {discountRate}% Off Code: {promoCode}</span>
                 </div>
 
                 <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight leading-snug">

@@ -12,9 +12,19 @@ interface LivePatchStudioProps {
     backing: string;
     quantity: number;
   }) => void;
+  basePrice?: number;
+  velcroFee?: number;
+  ironOnFee?: number;
+  peelStickFee?: number;
 }
 
-export default function LivePatchStudio({ onOpenQuoteWithSpecs }: LivePatchStudioProps) {
+export default function LivePatchStudio({
+  onOpenQuoteWithSpecs,
+  basePrice = 1.85,
+  velcroFee = 0.45,
+  ironOnFee = 0.20,
+  peelStickFee = 0.35,
+}: LivePatchStudioProps) {
   const [shape, setShape] = useState<'shield' | 'circle' | 'rectangle'>('shield');
   const [size, setSize] = useState<number>(3.0);
   const [backing, setBacking] = useState<string>('velcro_hook_loop');
@@ -22,12 +32,12 @@ export default function LivePatchStudio({ onOpenQuoteWithSpecs }: LivePatchStudi
 
   // Dynamic pricing calculation
   const calculations = useMemo(() => {
-    let base = 2.15 + (size - 2.0) * 0.55;
+    let base = basePrice + (size - 2.0) * 0.55;
 
     // Backing addon
-    if (backing === 'velcro_hook_loop') base += 0.45;
-    if (backing === 'iron_on') base += 0.20;
-    if (backing === 'peel_stick') base += 0.30;
+    if (backing === 'velcro_hook_loop') base += velcroFee;
+    if (backing === 'iron_on') base += ironOnFee;
+    if (backing === 'peel_stick') base += peelStickFee;
 
     // Wholesale discounts
     let discount = 0;

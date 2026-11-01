@@ -3,6 +3,8 @@
 import React, { useState, useEffect, useMemo, ChangeEvent, FormEvent } from 'react';
 import { X, UploadCloud, CheckCircle2, ShieldCheck, ArrowRight, Loader2, Sparkles, Image as ImageIcon, MessageSquare } from 'lucide-react';
 
+import { SiteSettings } from '@/lib/settings';
+
 interface QuoteModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -11,6 +13,7 @@ interface QuoteModalProps {
   initialHeight?: number;
   initialBacking?: string;
   initialQuantity?: number;
+  priceSettings?: Partial<SiteSettings>;
 }
 
 export default function QuoteModal({
@@ -21,6 +24,7 @@ export default function QuoteModal({
   initialHeight = 3.0,
   initialBacking = 'iron_on',
   initialQuantity = 100,
+  priceSettings,
 }: QuoteModalProps) {
   const [style, setStyle] = useState(defaultStyle);
   const [width, setWidth] = useState(initialWidth);
@@ -67,17 +71,19 @@ export default function QuoteModal({
   // Dynamic pricing calculation
   const pricing = useMemo(() => {
     const size = Math.max(1.5, (width + height) / 2);
-    let base = 1.95 + size * 0.45;
+    let base = (priceSettings?.priceEmbroidered ?? 1.85) + (size - 1.5) * 0.45;
 
-    // Style adjustment
-    if (style === 'pvc') base *= 1.25;
-    if (style === 'leather') base *= 1.15;
-    if (style === 'woven') base *= 0.95;
-    if (style === 'velcro') base += 0.35;
+    // Style adjustment using live admin priceSettings
+    if (style === 'pvc') base = (priceSettings?.pricePvc ?? 2.55) + (size - 1.5) * 0.50;
+    else if (style === 'leather') base = (priceSettings?.priceLeather ?? 2.45) + (size - 1.5) * 0.45;
+    else if (style === 'woven') base = (priceSettings?.priceWoven ?? 1.65) + (size - 1.5) * 0.40;
+    else if (style === 'velcro') base = (priceSettings?.priceVelcro ?? 2.35) + (size - 1.5) * 0.45;
+    else if (style === 'iron-on' || style === 'iron_on') base = (priceSettings?.priceIronOn ?? 1.95) + (size - 1.5) * 0.45;
 
     // Backing addon
-    if (backing === 'velcro_hook_loop') base += 0.45;
-    if (backing === 'iron_on') base += 0.20;
+    if (backing === 'velcro_hook_loop') base += (priceSettings?.velcroFee ?? 0.45);
+    else if (backing === 'iron_on') base += (priceSettings?.ironOnFee ?? 0.20);
+    else if (backing === 'peel_stick') base += (priceSettings?.peelStickFee ?? 0.35);
 
     // Quantity discounts
     let discount = 0;
@@ -87,7 +93,7 @@ export default function QuoteModal({
     else if (quantity >= 100) discount = 0.22;
     else if (quantity >= 50) discount = 0.12;
 
-    const unitPrice = Math.max(0.95, base * (1 - discount));
+    const unitPrice = Math.max(0.75, base * (1 - discount));
     const totalPrice = unitPrice * quantity;
 
     return {
@@ -95,7 +101,7 @@ export default function QuoteModal({
       totalPrice: totalPrice.toFixed(2),
       discountPercent: Math.round(discount * 100),
     };
-  }, [style, width, height, backing, quantity]);
+  }, [style, width, height, backing, quantity, priceSettings]);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {

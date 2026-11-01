@@ -13,9 +13,18 @@ import {
 interface HeroProps {
   onOpenQuote?: () => void;
   onOpenVideo?: () => void;
+  badge?: string;
+  headline?: string;
+  subheadline?: string;
 }
 
-export default function Hero({ onOpenQuote, onOpenVideo }: HeroProps) {
+export default function Hero({
+  onOpenQuote,
+  onOpenVideo,
+  badge = 'Premium Quality • Worldwide Shipping',
+  headline,
+  subheadline = 'High-quality embroidered, woven and custom patches with premium finishing. Perfect for businesses, teams & more.',
+}: HeroProps) {
   const [activeHoveredPatch, setActiveHoveredPatch] = useState<string | null>(null);
 
   const patchDetails: Record<string, { title: string; specs: string }> = {
@@ -61,24 +70,30 @@ export default function Hero({ onOpenQuote, onOpenVideo }: HeroProps) {
               <span className="w-4 h-4 rounded-full bg-orange-500 text-white flex items-center justify-center text-[10px] animate-pulse">
                 ★
               </span>
-              <span>Premium Quality • Worldwide Shipping</span>
+              <span>{badge}</span>
             </div>
 
             {/* 2. Main Heading */}
             <h1 className="text-4xl sm:text-5xl lg:text-[58px] font-black text-slate-900 tracking-tight leading-[1.08]">
-              Custom Patches <br />
-              for <span className="text-orange-500 relative inline-block">
-                Your Brand
-                {/* Subtle hand-drawn stitched underline effect */}
-                <svg className="absolute -bottom-2 left-0 w-full h-3 text-orange-400/60" viewBox="0 0 100 12" preserveAspectRatio="none">
-                  <path d="M0,7 Q50,0 100,7" stroke="currentColor" strokeWidth="3" fill="none" strokeDasharray="5 3" />
-                </svg>
-              </span>
+              {headline ? (
+                <span>{headline}</span>
+              ) : (
+                <>
+                  Custom Patches <br />
+                  for <span className="text-orange-500 relative inline-block">
+                    Your Brand
+                    {/* Subtle hand-drawn stitched underline effect */}
+                    <svg className="absolute -bottom-2 left-0 w-full h-3 text-orange-400/60" viewBox="0 0 100 12" preserveAspectRatio="none">
+                      <path d="M0,7 Q50,0 100,7" stroke="currentColor" strokeWidth="3" fill="none" strokeDasharray="5 3" />
+                    </svg>
+                  </span>
+                </>
+              )}
             </h1>
 
             {/* 3. Subtitle */}
             <p className="text-base sm:text-lg text-slate-600 font-normal leading-relaxed max-w-xl">
-              High-quality embroidered, woven and custom patches with premium finishing. Perfect for businesses, teams &amp; more.
+              {subheadline}
             </p>
 
             {/* 4. Three Bullet Checkmarks */}

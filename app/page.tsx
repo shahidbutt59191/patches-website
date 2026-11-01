@@ -114,6 +114,9 @@ export default function HomePage() {
         <Hero
           onOpenQuote={() => handleOpenQuote()}
           onOpenVideo={handleOpenVideo}
+          badge={settings.heroBadge}
+          headline={settings.heroHeadline}
+          subheadline={settings.heroSubheadline}
         />
 
         {/* 3. Our Patch Services: 5 Cards (Embroidered, Iron-On, Velcro, Woven, Leather) */}
@@ -123,7 +126,13 @@ export default function HomePage() {
         <BeforeAfterSlider onOpenQuote={() => handleOpenQuote()} />
 
         {/* 5. Interactive Live Patch Studio & Real-Time Price Estimator */}
-        <LivePatchStudio onOpenQuoteWithSpecs={handleOpenQuoteWithSpecs} />
+        <LivePatchStudio
+          onOpenQuoteWithSpecs={handleOpenQuoteWithSpecs}
+          basePrice={settings.priceEmbroidered}
+          velcroFee={settings.velcroFee}
+          ironOnFee={settings.ironOnFee}
+          peelStickFee={settings.peelStickFee}
+        />
 
         {/* 6. Why Choose BDigitizing?: 4 Feature Icons + Stats + Stitched "CUSTOM PATCHES" Banner */}
         <WhyChooseUs />
@@ -132,13 +141,20 @@ export default function HomePage() {
         <Process onOpenQuote={() => handleOpenQuote()} />
 
         {/* 10. Real Client Production Portfolio with Rich Photography & Lightbox Zoom */}
-        <Portfolio onOpenQuote={handleOpenQuote} />
+        <Portfolio
+          onOpenQuote={handleOpenQuote}
+          items={settings.portfolio}
+        />
 
         {/* 11. What Our Customers Say: Dark Luxury Section with 5-Star Reviews & Order Tags */}
-        <Reviews />
+        <Reviews items={settings.reviews} />
 
         {/* 12. Frequently Asked Questions + Vibrant Orange CTA Box with Discount Code */}
-        <FaqAndCta onOpenQuote={() => handleOpenQuote()} />
+        <FaqAndCta
+          onOpenQuote={() => handleOpenQuote()}
+          promoCode={settings.promoCode}
+          discountRate={settings.discountRate}
+        />
       </main>
 
       {/* 13. Dark Footer */}
@@ -159,6 +175,7 @@ export default function HomePage() {
         initialHeight={activeHeight}
         initialBacking={activeBacking}
         initialQuantity={activeQuantity}
+        priceSettings={settings}
       />
 
       <VideoModal

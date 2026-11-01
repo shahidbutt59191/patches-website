@@ -3,68 +3,86 @@
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, Star, CheckCircle, ShieldCheck } from 'lucide-react';
 
-export default function Reviews() {
-  const reviews = [
+import { CustomerReviewItem } from '@/lib/settings';
+
+interface ReviewsProps {
+  items?: CustomerReviewItem[];
+}
+
+export default function Reviews({ items }: ReviewsProps) {
+  const defaultReviews = [
     {
-      id: 1,
-      name: 'David Miller',
+      id: '1',
+      author: 'David Miller',
       country: 'USA',
       company: 'Apex Tactical Gear',
-      order: '250 Embroidered Shield Patches',
-      quote: 'Excellent quality and super fast delivery. Highly recommended!',
+      verifiedOrder: 'BD-43541 (250 pcs Velcro)',
+      comment: 'Excellent quality and super fast delivery. Highly recommended!',
+      rating: 5,
+      date: 'Yesterday',
+      featured: true,
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
-      initials: 'DM',
     },
     {
-      id: 2,
-      name: 'Sarah Johnson',
+      id: '2',
+      author: 'Sarah Johnson',
       country: 'Canada',
       company: 'Wilderness Explorers Club',
-      order: '150 Round Woven Mountain Badges',
-      quote: 'Amazing patches! The colors are perfect. Will order again.',
+      verifiedOrder: 'BD-38910 (150 pcs Woven)',
+      comment: 'Amazing patches! The colors are perfect. Will order again.',
+      rating: 5,
+      date: '3 days ago',
+      featured: true,
       avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80',
-      initials: 'SJ',
     },
     {
-      id: 3,
-      name: 'Ahmed Khan',
+      id: '3',
+      author: 'Ahmed Khan',
       country: 'UK',
       company: 'Khan Motorsports MC',
-      order: '500 Iron-On Custom Rockers',
-      quote: 'Professional service and outstanding quality.',
+      verifiedOrder: 'BD-27480 (500 pcs Iron-On)',
+      comment: 'Professional service and outstanding quality.',
+      rating: 5,
+      date: '5 days ago',
+      featured: true,
       avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
-      initials: 'AK',
     },
     {
-      id: 4,
-      name: 'Michael Rossi',
+      id: '4',
+      author: 'Michael Rossi',
       country: 'Australia',
       company: 'Outback Adventures',
-      order: '300 Laser Debossed Leather Patches',
-      quote: 'Turnaround was under 10 days and stitch density is unmatched!',
+      verifiedOrder: 'BD-19230 (300 pcs Leather)',
+      comment: 'Turnaround was under 10 days and stitch density is unmatched!',
+      rating: 5,
+      date: '1 week ago',
+      featured: true,
       avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80',
-      initials: 'MR',
     },
     {
-      id: 5,
-      name: 'Elena Rostova',
+      id: '5',
+      author: 'Elena Rostova',
       country: 'Germany',
       company: 'Cyberpunk Apparel Brand',
-      order: '200 Glow-in-the-Dark Velcro Patches',
-      quote: 'The stitch precision on tiny text is incredible. 10/10 experience.',
+      verifiedOrder: 'BD-88401 (200 pcs Glow Velcro)',
+      comment: 'The stitch precision on tiny text is incredible. 10/10 experience.',
+      rating: 5,
+      date: '2 weeks ago',
+      featured: true,
       avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-      initials: 'ER',
     },
   ];
+
+  const reviewsList = items && items.length > 0 ? items : defaultReviews;
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const prevReview = () => {
-    setCurrentIndex((prev) => (prev === 0 ? reviews.length - 3 : prev - 1));
+    setCurrentIndex((prev) => (prev === 0 ? Math.max(0, reviewsList.length - 3) : prev - 1));
   };
 
   const nextReview = () => {
-    setCurrentIndex((prev) => (prev >= reviews.length - 3 ? 0 : prev + 1));
+    setCurrentIndex((prev) => (prev >= reviewsList.length - 3 ? 0 : prev + 1));
   };
 
   return (
@@ -109,64 +127,70 @@ export default function Reviews() {
 
             {/* 3 Review Cards Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
-              {reviews.slice(currentIndex, currentIndex + 3).map((item) => (
-                <div
-                  key={item.id}
-                  className="rounded-2xl bg-[#181b22] border border-slate-800/90 p-6 flex flex-col justify-between hover:border-orange-500/60 hover:-translate-y-1 transition-all duration-300 shadow-inner group"
-                >
-                  
-                  {/* Verified & Order Tag */}
-                  <div className="flex items-center justify-between text-[10px] text-slate-400 mb-4 border-b border-slate-800 pb-2">
-                    <span className="flex items-center gap-1 text-emerald-400 font-bold">
-                      <CheckCircle className="w-3 h-3" /> Verified Customer
-                    </span>
-                    <span className="font-mono text-slate-500 truncate max-w-[140px]">
-                      {item.order}
-                    </span>
-                  </div>
+              {reviewsList.slice(currentIndex, currentIndex + 3).map((item) => {
+                const authorName = (item as any).author || (item as any).name || 'Verified Client';
+                const quoteText = (item as any).comment || (item as any).quote || '';
+                const orderText = (item as any).verifiedOrder || (item as any).order || 'Custom Patch Run';
+                const companyText = (item as any).company || 'Client';
+                const countryText = (item as any).country || 'USA';
+                const avatarUrl = (item as any).avatar || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80';
+                const initials = authorName.split(' ').map((n: string) => n[0]).join('').slice(0, 2) || 'BD';
 
-                  {/* Customer Quote */}
-                  <p className="text-xs sm:text-sm text-slate-300 italic leading-relaxed mb-6 group-hover:text-white transition-colors">
-                    &ldquo;{item.quote}&rdquo;
-                  </p>
-
-                  {/* Customer Info & Orange Stars */}
-                  <div className="flex items-center justify-between pt-4 border-t border-slate-800">
-                    
-                    {/* Avatar & Name */}
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full overflow-hidden bg-orange-600 flex items-center justify-center text-xs font-bold text-white border-2 border-orange-500 shrink-0">
-                        <img
-                          src={item.avatar}
-                          alt={item.name}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            (e.currentTarget as HTMLElement).style.display = 'none';
-                          }}
-                        />
-                        <span>{item.initials}</span>
-                      </div>
-                      <div>
-                        <div className="text-xs font-bold text-white leading-tight">
-                          {item.name}
-                        </div>
-                        <div className="text-[10px] text-slate-400 font-medium">
-                          {item.company} • {item.country}
-                        </div>
-                      </div>
+                return (
+                  <div
+                    key={item.id}
+                    className="rounded-2xl bg-[#181b22] border border-slate-800/90 p-6 flex flex-col justify-between hover:border-orange-500/60 hover:-translate-y-1 transition-all duration-300 shadow-inner group"
+                  >
+                    {/* Verified & Order Tag */}
+                    <div className="flex items-center justify-between text-[10px] text-slate-400 mb-4 border-b border-slate-800 pb-2">
+                      <span className="flex items-center gap-1 text-emerald-400 font-bold">
+                        <CheckCircle className="w-3 h-3" /> Verified Customer
+                      </span>
+                      <span className="font-mono text-slate-500 truncate max-w-[140px]">
+                        {orderText}
+                      </span>
                     </div>
 
-                    {/* 5 Orange Stars */}
-                    <div className="flex items-center gap-0.5 text-orange-500">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-3.5 h-3.5 fill-orange-500 text-orange-500" />
-                      ))}
+                    {/* Customer Quote */}
+                    <p className="text-xs sm:text-sm text-slate-300 italic leading-relaxed mb-6 group-hover:text-white transition-colors">
+                      &ldquo;{quoteText}&rdquo;
+                    </p>
+
+                    {/* Customer Info & Orange Stars */}
+                    <div className="flex items-center justify-between pt-4 border-t border-slate-800">
+                      {/* Avatar & Name */}
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full overflow-hidden bg-orange-600 flex items-center justify-center text-xs font-bold text-white border-2 border-orange-500 shrink-0">
+                          <img
+                            src={avatarUrl}
+                            alt={authorName}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              (e.currentTarget as HTMLElement).style.display = 'none';
+                            }}
+                          />
+                          <span>{initials}</span>
+                        </div>
+                        <div>
+                          <div className="text-xs font-bold text-white leading-tight">
+                            {authorName}
+                          </div>
+                          <div className="text-[10px] text-slate-400 font-medium">
+                            {companyText} • {countryText}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 5 Orange Stars */}
+                      <div className="flex items-center gap-0.5 text-orange-500">
+                        {[...Array(item.rating || 5)].map((_, i) => (
+                          <Star key={i} className="w-3.5 h-3.5 fill-orange-500 text-orange-500" />
+                        ))}
+                      </div>
                     </div>
-
                   </div>
-
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {/* Right Nav Arrow */}

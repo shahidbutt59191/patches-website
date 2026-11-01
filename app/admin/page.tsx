@@ -33,7 +33,7 @@ import {
   Truck,
   Sparkles,
 } from 'lucide-react';
-import { SiteSettings, DEFAULT_SETTINGS } from '@/lib/settings';
+import { SiteSettings, DEFAULT_SETTINGS, PortfolioItem, CustomerReviewItem } from '@/lib/settings';
 
 // Data Interfaces
 export interface PatchOrderItem {
@@ -72,31 +72,6 @@ export interface QuoteItem {
   created_at: string;
 }
 
-export interface PortfolioPatchItem {
-  id: string;
-  name: string;
-  category: 'Embroidered' | 'Iron-On' | 'Velcro' | 'Woven' | 'Leather' | 'PVC';
-  icon: string;
-  specs: string;
-  backing: string;
-  turnaround: string;
-  active: boolean;
-  minQty: number;
-  basePrice: number;
-}
-
-export interface CustomerReviewItem {
-  id: string;
-  author: string;
-  company: string;
-  country?: string;
-  rating: number;
-  verifiedOrder: string;
-  comment: string;
-  date: string;
-  featured: boolean;
-}
-
 export interface B2BAccountItem {
   id: string;
   name: string;
@@ -108,23 +83,6 @@ export interface B2BAccountItem {
   totalOrders: number;
   lifetimeSpend: number;
 }
-
-// Initial Portfolio List
-const INITIAL_PORTFOLIO: PortfolioPatchItem[] = [
-  { id: 'p1', name: 'Mountain Alpine Shield Patch', category: 'Embroidered', icon: '🧵', specs: '100% full Madeira thread density, merrowed border', backing: 'Velcro / Iron-On', turnaround: '10-14 Days', active: true, minQty: 10, basePrice: 1.85 },
-  { id: 'p2', name: 'Explore More Circular Badge', category: 'Embroidered', icon: '🏔️', specs: 'High-density duck twill base, 8 vivid thread shades', backing: 'Heat-Seal Iron-On', turnaround: '10-14 Days', active: true, minQty: 25, basePrice: 1.95 },
-  { id: 'p3', name: 'Tactical Combat Morale Patch', category: 'Velcro', icon: '🛡️', specs: 'Mil-spec hook & loop fasteners, abrasion proof perimeter', backing: 'Velcro Hook & Loop', turnaround: '10-14 Days', active: true, minQty: 25, basePrice: 2.35 },
-  { id: 'p4', name: 'Micro-Woven Tournament Crest', category: 'Woven', icon: '🎮', specs: '50-denier ultra-fine thread for small typography down to 1.5mm', backing: 'Heat-Seal Iron-On', turnaround: '10-14 Days', active: true, minQty: 50, basePrice: 1.65 },
-  { id: 'p5', name: 'Artisan Laser-Debossed Leather Patch', category: 'Leather', icon: '🏷️', specs: 'Caramel faux leather debossed with fiber laser precision', backing: '3M Industrial Adhesive', turnaround: '10-14 Days', active: true, minQty: 25, basePrice: 2.45 },
-  { id: 'p6', name: '3D Sculpted PVC Morale Rubber', category: 'PVC', icon: '✨', specs: 'Liquid molded PVC polymer, completely waterproof & mudproof', backing: 'Velcro Hook & Loop', turnaround: '12-14 Days', active: true, minQty: 50, basePrice: 2.55 },
-];
-
-// Initial Customer Reviews
-const INITIAL_REVIEWS: CustomerReviewItem[] = [
-  { id: 'r1', author: 'David Miller', company: 'Apex Tactical Gear', country: 'USA', rating: 5, verifiedOrder: 'BD-43541 (250 pcs Velcro)', comment: 'Excellent quality and super fast delivery. Highly recommended!', date: 'Yesterday', featured: true },
-  { id: 'r2', author: 'Sarah Johnson', company: 'Wilderness Explorers Club', country: 'Canada', rating: 5, verifiedOrder: 'BD-38910 (150 pcs Woven)', comment: 'Amazing patches! The colors are perfect. Will order again.', date: '3 days ago', featured: true },
-  { id: 'r3', author: 'Ahmed Khan', company: 'Khan Motorsports MC', country: 'UK', rating: 5, verifiedOrder: 'BD-27480 (500 pcs Iron-On)', comment: 'Professional service and outstanding quality.', date: '5 days ago', featured: true },
-];
 
 // Sample Initial Orders
 const INITIAL_ORDERS: PatchOrderItem[] = [
@@ -182,32 +140,33 @@ export default function AdminDashboardPage() {
   // Orders, Quotes & Portfolio Data
   const [orders, setOrders] = useState<PatchOrderItem[]>(INITIAL_ORDERS);
   const [quotes, setQuotes] = useState<QuoteItem[]>([]);
-  const [portfolio, setPortfolio] = useState<PortfolioPatchItem[]>(INITIAL_PORTFOLIO);
-  const [reviews, setReviews] = useState<CustomerReviewItem[]>(INITIAL_REVIEWS);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
 
   // Modals & Forms
   const [showAddPortfolio, setShowAddPortfolio] = useState(false);
-  const [newPortfolio, setNewPortfolio] = useState({
-    name: '',
-    category: 'Embroidered' as PortfolioPatchItem['category'],
-    icon: '🧵',
-    specs: '',
-    backing: 'Velcro Hook & Loop',
-    turnaround: '10-14 Days',
-    minQty: 25,
+  const [newPortfolio, setNewPortfolio] = useState<Partial<PortfolioItem>>({
+    title: '',
+    category: 'tactical',
+    styleId: 'embroidered',
+    badge: '100% Tajima High Density',
+    specs: '3.0" × 3.0" • Madeira Thread • Merrowed Border',
+    batch: '250 pcs',
+    desc: 'Full-density polyester thread coverage calibrated for extreme abrasion resistance.',
+    image: 'https://images.unsplash.com/photo-1584905066893-7d5c142ba4e1?w=800&auto=format&fit=crop&q=80',
     basePrice: 1.85,
+    active: true,
   });
 
   const [showAddReview, setShowAddReview] = useState(false);
-  const [newReview, setNewReview] = useState({
+  const [newReview, setNewReview] = useState<Partial<CustomerReviewItem>>({
     author: '',
     company: '',
     country: 'USA',
     rating: 5,
-    verifiedOrder: 'BD-Custom',
+    verifiedOrder: 'BD-Custom (100 pcs)',
     comment: '',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
   });
 
   // Selected Order for Detail Modal
@@ -220,7 +179,14 @@ export default function AdminDashboardPage() {
       const setRes = await fetch('/api/settings');
       if (setRes.ok) {
         const setData = await setRes.json();
-        setSettings({ ...DEFAULT_SETTINGS, ...setData });
+        const merged = { ...DEFAULT_SETTINGS, ...setData };
+        if (!merged.portfolio || merged.portfolio.length === 0) {
+          merged.portfolio = DEFAULT_SETTINGS.portfolio;
+        }
+        if (!merged.reviews || merged.reviews.length === 0) {
+          merged.reviews = DEFAULT_SETTINGS.reviews;
+        }
+        setSettings(merged);
       }
 
       // 2. Fetch Orders/Quotes
@@ -259,16 +225,6 @@ export default function AdminDashboardPage() {
           });
         }
       }
-
-      // Check LocalStorage for portfolio & reviews persistence
-      try {
-        const localPort = localStorage.getItem('bdigitizing_portfolio');
-        if (localPort) setPortfolio(JSON.parse(localPort));
-        const localRev = localStorage.getItem('bdigitizing_reviews');
-        if (localRev) setReviews(JSON.parse(localRev));
-      } catch (e) {
-        console.error('LocalStorage load note:', e);
-      }
     } catch (err) {
       console.warn('Dashboard data fetch note:', err);
     }
@@ -279,21 +235,22 @@ export default function AdminDashboardPage() {
   }, [refreshData]);
 
   // Save Settings Function
-  const handleSaveSettings = async () => {
+  const handleSaveSettings = async (customSettings?: SiteSettings) => {
+    const toSave = customSettings && typeof customSettings.priceEmbroidered === 'number' ? customSettings : settings;
     setIsSavingSettings(true);
     setSaveToast('');
     try {
       const res = await fetch('/api/settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(settings),
+        body: JSON.stringify(toSave),
       });
 
       if (!res.ok) throw new Error('Failed to save settings to server');
 
       // Also persist to localStorage for instant client hydration
-      localStorage.setItem('apex_live_settings', JSON.stringify(settings));
-      setSaveToast('Settings & pricing successfully published to live site!');
+      localStorage.setItem('apex_live_settings', JSON.stringify(toSave));
+      setSaveToast('All changes (prices, portfolio, reviews & settings) published to live site!');
       setTimeout(() => setSaveToast(''), 4000);
     } catch (err: any) {
       setSaveToast(`Error: ${err.message || 'Could not save'}`);
@@ -326,33 +283,64 @@ export default function AdminDashboardPage() {
 
   // Add Portfolio Item
   const handleAddPortfolio = () => {
-    if (!newPortfolio.name) return;
-    const item: PortfolioPatchItem = {
+    if (!newPortfolio.title) return;
+    const item: PortfolioItem = {
       id: `p-${Date.now()}`,
-      ...newPortfolio,
+      title: newPortfolio.title,
+      category: (newPortfolio.category as any) || 'tactical',
+      styleId: newPortfolio.styleId || 'embroidered',
+      badge: newPortfolio.badge || '100% Tajima High Density',
+      specs: newPortfolio.specs || '3.0" × 3.0" • Madeira Thread • Merrowed Border',
+      batch: newPortfolio.batch || '250 pcs',
+      desc: newPortfolio.desc || 'Full-density polyester thread coverage calibrated for extreme abrasion resistance.',
+      badgeClass:
+        newPortfolio.category === 'tactical'
+          ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+          : newPortfolio.category === 'biker'
+          ? 'bg-slate-100 text-slate-800 border-slate-300'
+          : newPortfolio.category === 'varsity'
+          ? 'bg-yellow-50 text-yellow-800 border-yellow-200'
+          : 'bg-purple-50 text-purple-700 border-purple-200',
+      image: newPortfolio.image || 'https://images.unsplash.com/photo-1584905066893-7d5c142ba4e1?w=800&auto=format&fit=crop&q=80',
+      altText: newPortfolio.title,
+      basePrice: Number(newPortfolio.basePrice) || 1.85,
       active: true,
     };
-    const updated = [item, ...portfolio];
-    setPortfolio(updated);
-    localStorage.setItem('bdigitizing_portfolio', JSON.stringify(updated));
+    const updated = [item, ...(settings.portfolio || [])];
+    const updatedSettings = { ...settings, portfolio: updated };
+    setSettings(updatedSettings);
+    handleSaveSettings(updatedSettings);
     setShowAddPortfolio(false);
     setNewPortfolio({
-      name: '',
-      category: 'Embroidered',
-      icon: '🧵',
-      specs: '',
-      backing: 'Velcro Hook & Loop',
-      turnaround: '10-14 Days',
-      minQty: 25,
+      title: '',
+      category: 'tactical',
+      styleId: 'embroidered',
+      badge: '100% Tajima High Density',
+      specs: '3.0" × 3.0" • Madeira Thread • Merrowed Border',
+      batch: '250 pcs',
+      desc: '',
+      image: 'https://images.unsplash.com/photo-1584905066893-7d5c142ba4e1?w=800&auto=format&fit=crop&q=80',
       basePrice: 1.85,
+      active: true,
     });
   };
 
   // Delete Portfolio Item
-  const handleDeletePortfolio = (id: string) => {
-    const updated = portfolio.filter((p) => p.id !== id);
-    setPortfolio(updated);
-    localStorage.setItem('bdigitizing_portfolio', JSON.stringify(updated));
+  const handleDeletePortfolio = (id: string | number) => {
+    const updated = (settings.portfolio || []).filter((p) => String(p.id) !== String(id));
+    const updatedSettings = { ...settings, portfolio: updated };
+    setSettings(updatedSettings);
+    handleSaveSettings(updatedSettings);
+  };
+
+  // Toggle Active on Portfolio Item
+  const handleTogglePortfolioActive = (id: string | number) => {
+    const updated = (settings.portfolio || []).map((p) =>
+      String(p.id) === String(id) ? { ...p, active: p.active === false ? true : false } : p
+    );
+    const updatedSettings = { ...settings, portfolio: updated };
+    setSettings(updatedSettings);
+    handleSaveSettings(updatedSettings);
   };
 
   // Add Review
@@ -360,29 +348,38 @@ export default function AdminDashboardPage() {
     if (!newReview.author || !newReview.comment) return;
     const item: CustomerReviewItem = {
       id: `r-${Date.now()}`,
-      ...newReview,
+      author: newReview.author,
+      company: newReview.company || 'Private Client',
+      country: newReview.country || 'USA',
+      rating: Number(newReview.rating) || 5,
+      verifiedOrder: newReview.verifiedOrder || 'BD-Custom (100 pcs)',
+      comment: newReview.comment,
       date: 'Just now',
       featured: true,
+      avatar: newReview.avatar || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
     };
-    const updated = [item, ...reviews];
-    setReviews(updated);
-    localStorage.setItem('bdigitizing_reviews', JSON.stringify(updated));
+    const updated = [item, ...(settings.reviews || [])];
+    const updatedSettings = { ...settings, reviews: updated };
+    setSettings(updatedSettings);
+    handleSaveSettings(updatedSettings);
     setShowAddReview(false);
     setNewReview({
       author: '',
       company: '',
       country: 'USA',
       rating: 5,
-      verifiedOrder: 'BD-Custom',
+      verifiedOrder: 'BD-Custom (100 pcs)',
       comment: '',
+      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
     });
   };
 
   // Delete Review
   const handleDeleteReview = (id: string) => {
-    const updated = reviews.filter((r) => r.id !== id);
-    setReviews(updated);
-    localStorage.setItem('bdigitizing_reviews', JSON.stringify(updated));
+    const updated = (settings.reviews || []).filter((r) => r.id !== id);
+    const updatedSettings = { ...settings, reviews: updated };
+    setSettings(updatedSettings);
+    handleSaveSettings(updatedSettings);
   };
 
   // Metrics Calculations
@@ -459,7 +456,7 @@ export default function AdminDashboardPage() {
 
           <button
             type="button"
-            onClick={handleSaveSettings}
+            onClick={() => handleSaveSettings()}
             disabled={isSavingSettings}
             className="btn-orange px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
           >
@@ -491,8 +488,8 @@ export default function AdminDashboardPage() {
             { id: 'overview', label: 'Dashboard Overview', icon: <LayoutDashboard className="w-4 h-4" /> },
             { id: 'orders', label: 'Quote Requests & Orders', icon: <ShoppingBag className="w-4 h-4" />, badge: orders.length },
             { id: 'pricing', label: 'Pricing & Discounts', icon: <DollarSign className="w-4 h-4" /> },
-            { id: 'portfolio', label: 'Portfolio & Gallery', icon: <ImageIcon className="w-4 h-4" />, badge: portfolio.length },
-            { id: 'reviews', label: 'Customer Reviews', icon: <Star className="w-4 h-4" /> },
+            { id: 'portfolio', label: 'Portfolio & Gallery', icon: <ImageIcon className="w-4 h-4" />, badge: (settings.portfolio || []).length },
+            { id: 'reviews', label: 'Customer Reviews', icon: <Star className="w-4 h-4" />, badge: (settings.reviews || []).length },
             { id: 'settings', label: 'Website Settings', icon: <Settings className="w-4 h-4" /> },
             { id: 'b2b', label: 'Wholesale B2B Accounts', icon: <Users className="w-4 h-4" /> },
           ].map((tab) => (
@@ -705,7 +702,7 @@ export default function AdminDashboardPage() {
                 </div>
                 <button
                   type="button"
-                  onClick={handleSaveSettings}
+                  onClick={() => handleSaveSettings()}
                   className="btn-orange px-5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer self-start"
                 >
                   <Save className="w-4 h-4" />
@@ -874,7 +871,7 @@ export default function AdminDashboardPage() {
                     Portfolio &amp; Showcase Management
                   </h1>
                   <p className="text-xs text-slate-400 mt-1">
-                    Add, edit, or disable patch styles and specimens shown in the client catalog.
+                    Add, edit, or disable patch specimens shown on the public website with live high-res photography.
                   </p>
                 </div>
                 <button
@@ -883,28 +880,28 @@ export default function AdminDashboardPage() {
                   className="btn-orange px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer self-start"
                 >
                   <Plus className="w-4 h-4" />
-                  <span>Add New Patch Style</span>
+                  <span>Add New Patch Specimen</span>
                 </button>
               </div>
 
               {/* Add Modal */}
               {showAddPortfolio && (
                 <div className="bg-[#141722] border-2 border-orange-500/60 rounded-2xl p-6 space-y-4">
-                  <h3 className="text-sm font-bold text-white">Add New Patch Style</h3>
+                  <h3 className="text-sm font-bold text-white">Add New Portfolio Specimen</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-400 mb-1">Patch Name</label>
+                      <label className="block text-xs font-bold text-slate-400 mb-1">Patch Title</label>
                       <input
                         type="text"
-                        placeholder="e.g. Vintage Varsity Letterman"
-                        value={newPortfolio.name}
-                        onChange={(e) => setNewPortfolio({ ...newPortfolio, name: e.target.value })}
+                        placeholder="e.g. Tactical Recon Skull Morale Badge"
+                        value={newPortfolio.title}
+                        onChange={(e) => setNewPortfolio({ ...newPortfolio, title: e.target.value })}
                         className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-slate-400 mb-1">Category</label>
+                      <label className="block text-xs font-bold text-slate-400 mb-1">Portfolio Category</label>
                       <select
                         value={newPortfolio.category}
                         onChange={(e) =>
@@ -915,13 +912,58 @@ export default function AdminDashboardPage() {
                         }
                         className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
                       >
-                        <option value="Embroidered">Embroidered</option>
-                        <option value="Iron-On">Iron-On</option>
-                        <option value="Velcro">Velcro</option>
-                        <option value="Woven">Woven</option>
-                        <option value="Leather">Leather</option>
-                        <option value="PVC">PVC Rubber</option>
+                        <option value="tactical">Tactical Units</option>
+                        <option value="headwear">Caps &amp; Beanies</option>
+                        <option value="biker">Biker MC</option>
+                        <option value="varsity">Varsity Athletics</option>
                       </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-400 mb-1">Patch Material Style</label>
+                      <select
+                        value={newPortfolio.styleId}
+                        onChange={(e) =>
+                          setNewPortfolio({
+                            ...newPortfolio,
+                            styleId: e.target.value,
+                          })
+                        }
+                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                      >
+                        <option value="embroidered">Embroidered</option>
+                        <option value="iron-on">Iron-On</option>
+                        <option value="velcro">Velcro Hook &amp; Loop</option>
+                        <option value="woven">Jacquard Woven</option>
+                        <option value="leather">Debossed Leather</option>
+                        <option value="pvc">3D Soft PVC</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-400 mb-1">Badge Tag</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. 3D Soft Molded PVC"
+                        value={newPortfolio.badge}
+                        onChange={(e) =>
+                          setNewPortfolio({ ...newPortfolio, badge: e.target.value })
+                        }
+                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-400 mb-1">Batch Run Size</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. 500 pcs"
+                        value={newPortfolio.batch}
+                        onChange={(e) =>
+                          setNewPortfolio({ ...newPortfolio, batch: e.target.value })
+                        }
+                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                      />
                     </div>
 
                     <div>
@@ -941,24 +983,45 @@ export default function AdminDashboardPage() {
                     </div>
 
                     <div className="sm:col-span-2">
-                      <label className="block text-xs font-bold text-slate-400 mb-1">Specs &amp; Description</label>
+                      <label className="block text-xs font-bold text-slate-400 mb-1">Image URL (High-Res Photo)</label>
                       <input
                         type="text"
-                        placeholder="e.g. 100% full stitch density, merrowed overlock edge..."
+                        placeholder="https://images.unsplash.com/..."
+                        value={newPortfolio.image}
+                        onChange={(e) => setNewPortfolio({ ...newPortfolio, image: e.target.value })}
+                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                      />
+                    </div>
+
+                    <div className="sm:col-span-1">
+                      <label className="block text-xs font-bold text-slate-400 mb-1">Preview</label>
+                      <div className="h-10 rounded-lg overflow-hidden border border-slate-700 bg-slate-900 flex items-center justify-center">
+                        {newPortfolio.image ? (
+                          <img src={newPortfolio.image} alt="Preview" className="w-full h-full object-cover" />
+                        ) : (
+                          <span className="text-[10px] text-slate-500">No Image</span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="sm:col-span-3">
+                      <label className="block text-xs font-bold text-slate-400 mb-1">Specifications Line</label>
+                      <input
+                        type="text"
+                        placeholder='e.g. 3.25" × 3.0" • Pantone 418C Coyote • Mil-Spec Hook Velcro'
                         value={newPortfolio.specs}
                         onChange={(e) => setNewPortfolio({ ...newPortfolio, specs: e.target.value })}
                         className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
                       />
                     </div>
 
-                    <div>
-                      <label className="block text-xs font-bold text-slate-400 mb-1">Turnaround</label>
-                      <input
-                        type="text"
-                        value={newPortfolio.turnaround}
-                        onChange={(e) =>
-                          setNewPortfolio({ ...newPortfolio, turnaround: e.target.value })
-                        }
+                    <div className="sm:col-span-3">
+                      <label className="block text-xs font-bold text-slate-400 mb-1">Description</label>
+                      <textarea
+                        rows={2}
+                        placeholder="Describe stitch construction, thread type, and backing durability..."
+                        value={newPortfolio.desc}
+                        onChange={(e) => setNewPortfolio({ ...newPortfolio, desc: e.target.value })}
                         className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
                       />
                     </div>
@@ -977,40 +1040,73 @@ export default function AdminDashboardPage() {
                       onClick={handleAddPortfolio}
                       className="btn-orange px-5 py-2 rounded-lg text-xs font-bold"
                     >
-                      Save Patch Style
+                      Save &amp; Publish Specimen
                     </button>
                   </div>
                 </div>
               )}
 
               {/* Portfolio Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {portfolio.map((item) => (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {(settings.portfolio || []).map((item) => (
                   <div
                     key={item.id}
-                    className="bg-[#141722] border border-slate-800 p-5 rounded-2xl flex flex-col justify-between hover:border-slate-700 transition-colors"
+                    className="bg-[#141722] border border-slate-800 rounded-2xl overflow-hidden flex flex-col justify-between hover:border-slate-700 transition-colors group"
                   >
                     <div>
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="text-2xl">{item.icon}</span>
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/30 font-bold uppercase">
-                          {item.category}
-                        </span>
+                      {/* Image Preview Header */}
+                      <div className="relative h-44 w-full bg-slate-900 overflow-hidden">
+                        <img
+                          src={item.image}
+                          alt={item.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          onError={(e) => {
+                            (e.currentTarget as HTMLElement).style.display = 'none';
+                          }}
+                        />
+                        <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
+                          <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full shadow-md backdrop-blur-md border ${item.badgeClass || 'bg-orange-50 text-orange-700 border-orange-200'}`}>
+                            {item.badge}
+                          </span>
+                          <span className="text-[10px] font-mono font-bold bg-black/75 backdrop-blur-md text-white px-2 py-0.5 rounded-full border border-white/20">
+                            {item.batch}
+                          </span>
+                        </div>
                       </div>
-                      <h4 className="text-base font-bold text-white mb-1">{item.name}</h4>
-                      <p className="text-xs text-slate-400 leading-relaxed mb-4">{item.specs}</p>
+
+                      <div className="p-4 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-orange-500/10 text-orange-400 border border-orange-500/20 font-bold">
+                            {item.category}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleTogglePortfolioActive(item.id)}
+                            className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-bold transition-colors cursor-pointer ${
+                              item.active !== false
+                                ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                                : 'bg-slate-800 text-slate-500 border border-slate-700'
+                            }`}
+                          >
+                            {item.active !== false ? '● Live on Store' : '○ Hidden'}
+                          </button>
+                        </div>
+                        <h4 className="text-base font-bold text-white leading-tight">{item.title}</h4>
+                        <p className="text-xs text-slate-400 font-mono text-[11px]">{item.specs}</p>
+                        <p className="text-xs text-slate-400 line-clamp-2">{item.desc}</p>
+                      </div>
                     </div>
 
-                    <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-mono">
+                    <div className="p-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-mono">
                       <div>
                         <span className="text-slate-500 text-[10px] block">BASE PRICE</span>
-                        <span className="text-white font-bold">${item.basePrice.toFixed(2)}/ea</span>
+                        <span className="text-white font-bold">${(item.basePrice || 1.85).toFixed(2)}/ea</span>
                       </div>
                       <button
                         type="button"
                         onClick={() => handleDeletePortfolio(item.id)}
-                        className="text-slate-500 hover:text-red-400 p-1.5 transition-colors"
-                        title="Delete Patch Style"
+                        className="text-slate-500 hover:text-red-400 p-1.5 transition-colors cursor-pointer"
+                        title="Delete Patch Specimen"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -1164,7 +1260,7 @@ export default function AdminDashboardPage() {
                     Customer Testimonials &amp; Reviews
                   </h1>
                   <p className="text-xs text-slate-400 mt-1">
-                    Manage testimonials and ratings shown on the homepage carousel.
+                    Manage testimonials and ratings shown on the homepage luxury dark carousel.
                   </p>
                 </div>
                 <button
@@ -1186,22 +1282,33 @@ export default function AdminDashboardPage() {
                       <label className="block text-xs font-bold text-slate-400 mb-1">Author Name</label>
                       <input
                         type="text"
-                        placeholder="e.g. Captain Harris"
+                        placeholder="e.g. Captain David Miller"
                         value={newReview.author}
                         onChange={(e) => setNewReview({ ...newReview, author: e.target.value })}
                         className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-400 mb-1">Company / Club</label>
+                      <label className="block text-xs font-bold text-slate-400 mb-1">Company / Organization</label>
                       <input
                         type="text"
-                        placeholder="e.g. Tactical Flight Squadron"
+                        placeholder="e.g. Apex Tactical Gear"
                         value={newReview.company}
                         onChange={(e) => setNewReview({ ...newReview, company: e.target.value })}
                         className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
                       />
                     </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-400 mb-1">Country</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. USA"
+                        value={newReview.country}
+                        onChange={(e) => setNewReview({ ...newReview, country: e.target.value })}
+                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                      />
+                    </div>
+
                     <div>
                       <label className="block text-xs font-bold text-slate-400 mb-1">Rating</label>
                       <select
@@ -1211,10 +1318,33 @@ export default function AdminDashboardPage() {
                         }
                         className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
                       >
-                        <option value="5">★★★★★ (5 Stars)</option>
-                        <option value="4">★★★★☆ (4 Stars)</option>
+                        <option value="5">★★★★★ (5 Stars - Exceptional)</option>
+                        <option value="4">★★★★☆ (4 Stars - Great)</option>
                       </select>
                     </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-400 mb-1">Verified Order Tag</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. BD-43541 (250 pcs Velcro)"
+                        value={newReview.verifiedOrder}
+                        onChange={(e) => setNewReview({ ...newReview, verifiedOrder: e.target.value })}
+                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-400 mb-1">Avatar Photo URL</label>
+                      <input
+                        type="text"
+                        placeholder="https://images.unsplash.com/..."
+                        value={newReview.avatar}
+                        onChange={(e) => setNewReview({ ...newReview, avatar: e.target.value })}
+                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                      />
+                    </div>
+
                     <div className="sm:col-span-3">
                       <label className="block text-xs font-bold text-slate-400 mb-1">Testimonial Quote</label>
                       <textarea
@@ -1231,53 +1361,69 @@ export default function AdminDashboardPage() {
                     <button
                       type="button"
                       onClick={() => setShowAddReview(false)}
-                      className="px-4 py-2 rounded-lg bg-slate-800 text-xs font-bold text-slate-300"
+                      className="px-4 py-2 rounded-lg bg-slate-800 text-xs font-bold text-slate-300 cursor-pointer"
                     >
                       Cancel
                     </button>
                     <button
                       type="button"
                       onClick={handleAddReview}
-                      className="btn-orange px-5 py-2 rounded-lg text-xs font-bold"
+                      className="btn-orange px-5 py-2 rounded-lg text-xs font-bold cursor-pointer"
                     >
-                      Save Review
+                      Save &amp; Publish Review
                     </button>
                   </div>
                 </div>
               )}
 
               {/* Reviews List */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {reviews.map((rev) => (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {(settings.reviews || []).map((rev) => (
                   <div
                     key={rev.id}
-                    className="bg-[#141722] border border-slate-800 p-5 rounded-2xl flex flex-col justify-between"
+                    className="bg-[#141722] border border-slate-800 p-5 rounded-2xl flex flex-col justify-between hover:border-slate-700 transition-colors"
                   >
                     <div>
-                      <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center justify-between mb-3 border-b border-slate-800/80 pb-2">
                         <div className="flex text-orange-400">
-                          {[...Array(rev.rating)].map((_, i) => (
+                          {[...Array(rev.rating || 5)].map((_, i) => (
                             <Star key={i} className="w-3.5 h-3.5 fill-current" />
                           ))}
                         </div>
-                        <span className="text-[10px] font-mono text-emerald-400 font-bold">
+                        <span className="text-[10px] font-mono text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
                           ✓ Verified
                         </span>
                       </div>
+
+                      <div className="text-[10px] text-slate-500 font-mono mb-2">
+                        {rev.verifiedOrder || 'Custom Run'}
+                      </div>
+
                       <p className="text-xs text-slate-300 italic mb-4 leading-relaxed">
                         &ldquo;{rev.comment}&rdquo;
                       </p>
                     </div>
 
                     <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between">
-                      <div>
-                        <div className="text-xs font-bold text-white">{rev.author}</div>
-                        <div className="text-[10px] text-slate-400">{rev.company}</div>
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-full overflow-hidden bg-orange-600 flex items-center justify-center text-xs font-bold text-white shrink-0">
+                          {rev.avatar ? (
+                            <img src={rev.avatar} alt={rev.author} className="w-full h-full object-cover" />
+                          ) : (
+                            <span>{rev.author?.slice(0, 2) || 'BD'}</span>
+                          )}
+                        </div>
+                        <div>
+                          <div className="text-xs font-bold text-white leading-tight">{rev.author}</div>
+                          <div className="text-[10px] text-slate-400">
+                            {rev.company} • {rev.country || 'USA'}
+                          </div>
+                        </div>
                       </div>
                       <button
                         type="button"
                         onClick={() => handleDeleteReview(rev.id)}
-                        className="text-slate-500 hover:text-red-400 p-1.5 transition-colors"
+                        className="text-slate-500 hover:text-red-400 p-1.5 transition-colors cursor-pointer"
                         title="Delete Review"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -1305,7 +1451,7 @@ export default function AdminDashboardPage() {
                 </div>
                 <button
                   type="button"
-                  onClick={handleSaveSettings}
+                  onClick={() => handleSaveSettings()}
                   className="btn-orange px-5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer self-start"
                 >
                   <Save className="w-4 h-4" />
