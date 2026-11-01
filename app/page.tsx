@@ -1,12 +1,16 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import Services from '@/components/Services';
+import BeforeAfterSlider from '@/components/BeforeAfterSlider';
 import LivePatchStudio from '@/components/LivePatchStudio';
+import ComparisonTable from '@/components/ComparisonTable';
+import Backings from '@/components/Backings';
 import WhyChooseUs from '@/components/WhyChooseUs';
 import Process from '@/components/Process';
+import Gallery from '@/components/Gallery';
 import Reviews from '@/components/Reviews';
 import FaqAndCta from '@/components/FaqAndCta';
 import Footer from '@/components/Footer';
@@ -14,8 +18,12 @@ import FloatingAssistants from '@/components/FloatingAssistants';
 import QuoteModal from '@/components/QuoteModal';
 import VideoModal from '@/components/VideoModal';
 import SearchModal from '@/components/SearchModal';
+import { SiteSettings, DEFAULT_SETTINGS } from '@/lib/settings';
 
 export default function HomePage() {
+  const [settings, setSettings] = useState<SiteSettings>(DEFAULT_SETTINGS);
+
+  // Modals state
   const [quoteModalOpen, setQuoteModalOpen] = useState(false);
   const [videoModalOpen, setVideoModalOpen] = useState(false);
   const [searchModalOpen, setSearchModalOpen] = useState(false);
@@ -26,6 +34,27 @@ export default function HomePage() {
   const [activeHeight, setActiveHeight] = useState(3.0);
   const [activeBacking, setActiveBacking] = useState('iron_on');
   const [activeQuantity, setActiveQuantity] = useState(100);
+
+  // Load live site settings from API or LocalStorage
+  useEffect(() => {
+    try {
+      const local = localStorage.getItem('apex_live_settings');
+      if (local) {
+        setSettings({ ...DEFAULT_SETTINGS, ...JSON.parse(local) });
+      }
+    } catch (e) {
+      console.log('Local settings note:', e);
+    }
+
+    fetch('/api/settings')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data) {
+          setSettings({ ...DEFAULT_SETTINGS, ...data });
+        }
+      })
+      .catch((err) => console.log('Settings fetch note:', err));
+  }, []);
 
   const handleOpenQuote = (styleId?: string) => {
     if (styleId) {
@@ -72,10 +101,14 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-white text-slate-900 font-sans antialiased selection:bg-orange-500 selection:text-white">
       
-      {/* 1. Header: Top Bar + Brand Navbar */}
+      {/* 1. Header: Top Bar + Brand Navbar with Dynamic Announcements */}
       <Navbar
         onOpenQuote={() => handleOpenQuote()}
         onOpenSearch={handleOpenSearch}
+        announcementText={settings.announcementText}
+        announcementEnabled={settings.announcementEnabled}
+        supportEmail={settings.supportEmail}
+        turnaroundTime={settings.turnaroundTime}
       />
 
       <main>
@@ -88,28 +121,40 @@ export default function HomePage() {
         {/* 3. Our Patch Services: 5 Cards (Embroidered, Iron-On, Velcro, Woven, Leather) */}
         <Services onOpenQuote={handleOpenQuote} />
 
-        {/* 4. Interactive Live Patch Studio & Real-Time Price Estimator */}
+        {/* 4. Interactive Vector-to-Stitch Digitizing Before & After Slider */}
+        <BeforeAfterSlider onOpenQuote={() => handleOpenQuote()} />
+
+        {/* 5. Interactive Live Patch Studio & Real-Time Price Estimator */}
         <LivePatchStudio onOpenQuoteWithSpecs={handleOpenQuoteWithSpecs} />
 
-        {/* 5. Why Choose BDigitizing?: 4 Feature Icons + Stats + Stitched "CUSTOM PATCHES" Banner */}
+        {/* 6. Side-by-Side Materials Comparison Matrix */}
+        <ComparisonTable onOpenQuote={handleOpenQuote} />
+
+        {/* 7. Fasteners & Edge Finishes Guide (Backings & Borders) */}
+        <Backings onOpenQuote={() => handleOpenQuote()} />
+
+        {/* 8. Why Choose BDigitizing?: 4 Feature Icons + Stats + Stitched "CUSTOM PATCHES" Banner */}
         <WhyChooseUs />
 
-        {/* 6. Simple Ordering Process: 4 Connected Numbered Steps with Timing Badges */}
+        {/* 9. Simple Ordering Process: 4 Connected Numbered Steps with Timing Badges */}
         <Process onOpenQuote={() => handleOpenQuote()} />
 
-        {/* 7. What Our Customers Say: Dark Luxury Section with 5-Star Reviews & Order Tags */}
+        {/* 10. Real Client Production Runs Gallery Across Tactical, Headwear, Biker & Varsity */}
+        <Gallery onOpenQuote={() => handleOpenQuote()} />
+
+        {/* 11. What Our Customers Say: Dark Luxury Section with 5-Star Reviews & Order Tags */}
         <Reviews />
 
-        {/* 8. Frequently Asked Questions + Vibrant Orange CTA Box with Discount Code */}
+        {/* 12. Frequently Asked Questions + Vibrant Orange CTA Box with Discount Code */}
         <FaqAndCta onOpenQuote={() => handleOpenQuote()} />
       </main>
 
-      {/* 9. Dark Footer */}
+      {/* 13. Dark Footer */}
       <Footer onOpenQuote={() => handleOpenQuote()} />
 
       {/* Floating Assistants: Live Order Social Proof Toast & 24/7 WhatsApp Desk */}
       <FloatingAssistants
-        whatsappNumber="18005557282"
+        whatsappNumber={settings.whatsappNumber}
         onOpenQuote={() => handleOpenQuote()}
       />
 

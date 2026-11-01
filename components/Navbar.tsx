@@ -2,19 +2,40 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Mail, Truck, Clock, Search, ArrowRight, Menu, X } from 'lucide-react';
+import { Mail, Truck, Clock, Search, ArrowRight, Menu, X, Sparkles } from 'lucide-react';
 
 interface NavbarProps {
   onOpenQuote?: () => void;
   onOpenSearch?: () => void;
+  announcementText?: string;
+  announcementEnabled?: boolean;
+  supportEmail?: string;
+  turnaroundTime?: string;
 }
 
-export default function Navbar({ onOpenQuote, onOpenSearch }: NavbarProps) {
+export default function Navbar({
+  onOpenQuote,
+  onOpenSearch,
+  announcementText,
+  announcementEnabled = true,
+  supportEmail = 'support@bdigitizing.com',
+  turnaroundTime = '10-14 Days Turnaround',
+}: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 w-full transition-all duration-300">
       
+      {/* 0. Top Dynamic Announcement Strip if enabled */}
+      {announcementEnabled && announcementText && (
+        <div className="bg-gradient-to-r from-orange-600 via-orange-500 to-amber-600 text-white py-2 px-4 text-center text-xs font-bold tracking-wide shadow-xs flex items-center justify-center gap-2">
+          <span className="rounded-full bg-white/20 px-2.5 py-0.5 text-[10px] font-black uppercase font-mono">
+            Special Promo
+          </span>
+          <span>{announcementText}</span>
+        </div>
+      )}
+
       {/* 1. Dark Charcoal Top Announcement & Trust Bar */}
       <div className="bg-[#111318] text-slate-300 py-2 px-4 sm:px-6 text-xs border-b border-slate-800">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 text-[11px] sm:text-xs">
@@ -22,11 +43,11 @@ export default function Navbar({ onOpenQuote, onOpenSearch }: NavbarProps) {
           {/* Left Details */}
           <div className="flex items-center flex-wrap gap-2 sm:gap-4 text-slate-300">
             <a
-              href="mailto:support@bdigitizing.com"
+              href={`mailto:${supportEmail}`}
               className="flex items-center gap-1.5 hover:text-orange-400 transition-colors"
             >
               <Mail className="w-3.5 h-3.5 text-orange-500" />
-              <span>support@bdigitizing.com</span>
+              <span>{supportEmail}</span>
             </a>
 
             <span className="text-slate-600 hidden sm:inline">|</span>
@@ -40,7 +61,7 @@ export default function Navbar({ onOpenQuote, onOpenSearch }: NavbarProps) {
 
             <div className="hidden md:flex items-center gap-1.5">
               <Clock className="w-3.5 h-3.5 text-orange-500" />
-              <span>10-14 Days Turnaround</span>
+              <span>{turnaroundTime}</span>
             </div>
           </div>
 
@@ -102,7 +123,6 @@ export default function Navbar({ onOpenQuote, onOpenSearch }: NavbarProps) {
           {/* Logo: BDigitizing */}
           <Link href="/" className="inline-flex items-center gap-3 group shrink-0">
             <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-orange-600 to-orange-500 text-white flex items-center justify-center font-black shadow-md group-hover:scale-105 transition-transform">
-              {/* Stylized 'B' stitch icon */}
               <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-white fill-none stroke-[2.5]" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M6 4h7a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z" />
                 <path d="M6 12h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z" />
@@ -120,14 +140,20 @@ export default function Navbar({ onOpenQuote, onOpenSearch }: NavbarProps) {
           </Link>
 
           {/* Desktop Navigation Links */}
-          <div className="hidden lg:flex items-center gap-8 text-sm font-semibold text-slate-700">
+          <div className="hidden lg:flex items-center gap-7 text-sm font-semibold text-slate-700">
             <Link href="/" className="text-orange-500 font-bold border-b-2 border-orange-500 pb-1">
               Home
             </Link>
             <a href="#services" className="hover:text-orange-500 transition-colors">
               Custom Patches
             </a>
-            <a href="#services" className="hover:text-orange-500 transition-colors">
+            <a href="#comparison" className="hover:text-orange-500 transition-colors">
+              Compare Materials
+            </a>
+            <a href="#backings" className="hover:text-orange-500 transition-colors">
+              Backings
+            </a>
+            <a href="#gallery" className="hover:text-orange-500 transition-colors">
               Gallery
             </a>
             <a href="#why-us" className="hover:text-orange-500 transition-colors">
@@ -136,18 +162,15 @@ export default function Navbar({ onOpenQuote, onOpenSearch }: NavbarProps) {
             <a href="#faq" className="hover:text-orange-500 transition-colors">
               FAQ
             </a>
-            <a href="#faq" className="hover:text-orange-500 transition-colors">
-              Contact
-            </a>
           </div>
 
           {/* Right Action Icons & Quote CTA */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
             <button
               type="button"
               onClick={onOpenSearch}
               aria-label="Search"
-              className="p-2 rounded-full text-slate-600 hover:text-orange-500 hover:bg-orange-50 transition-colors"
+              className="p-2 rounded-full text-slate-600 hover:text-orange-500 hover:bg-orange-50 transition-colors cursor-pointer"
             >
               <Search className="w-5 h-5" />
             </button>
@@ -155,7 +178,7 @@ export default function Navbar({ onOpenQuote, onOpenSearch }: NavbarProps) {
             <button
               type="button"
               onClick={onOpenQuote}
-              className="btn-orange px-5 py-2.5 rounded-full text-sm flex items-center gap-2 cursor-pointer"
+              className="btn-orange px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold flex items-center gap-2 cursor-pointer"
             >
               <span>Get a Quote</span>
               <ArrowRight className="w-4 h-4" />
@@ -193,18 +216,32 @@ export default function Navbar({ onOpenQuote, onOpenSearch }: NavbarProps) {
                 Custom Patches
               </a>
               <a
-                href="#services"
+                href="#comparison"
                 onClick={() => setMobileMenuOpen(false)}
                 className="hover:text-orange-500"
               >
-                Gallery
+                Compare Materials
+              </a>
+              <a
+                href="#backings"
+                onClick={() => setMobileMenuOpen(false)}
+                className="hover:text-orange-500"
+              >
+                Backings &amp; Borders
+              </a>
+              <a
+                href="#gallery"
+                onClick={() => setMobileMenuOpen(false)}
+                className="hover:text-orange-500"
+              >
+                Client Gallery
               </a>
               <a
                 href="#why-us"
                 onClick={() => setMobileMenuOpen(false)}
                 className="hover:text-orange-500"
               >
-                About
+                About Factory
               </a>
               <a
                 href="#faq"
@@ -212,13 +249,6 @@ export default function Navbar({ onOpenQuote, onOpenSearch }: NavbarProps) {
                 className="hover:text-orange-500"
               >
                 FAQ
-              </a>
-              <a
-                href="#faq"
-                onClick={() => setMobileMenuOpen(false)}
-                className="hover:text-orange-500"
-              >
-                Contact
               </a>
             </div>
 
