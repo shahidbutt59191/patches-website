@@ -1,34 +1,31 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Navbar from '@/components/Layout/Navbar';
-import Footer from '@/components/Layout/Footer';
-import HeroSection from '@/components/HeroSection';
-import ValuePillarsSection from '@/components/ValuePillarsSection';
-import PricingSection from '@/components/PricingSection';
-import StandardsSection from '@/components/StandardsSection';
-import ServicesSection from '@/components/ServicesSection';
-import PatchAdvisorWizard from '@/components/PatchAdvisorWizard';
-import PatchCustomizerStudio from '@/components/PatchCustomizerStudio';
-import BulkPricingCalculator from '@/components/BulkPricingCalculator';
-import BackingsGuide from '@/components/BackingsGuide';
-import PortfolioSection from '@/components/PortfolioSection';
-import CustomMerchSection from '@/components/CustomMerchSection';
-import HowItWorksSection from '@/components/HowItWorksSection';
-import GuaranteeSection from '@/components/GuaranteeSection';
-import TestimonialsSection from '@/components/TestimonialsSection';
-import OrderForm from '@/components/OrderForm';
-import FaqSection from '@/components/FaqSection';
-import CtaSection from '@/components/CtaSection';
-import SampleKitModal from '@/components/SampleKitModal';
+import Navbar from '@/components/PatchServices/Navbar';
+import Hero from '@/components/PatchServices/Hero';
+import ServicesGrid from '@/components/PatchServices/ServicesGrid';
+import PriceCalculator from '@/components/PatchServices/PriceCalculator';
+import BackingsSection from '@/components/PatchServices/BackingsSection';
+import HowItWorks from '@/components/PatchServices/HowItWorks';
+import Portfolio from '@/components/PatchServices/Portfolio';
+import QuoteForm from '@/components/PatchServices/QuoteForm';
+import ReviewsAndGuarantees from '@/components/PatchServices/ReviewsAndGuarantees';
+import Faq from '@/components/PatchServices/Faq';
+import Footer from '@/components/PatchServices/Footer';
 import { SiteSettings, DEFAULT_SETTINGS } from '@/lib/settings';
 
-export default function HomePage() {
+export default function PatchServicesPage() {
   const [settings, setSettings] = useState<SiteSettings>(DEFAULT_SETTINGS);
-  const [isSampleKitOpen, setIsSampleKitOpen] = useState(false);
+  
+  // Interactive Spec State shared across Calculator, Services, and QuoteForm
+  const [selectedStyle, setSelectedStyle] = useState('embroidered');
+  const [selectedWidth, setSelectedWidth] = useState(3.0);
+  const [selectedHeight, setSelectedHeight] = useState(3.0);
+  const [selectedBacking, setSelectedBacking] = useState('velcro_hook_loop');
+  const [selectedQuantity, setSelectedQuantity] = useState(100);
 
   useEffect(() => {
-    // 1. Check local storage for instant reactivity
+    // 1. Check local storage for settings
     try {
       const local = localStorage.getItem('apex_live_settings');
       if (local) {
@@ -49,6 +46,24 @@ export default function HomePage() {
       .catch((err) => console.log('Settings fetch error:', err));
   }, []);
 
+  const handleSelectStyle = (styleId: string) => {
+    setSelectedStyle(styleId);
+  };
+
+  const handleApplySpecsFromCalculator = (specs: {
+    style: string;
+    width: number;
+    height: number;
+    backing: string;
+    quantity: number;
+  }) => {
+    setSelectedStyle(specs.style);
+    setSelectedWidth(specs.width);
+    setSelectedHeight(specs.height);
+    setSelectedBacking(specs.backing === 'velcro' ? 'velcro_hook_loop' : specs.backing);
+    setSelectedQuantity(specs.quantity);
+  };
+
   return (
     <div className="min-h-screen bg-[#070913] text-slate-100 selection:bg-indigo-600 selection:text-white font-sans antialiased">
       
@@ -62,101 +77,47 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* Sticky Header with Sample Box Trigger */}
-      <Navbar
+      {/* 1. Header & Navigation */}
+      <Navbar whatsappNumber={settings.whatsappNumber} />
+
+      {/* 2. Hero Section: Core Value Proposition & Live Specimen Inspector */}
+      <Hero
         whatsappNumber={settings.whatsappNumber}
-        onOpenSampleKit={() => setIsSampleKitOpen(true)}
+        onSelectStyle={handleSelectStyle}
       />
 
-      {/* Hero Section */}
-      <HeroSection
-        heroBadge={settings.heroBadge}
-        heroHeadline={settings.heroHeadline}
-        heroSubheadline={settings.heroSubheadline}
-        heroCtaText={settings.heroCtaText}
-        whatsappNumber={settings.whatsappNumber}
+      {/* 3. Patch Services: 6 Core Patch Materials Showcase */}
+      <ServicesGrid onSelectStyle={handleSelectStyle} />
+
+      {/* 4. Bulk Pricing Calculator: Live Dimension & Quantity Sliders */}
+      <PriceCalculator onApplySpecs={handleApplySpecsFromCalculator} />
+
+      {/* 5. Backings & Borders: Fasteners & Edge Finishes Guide */}
+      <BackingsSection />
+
+      {/* 6. Production Process: 4 Transparent Steps & Photo Sample Guarantee */}
+      <HowItWorks />
+
+      {/* 7. Gallery: Real Client Work Across Tactical, Biker, Headwear & Varsity */}
+      <Portfolio />
+
+      {/* 8. Free Quote & Artwork Submission Form (Connected to Supabase / Orders API) */}
+      <QuoteForm
+        initialStyle={selectedStyle}
+        initialWidth={selectedWidth}
+        initialHeight={selectedHeight}
+        initialBacking={selectedBacking}
+        initialQuantity={selectedQuantity}
       />
 
-      {/* Core Factory Value Pillars (Inspired by Low MOQ, Direct Pricing, 6h Proof, Photo Sample) */}
-      <ValuePillarsSection onOpenSampleKit={() => setIsSampleKitOpen(true)} />
+      {/* 9. Verified Customer Reviews & Quadruple Factory Guarantee */}
+      <ReviewsAndGuarantees />
 
-      {/* Section 0: Simple, Upfront Pricing Tiers */}
-      <PricingSection />
+      {/* 10. Frequently Asked Questions */}
+      <Faq />
 
-      {/* Section 1: The Manufacturing Standard */}
-      <StandardsSection />
-
-      {/* Section 2: Complete Material Lineup (6 Core Patch Types) */}
-      <ServicesSection />
-
-      {/* Interactive Patch Advisor Quiz (Replaces external GPT with high-converting native wizard) */}
-      <PatchAdvisorWizard />
-
-      {/* Interactive 3D Patch Customizer Studio */}
-      <PatchCustomizerStudio />
-
-      {/* Instant Bulk Wholesale Volume Calculator */}
-      <BulkPricingCalculator />
-
-      {/* Industrial Fasteners & Backings Comparison Guide */}
-      <BackingsGuide />
-
-      {/* Digitizing & Custom Patches Gallery */}
-      <PortfolioSection />
-
-      {/* Beyond Patches: Enamel Lapel Pins, Flight Tags, Challenge Coins & DST Digitizing */}
-      <CustomMerchSection />
-
-      {/* Clear 4-Step Process from Artwork to Finished Patches */}
-      <HowItWorksSection />
-
-      {/* Quadruple Factory Guarantee */}
-      <GuaranteeSection />
-
-      {/* Verified Customer Reviews & Social Proof */}
-      <TestimonialsSection />
-
-      {/* Direct Factory Order & Artwork Submission Section */}
-      <section id="order" className="py-20 sm:py-28 bg-[#0a0d1e]/50 border-b border-white/10 relative scroll-mt-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          <div className="flex flex-col gap-2.5 text-center items-center mb-14">
-            <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border text-[11px] font-bold uppercase tracking-[0.16em] bg-indigo-500/10 text-indigo-300 border-indigo-500/30 font-mono">
-              <span className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
-              Instant Factory Order &amp; Free Proof
-            </span>
-            <h2 className="text-3xl sm:text-5xl font-extrabold tracking-[-0.035em] text-white leading-[1.12] max-w-3xl">
-              Configure Specs &amp; Submit Your Order
-            </h2>
-            <p className="text-sm sm:text-base leading-relaxed max-w-2xl text-slate-400 mx-auto">
-              Select your patch dimensions, backing type, and quantity. Upload your artwork to receive a 100% free digital stitch proof within 6 hours + real machine sample photo approval.
-            </p>
-          </div>
-
-          <OrderForm />
-        </div>
-      </section>
-
-      {/* Frequently Asked Questions */}
-      <FaqSection />
-
-      {/* Final Call-To-Action Banner */}
-      <CtaSection
-        whatsappNumber={settings.whatsappNumber}
-        onOpenSampleKit={() => setIsSampleKitOpen(true)}
-      />
-
-      {/* Enterprise Multi-Column Footer */}
-      <Footer
-        whatsappNumber={settings.whatsappNumber}
-        onOpenSampleKit={() => setIsSampleKitOpen(true)}
-      />
-
-      {/* Physical Swatch Box Modal */}
-      <SampleKitModal
-        isOpen={isSampleKitOpen}
-        onClose={() => setIsSampleKitOpen(false)}
-      />
+      {/* 11. Enterprise Footer */}
+      <Footer whatsappNumber={settings.whatsappNumber} />
 
     </div>
   );
