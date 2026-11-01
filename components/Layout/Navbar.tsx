@@ -5,16 +5,17 @@ import Link from 'next/link';
 
 interface NavbarProps {
   whatsappNumber?: string;
+  onOpenSampleKit?: () => void;
 }
 
-export default function Navbar({ whatsappNumber = '18005557282' }: NavbarProps) {
+export default function Navbar({ whatsappNumber = '18005557282', onOpenSampleKit }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <nav className="sticky top-0 z-50 w-full backdrop-blur-xl bg-[#070913]/90 border-b border-white/10 transition-all duration-300">
       <div className="max-w-7xl mx-auto flex h-16 sm:h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
         
-        {/* Brand Logo matching EmbroidPro aesthetic */}
+        {/* Brand Logo */}
         <Link href="/" className="inline-flex items-center gap-2.5 group shrink-0">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#5448ea] via-[#6366f1] to-[#7c3aed] p-0.5 shadow-lg shadow-indigo-500/25 group-hover:scale-105 transition-transform flex items-center justify-center">
             <div className="w-full h-full bg-[#0a0d1e] rounded-[10px] flex items-center justify-center font-black text-indigo-400">
@@ -29,31 +30,31 @@ export default function Navbar({ whatsappNumber = '18005557282' }: NavbarProps) 
           </div>
           <div>
             <div className="text-xl font-extrabold tracking-tight text-white flex items-center gap-1 font-sans">
-              EMBROID<span className="text-[#5448ea]">PATCHES</span>
+              APEX<span className="text-[#5448ea]">PATCHES</span>
             </div>
             <div className="text-[10px] font-mono tracking-widest uppercase text-slate-400">
-              Custom Patch Manufacturer
+              Direct Custom Patch Factory
             </div>
           </div>
         </Link>
 
         {/* Desktop Navigation Links */}
-        <div className="hidden lg:flex items-center gap-7 text-sm font-semibold text-slate-300">
+        <div className="hidden xl:flex items-center gap-6 text-xs sm:text-sm font-semibold text-slate-300">
           <a href="#services" className="hover:text-indigo-400 transition-colors">
             Patch Styles
           </a>
-          <a href="#pricing" className="hover:text-indigo-400 transition-colors">
-            Pricing
-          </a>
-          <a href="#standards" className="hover:text-indigo-400 transition-colors">
-            The Standard
+          <a href="#patch-advisor" className="flex items-center gap-1 hover:text-indigo-400 transition-colors text-indigo-300">
+            <span>Advisor</span>
           </a>
           <a href="#customizer-studio" className="flex items-center gap-1.5 hover:text-indigo-400 transition-colors">
             <span className="w-2 h-2 rounded-full bg-indigo-500 animate-ping" />
             <span>3D Studio</span>
           </a>
-          <a href="#portfolio" className="hover:text-indigo-400 transition-colors">
-            Portfolio
+          <a href="#calculator" className="hover:text-indigo-400 transition-colors">
+            Bulk Calculator
+          </a>
+          <a href="#merchandise" className="hover:text-indigo-400 transition-colors">
+            Merch &amp; Digital
           </a>
           <a href="#how-it-works" className="hover:text-indigo-400 transition-colors">
             How It Works
@@ -65,6 +66,19 @@ export default function Navbar({ whatsappNumber = '18005557282' }: NavbarProps) 
 
         {/* Action Buttons */}
         <div className="flex items-center gap-2 sm:gap-3">
+          
+          {/* Sample Swatch Box Pill */}
+          {onOpenSampleKit && (
+            <button
+              onClick={onOpenSampleKit}
+              className="hidden md:flex items-center gap-1.5 rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold text-slate-200 hover:bg-white/10 hover:border-indigo-400/40 hover:text-white transition-all shadow-xs cursor-pointer"
+              title="Request a Physical Material Swatch Box"
+            >
+              <span>📦</span>
+              <span>Sample Box</span>
+            </button>
+          )}
+
           {/* Admin Portal Pill */}
           <Link
             href="/admin"
@@ -78,7 +92,7 @@ export default function Navbar({ whatsappNumber = '18005557282' }: NavbarProps) 
 
           {/* WhatsApp Direct Chat */}
           <a
-            href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Hello EmbroidPatches, I need a custom patch quote!')}`}
+            href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Hello ApexPatches, I need a custom patch quote!')}`}
             target="_blank"
             rel="noopener noreferrer"
             className="hidden sm:flex items-center gap-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-xs font-bold text-emerald-400 hover:bg-emerald-500/20 transition-all"
@@ -99,7 +113,7 @@ export default function Navbar({ whatsappNumber = '18005557282' }: NavbarProps) 
           {/* Mobile Hamburger Toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 text-slate-400 hover:text-white lg:hidden"
+            className="p-2 text-slate-400 hover:text-white xl:hidden"
             aria-label="Toggle Menu"
           >
             <svg className="w-6 h-6 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2">
@@ -115,27 +129,20 @@ export default function Navbar({ whatsappNumber = '18005557282' }: NavbarProps) 
 
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="border-b border-white/10 bg-[#080b16] px-4 pt-3 pb-6 lg:hidden space-y-3">
+        <div className="border-b border-white/10 bg-[#080b16] px-4 pt-3 pb-6 xl:hidden space-y-3">
           <a
             href="#services"
             onClick={() => setMobileMenuOpen(false)}
             className="block py-2 text-sm font-semibold text-slate-300 hover:text-indigo-400"
           >
-            🧵 Patch Styles & Materials
+            🧵 Patch Styles &amp; Materials
           </a>
           <a
-            href="#pricing"
+            href="#patch-advisor"
             onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 text-sm font-semibold text-slate-300 hover:text-indigo-400"
+            className="block py-2 text-sm font-semibold text-indigo-400"
           >
-            💲 Wholesale Pricing Plans
-          </a>
-          <a
-            href="#standards"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 text-sm font-semibold text-slate-300 hover:text-indigo-400"
-          >
-            📐 The EmbroidPro Standard
+            🧭 Smart Patch Advisor (Quiz)
           </a>
           <a
             href="#customizer-studio"
@@ -145,18 +152,25 @@ export default function Navbar({ whatsappNumber = '18005557282' }: NavbarProps) 
             ✨ 3D Interactive Patch Studio
           </a>
           <a
-            href="#portfolio"
+            href="#calculator"
             onClick={() => setMobileMenuOpen(false)}
             className="block py-2 text-sm font-semibold text-slate-300 hover:text-indigo-400"
           >
-            🖼️ Production Gallery
+            🧮 Bulk Wholesale Calculator
+          </a>
+          <a
+            href="#merchandise"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block py-2 text-sm font-semibold text-slate-300 hover:text-indigo-400"
+          >
+            🎖️ Pins, Coins &amp; Digitizing Services
           </a>
           <a
             href="#how-it-works"
             onClick={() => setMobileMenuOpen(false)}
             className="block py-2 text-sm font-semibold text-slate-300 hover:text-indigo-400"
           >
-            🚀 How It Works
+            🚀 How It Works (Proof &amp; Sample Guarantee)
           </a>
           <a
             href="#faq"
@@ -167,6 +181,17 @@ export default function Navbar({ whatsappNumber = '18005557282' }: NavbarProps) 
           </a>
 
           <div className="pt-3 border-t border-white/10 flex flex-col gap-2">
+            {onOpenSampleKit && (
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  onOpenSampleKit();
+                }}
+                className="py-2.5 rounded-xl border border-white/20 bg-white/5 text-center font-bold text-white text-xs"
+              >
+                📦 Request Physical Swatch Box
+              </button>
+            )}
             <Link
               href="/admin"
               onClick={() => setMobileMenuOpen(false)}

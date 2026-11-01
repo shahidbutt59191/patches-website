@@ -7,12 +7,14 @@ interface FooterProps {
   supportEmail?: string;
   supportPhone?: string;
   whatsappNumber?: string;
+  onOpenSampleKit?: () => void;
 }
 
 export default function Footer({
   supportEmail = 'orders@apexpatches.com',
   supportPhone = '+1 (800) 555-7282',
   whatsappNumber = '18005557282',
+  onOpenSampleKit,
 }: FooterProps) {
   return (
     <footer className="border-t border-white/10 bg-[#060810] text-slate-400 text-xs relative">
@@ -23,26 +25,37 @@ export default function Footer({
           <div className="lg:col-span-2 space-y-4">
             <Link href="/" className="inline-flex items-center gap-2.5">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#5448ea] to-[#7c3aed] flex items-center justify-center font-black text-white text-sm shadow-md">
-                EP
+                AP
               </div>
               <div>
                 <div className="text-lg font-black tracking-tight text-white font-sans">
-                  EMBROID<span className="text-[#5448ea]">PATCHES</span>
+                  APEX<span className="text-[#5448ea]">PATCHES</span>
                 </div>
                 <div className="text-[9px] font-mono tracking-widest uppercase text-slate-500">
-                  Commercial Patch Manufacturer
+                  Custom Patch &amp; Merch Factory
                 </div>
               </div>
             </Link>
 
             <p className="text-xs text-slate-400 max-w-sm leading-relaxed">
-              Industrial Tajima computerized embroidery, 3D soft PVC rubber molding, laser-cut leatherette, and varsity chenille patches. Direct factory facility with zero middlemen.
+              Industrial Tajima computerized embroidery, 3D soft PVC rubber molding, laser-cut leatherette, varsity chenille, custom enamel pins, and commercial digitizing. Direct factory facility with zero middlemen.
             </p>
 
             <div className="pt-2 flex items-center gap-2 font-mono text-[11px] text-emerald-400">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               <span>Production Looms Active: 24/6 Operation</span>
             </div>
+
+            {onOpenSampleKit && (
+              <div className="pt-2">
+                <button
+                  onClick={onOpenSampleKit}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-white/15 bg-white/5 hover:bg-white/10 text-white font-mono text-xs transition-colors"
+                >
+                  <span>📦 Request Physical Swatch Box</span>
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Col 2: Patch Styles */}
@@ -57,21 +70,22 @@ export default function Footer({
               <li><a href="#services" className="hover:text-indigo-400 transition-colors">Laser-Cut Leatherette</a></li>
               <li><a href="#services" className="hover:text-indigo-400 transition-colors">Micro-Woven Damask</a></li>
               <li><a href="#services" className="hover:text-indigo-400 transition-colors">Dye-Sublimated Photo</a></li>
+              <li><a href="#patch-advisor" className="text-indigo-400 hover:underline">🧭 Smart Patch Advisor</a></li>
             </ul>
           </div>
 
-          {/* Col 3: Backings & Hardware */}
+          {/* Col 3: Merch & Services */}
           <div className="space-y-3">
             <h4 className="text-[11px] font-mono font-bold uppercase tracking-wider text-white">
-              Attachment Backings
+              Merch &amp; Digital Services
             </h4>
             <ul className="space-y-2">
-              <li><a href="#backings" className="hover:text-indigo-400 transition-colors">Hook & Loop (Velcro)</a></li>
-              <li><a href="#backings" className="hover:text-indigo-400 transition-colors">Heat-Seal Iron-On Film</a></li>
-              <li><a href="#backings" className="hover:text-indigo-400 transition-colors">Reinforced Sew-On Twill</a></li>
-              <li><a href="#backings" className="hover:text-indigo-400 transition-colors">3M Heavy Peel & Stick</a></li>
-              <li><a href="#backings" className="hover:text-indigo-400 transition-colors">Dual-Magnet Pinless Bar</a></li>
-              <li><a href="#backings" className="hover:text-indigo-400 transition-colors">Merrowed Overlock Edge</a></li>
+              <li><a href="#merchandise" className="hover:text-indigo-400 transition-colors">Custom Enamel Lapel Pins</a></li>
+              <li><a href="#merchandise" className="hover:text-indigo-400 transition-colors">Embroidered Flight Tags</a></li>
+              <li><a href="#merchandise" className="hover:text-indigo-400 transition-colors">Solid Challenge Coins</a></li>
+              <li><a href="#merchandise" className="hover:text-indigo-400 transition-colors">Tajima Embroidery Digitizing (DST)</a></li>
+              <li><a href="#merchandise" className="hover:text-indigo-400 transition-colors">Vector Art Recreation (AI/EPS)</a></li>
+              <li><a href="#backings" className="hover:text-indigo-400 transition-colors">Hardware &amp; Backings Guide</a></li>
             </ul>
           </div>
 
@@ -117,7 +131,7 @@ export default function Footer({
         {/* Bottom Bar: Copyright & Payment Badges */}
         <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-slate-500 font-mono text-[11px]">
           <div>
-            © 2026 EmbroidPatches Manufacturing Co. All rights reserved. •{' '}
+            © 2026 ApexPatches Manufacturing Co. All rights reserved. •{' '}
             <Link href="/admin" className="text-indigo-400 hover:underline font-bold">
               Operations Admin
             </Link>
