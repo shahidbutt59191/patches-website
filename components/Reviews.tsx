@@ -1,151 +1,151 @@
 'use client';
 
-import React from 'react';
-import { Star, ShieldCheck, CheckCircle2 } from 'lucide-react';
-
-const REVIEWS = [
-  {
-    name: 'Capt. David Miller',
-    role: 'Logistics Commander',
-    org: 'Task Force Apex Tactical',
-    rating: 5,
-    order: '500 pcs 3D PVC Morale Patches',
-    text: 'The 3D PVC mold precision is razor sharp. The coyote tan matches our OCP combat uniform specs flawlessly, and the hook-and-loop backing holds rock-solid through live field operations.',
-  },
-  {
-    name: 'Marcus Vance',
-    role: 'Athletics Coordinator',
-    org: 'Eastbrook Collegiate Athletics',
-    rating: 5,
-    order: '150 pcs Vintage Chenille Letters',
-    text: 'Our varsity championship letterman patches arrived in just 6 business days. Thick fluffy loop pile, double-layer wool felt, and vibrant gold thread. Students and alumni were blown away.',
-  },
-  {
-    name: 'Elena Rostova',
-    role: 'Brand & Creative Director',
-    org: 'Timber & Bean Roasters',
-    rating: 5,
-    order: '250 pcs Laser-Cut Leatherette',
-    text: 'We had our logo etched onto rustic caramel synthetic leather for trucker snapbacks. The laser detail is unbelievable down to the finest lines, and the 3M adhesive stayed tight through repeat wash cycles.',
-  },
-  {
-    name: 'Jesse "Ironhead" Thorne',
-    role: 'Road Captain',
-    org: 'Iron Horse MC Brotherhood',
-    rating: 5,
-    order: '50 sets Curved Embroidered Rockers',
-    text: 'Toughest back patches we have ever run. Heavy twill background, thick merrowed border that does not fray at 80mph, and thread that does not fade under blistering sun and torrential rain. 10/10 factory service.',
-  },
-];
-
-const GUARANTEES = [
-  {
-    title: '100% Machine Calibrated by Masters',
-    desc: 'Every stitch path, underlay angle, and pull-compensation tolerance is manually plotted by master digitizers for clean, production-speed commercial sew-outs.',
-    icon: '🧵',
-  },
-  {
-    title: 'Free Proofing & Unlimited Revisions',
-    desc: 'We send an exact digital stitch simulation within 6 hours. You receive unlimited free design revisions until you are 100% satisfied before we run looms.',
-    icon: '✨',
-  },
-  {
-    title: 'Exact Thread & Pantone PMS Matching',
-    desc: 'We match your brand colors to genuine Madeira poly/rayon thread numbers and Pantone solid coated PMS formulas with zero color distortion.',
-    icon: '🎨',
-  },
-  {
-    title: 'Zero-Defect Replacement Guarantee',
-    desc: 'If any patch in your batch has broken threads, misaligned borders, or defective backing, we remanufacture and rush deliver replacements 100% free of charge.',
-    icon: '🛡️',
-  },
-];
+import React, { useState } from 'react';
+import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
 
 export default function Reviews() {
+  const reviews = [
+    {
+      id: 1,
+      name: 'David Miller',
+      country: 'USA',
+      quote: 'Excellent quality and super fast delivery. Highly recommended!',
+      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
+      initials: 'DM',
+    },
+    {
+      id: 2,
+      name: 'Sarah Johnson',
+      country: 'Canada',
+      quote: 'Amazing patches! The colors are perfect. Will order again.',
+      avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80',
+      initials: 'SJ',
+    },
+    {
+      id: 3,
+      name: 'Ahmed Khan',
+      country: 'UK',
+      quote: 'Professional service and outstanding quality.',
+      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
+      initials: 'AK',
+    },
+    {
+      id: 4,
+      name: 'Michael Rossi',
+      country: 'Australia',
+      quote: 'Turnaround was under 10 days and stitch density is unmatched!',
+      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80',
+      initials: 'MR',
+    },
+  ];
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const prevReview = () => {
+    setCurrentIndex((prev) => (prev === 0 ? reviews.length - 3 : prev - 1));
+  };
+
+  const nextReview = () => {
+    setCurrentIndex((prev) => (prev >= reviews.length - 3 ? 0 : prev + 1));
+  };
+
   return (
-    <section className="py-20 sm:py-28 bg-white border-b border-slate-200 relative">
+    <section className="py-14 sm:py-18 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Reviews Section Header */}
-        <div className="flex flex-col gap-2.5 text-center items-center mb-16">
-          <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border text-[11px] font-bold uppercase tracking-[0.16em] bg-blue-50 text-blue-700 border-blue-200 font-mono">
-            <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
-            5.0★ Verified Customer Trust
-          </span>
-          <h2 className="text-3xl sm:text-5xl font-extrabold tracking-[-0.035em] text-slate-900 leading-[1.12] max-w-3xl">
-            Trusted by 3,800+ Brands, Teams &amp; Armed Forces
-          </h2>
-          <p className="text-sm sm:text-base leading-relaxed text-slate-600 max-w-2xl mx-auto">
-            From tactical military units and first responders to collegiate varsity teams and international streetwear brands.
-          </p>
-        </div>
+        {/* Dark Container exactly matching screenshot */}
+        <div className="relative rounded-3xl bg-[#111318] border border-slate-800 p-8 sm:p-12 text-white shadow-2xl overflow-hidden">
+          
+          {/* Subtle Fabric Grid */}
+          <div className="absolute inset-0 bg-fabric-pattern opacity-40 pointer-events-none" />
 
-        {/* 4 Reviews Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-20">
-          {REVIEWS.map((r, i) => (
-            <div
-              key={i}
-              className="rounded-3xl border border-slate-200 bg-slate-50 p-7 flex flex-col justify-between shadow-xs hover:border-blue-400 hover:shadow-md transition-all"
+          {/* Heading with Orange Accents */}
+          <div className="relative z-10 text-center mb-10 flex items-center justify-center gap-4">
+            <span className="h-0.5 w-10 sm:w-16 bg-gradient-to-r from-transparent to-orange-500 rounded-full" />
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
+              What Our Customers Say
+            </h2>
+            <span className="h-0.5 w-10 sm:w-16 bg-gradient-to-l from-transparent to-orange-500 rounded-full" />
+          </div>
+
+          {/* Reviews Carousel Wrapper */}
+          <div className="relative z-10 flex items-center justify-between gap-4">
+            
+            {/* Left Nav Arrow */}
+            <button
+              type="button"
+              onClick={prevReview}
+              aria-label="Previous review"
+              className="w-9 h-9 rounded-full bg-slate-800/80 hover:bg-orange-500 text-slate-300 hover:text-white flex items-center justify-center transition-colors shrink-0 cursor-pointer"
             >
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-1 text-amber-500">
-                    {[...Array(r.rating)].map((_, idx) => (
-                      <Star key={idx} className="w-4 h-4 fill-amber-400 text-amber-500" />
-                    ))}
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+
+            {/* 3 Review Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+              {reviews.slice(currentIndex, currentIndex + 3).map((item) => (
+                <div
+                  key={item.id}
+                  className="rounded-2xl bg-[#181b22] border border-slate-800/90 p-6 flex flex-col justify-between hover:border-orange-500/50 transition-colors shadow-inner"
+                >
+                  
+                  {/* Customer Quote */}
+                  <p className="text-xs sm:text-sm text-slate-300 italic leading-relaxed mb-6">
+                    &ldquo;{item.quote}&rdquo;
+                  </p>
+
+                  {/* Customer Info & Orange Stars */}
+                  <div className="flex items-center justify-between pt-4 border-t border-slate-800">
+                    
+                    {/* Avatar & Name */}
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full overflow-hidden bg-orange-600 flex items-center justify-center text-xs font-bold text-white border-2 border-orange-500">
+                        {/* Fallback to initials if image fails */}
+                        <img
+                          src={item.avatar}
+                          alt={item.name}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            (e.currentTarget as HTMLElement).style.display = 'none';
+                          }}
+                        />
+                        <span>{item.initials}</span>
+                      </div>
+                      <div>
+                        <div className="text-xs font-bold text-white leading-tight">
+                          {item.name}
+                        </div>
+                        <div className="text-[10px] text-slate-400 font-medium">
+                          {item.country}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 5 Orange Stars */}
+                    <div className="flex items-center gap-0.5 text-orange-500">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className="w-3.5 h-3.5 fill-orange-500 text-orange-500" />
+                      ))}
+                    </div>
+
                   </div>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 font-bold">
-                    ✓ Verified Production Batch
-                  </span>
-                </div>
 
-                <p className="text-xs sm:text-sm text-slate-700 italic leading-relaxed">
-                  &ldquo;{r.text}&rdquo;
-                </p>
-              </div>
-
-              <div className="mt-6 pt-4 border-t border-slate-200 flex items-center justify-between text-xs font-mono">
-                <div>
-                  <div className="font-bold text-slate-900">{r.name}</div>
-                  <div className="text-[11px] text-slate-500">{r.role} • {r.org}</div>
                 </div>
-                <div className="text-right text-[10px] text-blue-600 font-bold">
-                  {r.order}
-                </div>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
 
-        {/* Quadruple Factory Guarantee Banner */}
-        <div className="rounded-3xl bg-slate-900 text-white p-8 sm:p-12 shadow-xl">
-          <div className="text-center max-w-2xl mx-auto mb-10">
-            <span className="text-xs font-mono font-bold uppercase tracking-wider text-amber-400 block mb-2">
-              ✦ ZERO RISK COMMITMENT
-            </span>
-            <h3 className="text-2xl sm:text-3xl font-black text-white">
-              The Quadruple Factory Guarantee
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-300 mt-2">
-              Every single patch batch leaving our facility is protected by 4 non-negotiable manufacturing standards.
-            </p>
+            {/* Right Nav Arrow */}
+            <button
+              type="button"
+              onClick={nextReview}
+              aria-label="Next review"
+              className="w-9 h-9 rounded-full bg-slate-800/80 hover:bg-orange-500 text-slate-300 hover:text-white flex items-center justify-center transition-colors shrink-0 cursor-pointer"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {GUARANTEES.map((g, idx) => (
-              <div key={idx} className="p-5 rounded-2xl bg-white/5 border border-white/10 flex flex-col justify-between">
-                <div>
-                  <span className="text-3xl block mb-3">{g.icon}</span>
-                  <h4 className="font-bold text-sm text-white mb-1.5">{g.title}</h4>
-                  <p className="text-xs text-slate-300 leading-relaxed">{g.desc}</p>
-                </div>
-                <div className="mt-4 pt-3 border-t border-white/10 text-[10px] font-mono text-emerald-400 flex items-center gap-1 font-bold">
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                  <span>100% Policy Backed</span>
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
 
       </div>

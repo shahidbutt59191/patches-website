@@ -2,203 +2,243 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Shield, Star, MessageSquare, Menu, X, ArrowRight, Lock, Phone } from 'lucide-react';
+import { Mail, Truck, Clock, Search, ArrowRight, Menu, X } from 'lucide-react';
 
 interface NavbarProps {
-  whatsappNumber?: string;
+  onOpenQuote?: () => void;
+  onOpenSearch?: () => void;
 }
 
-export default function Navbar({ whatsappNumber = '18005557282' }: NavbarProps) {
+export default function Navbar({ onOpenQuote, onOpenSearch }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 w-full transition-all duration-300">
       
-      {/* Top Trust & Hotline Ticker */}
-      <div className="bg-slate-900 text-slate-300 border-b border-slate-800 py-2 px-4 text-xs font-mono">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 text-[11px]">
-          <div className="flex items-center gap-3">
-            <span className="flex items-center gap-1 text-amber-400 font-bold">
-              <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-              <span>4.9/5 Rating (3,800+ Verified Orders)</span>
-            </span>
-            <span className="hidden md:inline text-slate-600">•</span>
-            <span className="hidden md:inline text-slate-300">
-              ⚡ Free 6-Hour Digital Proof with Unlimited Revisions
-            </span>
-            <span className="hidden lg:inline text-slate-600">•</span>
-            <span className="hidden lg:inline text-emerald-400 font-semibold">
-              ✓ Free Worldwide Delivery on Bulk Runs
-            </span>
+      {/* 1. Dark Charcoal Top Announcement & Trust Bar */}
+      <div className="bg-[#111318] text-slate-300 py-2 px-4 sm:px-6 text-xs border-b border-slate-800">
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 text-[11px] sm:text-xs">
+          
+          {/* Left Details */}
+          <div className="flex items-center flex-wrap gap-2 sm:gap-4 text-slate-300">
+            <a
+              href="mailto:support@bdigitizing.com"
+              className="flex items-center gap-1.5 hover:text-orange-400 transition-colors"
+            >
+              <Mail className="w-3.5 h-3.5 text-orange-500" />
+              <span>support@bdigitizing.com</span>
+            </a>
+
+            <span className="text-slate-600 hidden sm:inline">|</span>
+
+            <div className="flex items-center gap-1.5">
+              <Truck className="w-3.5 h-3.5 text-orange-500" />
+              <span>Free Shipping Worldwide</span>
+            </div>
+
+            <span className="text-slate-600 hidden md:inline">|</span>
+
+            <div className="hidden md:flex items-center gap-1.5">
+              <Clock className="w-3.5 h-3.5 text-orange-500" />
+              <span>10-14 Days Turnaround</span>
+            </div>
           </div>
 
-          <div className="flex items-center gap-4 text-slate-400">
-            <span className="hidden sm:inline">
-              Direct Loom Hotline: <strong className="text-white font-mono">+1 (800) 555-7282</strong>
-            </span>
-            <span className="text-slate-700 hidden sm:inline">|</span>
+          {/* Right Social Media Links */}
+          <div className="flex items-center gap-3 text-slate-400">
             <a
-              href={`https://wa.me/${whatsappNumber}`}
+              href="https://facebook.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5 font-semibold"
+              aria-label="Facebook"
+              className="hover:text-orange-400 transition-colors"
             >
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span>WhatsApp Desk 24/7</span>
+              <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" />
+              </svg>
+            </a>
+            <a
+              href="https://instagram.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+              className="hover:text-orange-400 transition-colors"
+            >
+              <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+              </svg>
+            </a>
+            <a
+              href="https://youtube.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="YouTube"
+              className="hover:text-orange-400 transition-colors"
+            >
+              <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+              </svg>
+            </a>
+            <a
+              href="https://linkedin.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="LinkedIn"
+              className="hover:text-orange-400 transition-colors"
+            >
+              <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+              </svg>
             </a>
           </div>
+
         </div>
       </div>
 
-      {/* Main Navbar */}
-      <nav className="w-full backdrop-blur-xl bg-white/95 border-b border-slate-200/80 shadow-xs">
+      {/* 2. Main White Brand Navbar */}
+      <nav className="w-full bg-white border-b border-slate-100 shadow-xs">
         <div className="max-w-7xl mx-auto flex h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
           
-          {/* Brand Logo */}
+          {/* Logo: BDigitizing */}
           <Link href="/" className="inline-flex items-center gap-3 group shrink-0">
-            <div className="w-11 h-11 rounded-xl bg-slate-900 text-amber-400 flex items-center justify-center font-black shadow-md group-hover:scale-105 transition-transform">
-              <Shield className="w-6 h-6 text-blue-500 fill-blue-500/20" />
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-orange-600 to-orange-500 text-white flex items-center justify-center font-black shadow-md group-hover:scale-105 transition-transform">
+              {/* Stylized 'B' stitch icon */}
+              <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-white fill-none stroke-[2.5]" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M6 4h7a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z" />
+                <path d="M6 12h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z" />
+                <line x1="6" y1="4" x2="6" y2="20" />
+              </svg>
             </div>
             <div>
-              <div className="text-xl font-black tracking-tight text-slate-900 flex items-center gap-1.5 font-sans">
-                <span>APEX</span>
-                <span className="text-blue-600">PATCHES</span>
+              <div className="text-2xl font-black tracking-tight text-slate-950 flex items-center gap-1 font-sans">
+                <span className="text-orange-500">B</span>Digitizing
               </div>
-              <div className="text-[10px] font-mono tracking-widest uppercase text-slate-500">
-                Direct Custom Patch Manufacturer
+              <div className="text-[10px] tracking-wider uppercase text-slate-500 font-semibold">
+                — Stitch Your Identity —
               </div>
             </div>
           </Link>
 
           {/* Desktop Navigation Links */}
-          <div className="hidden xl:flex items-center gap-7 text-xs font-semibold text-slate-700 tracking-wide">
-            <a href="#services" className="hover:text-blue-600 transition-colors">
-              Patch Services
+          <div className="hidden lg:flex items-center gap-8 text-sm font-semibold text-slate-700">
+            <Link href="/" className="text-orange-500 font-bold border-b-2 border-orange-500 pb-1">
+              Home
+            </Link>
+            <a href="#services" className="hover:text-orange-500 transition-colors">
+              Custom Patches
             </a>
-            <a href="#comparison" className="hover:text-blue-600 transition-colors">
-              Compare Materials
-            </a>
-            <a href="#calculator" className="hover:text-blue-600 transition-colors">
-              Bulk Calculator
-            </a>
-            <a href="#backings" className="hover:text-blue-600 transition-colors">
-              Fasteners &amp; Borders
-            </a>
-            <a href="#process" className="hover:text-blue-600 transition-colors">
-              How It Works
-            </a>
-            <a href="#gallery" className="hover:text-blue-600 transition-colors">
+            <a href="#services" className="hover:text-orange-500 transition-colors">
               Gallery
             </a>
-            <a href="#faq" className="hover:text-blue-600 transition-colors">
+            <a href="#why-us" className="hover:text-orange-500 transition-colors">
+              About
+            </a>
+            <a href="#faq" className="hover:text-orange-500 transition-colors">
               FAQ
             </a>
+            <a href="#faq" className="hover:text-orange-500 transition-colors">
+              Contact
+            </a>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex items-center gap-2.5 sm:gap-3">
-            <Link
-              href="/admin"
-              className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-100 hover:bg-slate-200 px-3 py-2 text-xs font-bold text-slate-700 transition-all"
-              title="Secure Factory Operations Portal"
-            >
-              <Lock className="w-3.5 h-3.5 text-slate-600" />
-              <span className="hidden sm:inline">Admin</span>
-            </Link>
-
-            <a
-              href="#quote"
-              className="inline-flex items-center justify-center gap-2 font-bold text-white rounded-xl px-5 py-2.5 text-xs sm:text-sm btn-primary-blue cursor-pointer shadow-md"
-            >
-              <span>Get Free Quote &amp; Proof</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </a>
-
-            {/* Mobile Hamburger Toggle */}
+          {/* Right Action Icons & Quote CTA */}
+          <div className="flex items-center gap-4">
             <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2.5 text-slate-600 hover:text-slate-900 xl:hidden rounded-lg bg-slate-100 border border-slate-200 cursor-pointer"
-              aria-label="Toggle Menu"
+              type="button"
+              onClick={onOpenSearch}
+              aria-label="Search"
+              className="p-2 rounded-full text-slate-600 hover:text-orange-500 hover:bg-orange-50 transition-colors"
             >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              <Search className="w-5 h-5" />
+            </button>
+
+            <button
+              type="button"
+              onClick={onOpenQuote}
+              className="btn-orange px-5 py-2.5 rounded-full text-sm flex items-center gap-2 cursor-pointer"
+            >
+              <span>Get a Quote</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+
+            {/* Mobile Menu Toggle Button */}
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden p-2 text-slate-700 hover:text-orange-500"
+              aria-label="Toggle navigation menu"
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
+
         </div>
 
-        {/* Mobile Navigation Drawer */}
+        {/* Mobile Slideout Nav */}
         {mobileMenuOpen && (
-          <div className="border-b border-slate-200 bg-white px-4 pt-4 pb-6 xl:hidden space-y-3 shadow-lg animate-in fade-in duration-150">
-            <a
-              href="#services"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block py-2 text-sm font-semibold text-slate-800 hover:text-blue-600"
-            >
-              🧵 Patch Services &amp; Styles
-            </a>
-            <a
-              href="#comparison"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block py-2 text-sm font-semibold text-slate-800 hover:text-blue-600"
-            >
-              📊 Compare Patch Materials
-            </a>
-            <a
-              href="#calculator"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block py-2 text-sm font-semibold text-slate-800 hover:text-blue-600"
-            >
-              🧮 Bulk Pricing Calculator
-            </a>
-            <a
-              href="#backings"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block py-2 text-sm font-semibold text-slate-800 hover:text-blue-600"
-            >
-              🧲 Fasteners &amp; Backings Guide
-            </a>
-            <a
-              href="#process"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block py-2 text-sm font-semibold text-slate-800 hover:text-blue-600"
-            >
-              🚀 4-Step Production Process
-            </a>
-            <a
-              href="#gallery"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block py-2 text-sm font-semibold text-slate-800 hover:text-blue-600"
-            >
-              🖼️ Client Work Gallery
-            </a>
-            <a
-              href="#faq"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block py-2 text-sm font-semibold text-slate-800 hover:text-blue-600"
-            >
-              ❓ Frequently Asked Questions
-            </a>
-
-            <div className="pt-3 border-t border-slate-200 flex flex-col gap-2.5">
-              <a
-                href="#quote"
+          <div className="lg:hidden bg-white border-b border-slate-200 px-6 py-5 space-y-4 shadow-lg animate-in fade-in">
+            <div className="flex flex-col space-y-3 font-semibold text-slate-800 text-sm">
+              <Link
+                href="/"
                 onClick={() => setMobileMenuOpen(false)}
-                className="py-3 rounded-xl btn-primary-blue text-center font-bold text-white text-xs"
+                className="text-orange-500 font-bold"
               >
-                Get Free Proof &amp; Quote
+                Home
+              </Link>
+              <a
+                href="#services"
+                onClick={() => setMobileMenuOpen(false)}
+                className="hover:text-orange-500"
+              >
+                Custom Patches
               </a>
               <a
-                href={`https://wa.me/${whatsappNumber}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="py-2.5 rounded-xl bg-emerald-600 text-center font-bold text-white text-xs flex items-center justify-center gap-2"
+                href="#services"
+                onClick={() => setMobileMenuOpen(false)}
+                className="hover:text-orange-500"
               >
-                <MessageSquare className="w-4 h-4" />
-                <span>Chat on WhatsApp (24/7 Desk)</span>
+                Gallery
               </a>
+              <a
+                href="#why-us"
+                onClick={() => setMobileMenuOpen(false)}
+                className="hover:text-orange-500"
+              >
+                About
+              </a>
+              <a
+                href="#faq"
+                onClick={() => setMobileMenuOpen(false)}
+                className="hover:text-orange-500"
+              >
+                FAQ
+              </a>
+              <a
+                href="#faq"
+                onClick={() => setMobileMenuOpen(false)}
+                className="hover:text-orange-500"
+              >
+                Contact
+              </a>
+            </div>
+
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  if (onOpenQuote) onOpenQuote();
+                }}
+                className="w-full btn-orange py-3 rounded-full text-center text-sm font-bold flex items-center justify-center gap-2"
+              >
+                <span>Get a Free Quote</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
             </div>
           </div>
         )}
       </nav>
+
     </header>
   );
 }

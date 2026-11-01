@@ -1,130 +1,103 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import Services from '@/components/Services';
-import ComparisonTable from '@/components/ComparisonTable';
-import Calculator from '@/components/Calculator';
-import Backings from '@/components/Backings';
+import WhyChooseUs from '@/components/WhyChooseUs';
 import Process from '@/components/Process';
-import Gallery from '@/components/Gallery';
-import QuoteForm from '@/components/QuoteForm';
 import Reviews from '@/components/Reviews';
-import Faq from '@/components/Faq';
+import FaqAndCta from '@/components/FaqAndCta';
 import Footer from '@/components/Footer';
-import { SiteSettings, DEFAULT_SETTINGS } from '@/lib/settings';
+import QuoteModal from '@/components/QuoteModal';
+import VideoModal from '@/components/VideoModal';
+import SearchModal from '@/components/SearchModal';
 
 export default function HomePage() {
-  const [settings, setSettings] = useState<SiteSettings>(DEFAULT_SETTINGS);
+  const [quoteModalOpen, setQuoteModalOpen] = useState(false);
+  const [videoModalOpen, setVideoModalOpen] = useState(false);
+  const [searchModalOpen, setSearchModalOpen] = useState(false);
+  const [activePatchStyle, setActivePatchStyle] = useState('embroidered');
 
-  // Dynamic shared spec state
-  const [selectedStyle, setSelectedStyle] = useState('embroidered');
-  const [selectedWidth, setSelectedWidth] = useState(3.0);
-  const [selectedHeight, setSelectedHeight] = useState(3.0);
-  const [selectedBacking, setSelectedBacking] = useState('velcro_hook_loop');
-  const [selectedQuantity, setSelectedQuantity] = useState(100);
-
-  useEffect(() => {
-    // 1. Check local storage
-    try {
-      const local = localStorage.getItem('apex_live_settings');
-      if (local) {
-        setSettings({ ...DEFAULT_SETTINGS, ...JSON.parse(local) });
-      }
-    } catch (e) {
-      console.log('Error reading local settings:', e);
+  const handleOpenQuote = (styleId?: string) => {
+    if (styleId) {
+      setActivePatchStyle(styleId);
     }
-
-    // 2. Fetch fresh settings from API
-    fetch('/api/settings')
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (data) {
-          setSettings({ ...DEFAULT_SETTINGS, ...data });
-        }
-      })
-      .catch((err) => console.log('Settings fetch error:', err));
-  }, []);
-
-  const handleSelectStyle = (styleId: string) => {
-    setSelectedStyle(styleId);
+    setQuoteModalOpen(true);
   };
 
-  const handleApplySpecsFromCalculator = (specs: {
-    style: string;
-    width: number;
-    height: number;
-    backing: string;
-    quantity: number;
-  }) => {
-    setSelectedStyle(specs.style);
-    setSelectedWidth(specs.width);
-    setSelectedHeight(specs.height);
-    setSelectedBacking(specs.backing === 'velcro' ? 'velcro_hook_loop' : specs.backing);
-    setSelectedQuantity(specs.quantity);
+  const handleCloseQuote = () => {
+    setQuoteModalOpen(false);
+  };
+
+  const handleOpenVideo = () => {
+    setVideoModalOpen(true);
+  };
+
+  const handleCloseVideo = () => {
+    setVideoModalOpen(false);
+  };
+
+  const handleOpenSearch = () => {
+    setSearchModalOpen(true);
+  };
+
+  const handleCloseSearch = () => {
+    setSearchModalOpen(false);
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 selection:bg-blue-600 selection:text-white font-sans antialiased">
+    <div className="min-h-screen bg-white text-slate-900 font-sans antialiased selection:bg-orange-500 selection:text-white">
       
-      {/* Dynamic Top Announcement Banner */}
-      {settings.announcementEnabled && settings.announcementText && (
-        <div className="bg-blue-600 py-2.5 px-4 text-center text-xs font-bold text-white tracking-wide shadow-sm">
-          <span className="mr-2 inline-block rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-black uppercase text-white font-mono">
-            Special Offer
-          </span>
-          <span>{settings.announcementText}</span>
-        </div>
-      )}
-
-      {/* 1. Header & Navigation */}
-      <Navbar whatsappNumber={settings.whatsappNumber} />
-
-      {/* 2. Hero Section: Core Value Proposition & Live Specimen Inspector */}
-      <Hero
-        whatsappNumber={settings.whatsappNumber}
-        onSelectStyle={handleSelectStyle}
+      {/* 1. Header: Top Bar + Brand Navbar */}
+      <Navbar
+        onOpenQuote={() => handleOpenQuote()}
+        onOpenSearch={handleOpenSearch}
       />
 
-      {/* 3. Patch Services: 6 Core Materials Showcase */}
-      <Services onSelectStyle={handleSelectStyle} />
+      <main>
+        {/* 2. Hero Section: Badge, Title, Bullets, CTA Buttons & Realistic Patch Cluster */}
+        <Hero
+          onOpenQuote={() => handleOpenQuote()}
+          onOpenVideo={handleOpenVideo}
+        />
 
-      {/* 4. Side-by-Side Materials Comparison Guide */}
-      <ComparisonTable onSelectStyle={handleSelectStyle} />
+        {/* 3. Our Patch Services: 5 Cards (Embroidered, Iron-On, Velcro, Woven, Leather) */}
+        <Services onOpenQuote={handleOpenQuote} />
 
-      {/* 5. Bulk Pricing Calculator: Live Dimension & Quantity Sliders */}
-      <Calculator onApplySpecs={handleApplySpecsFromCalculator} />
+        {/* 4. Why Choose BDigitizing?: 4 Feature Icons + Stitched "CUSTOM PATCHES" Banner */}
+        <WhyChooseUs />
 
-      {/* 6. Backings & Borders: Fasteners & Edge Finishes Guide */}
-      <Backings />
+        {/* 5. Simple Ordering Process: 4 Connected Numbered Steps */}
+        <Process onOpenQuote={() => handleOpenQuote()} />
 
-      {/* 7. Production Process: 4 Transparent Steps & Photo Sample Guarantee */}
-      <Process />
+        {/* 6. What Our Customers Say: Dark Luxury Section with 5-Star Reviews */}
+        <Reviews />
 
-      {/* 8. Gallery: Real Client Work Across Tactical, Biker, Headwear & Varsity */}
-      <Gallery />
+        {/* 7. Frequently Asked Questions + Vibrant Orange CTA Box */}
+        <FaqAndCta onOpenQuote={() => handleOpenQuote()} />
+      </main>
 
-      {/* 9. Free Quote & Artwork Submission Form */}
-      <QuoteForm
-        initialStyle={selectedStyle}
-        initialWidth={selectedWidth}
-        initialHeight={selectedHeight}
-        initialBacking={selectedBacking}
-        initialQuantity={selectedQuantity}
+      {/* 8. Dark Footer */}
+      <Footer onOpenQuote={() => handleOpenQuote()} />
+
+      {/* Global Interactive Modals */}
+      <QuoteModal
+        isOpen={quoteModalOpen}
+        onClose={handleCloseQuote}
+        defaultStyle={activePatchStyle}
       />
 
-      {/* 10. Verified Customer Reviews & Quadruple Factory Guarantee */}
-      <Reviews />
+      <VideoModal
+        isOpen={videoModalOpen}
+        onClose={handleCloseVideo}
+        onOpenQuote={() => handleOpenQuote()}
+      />
 
-      {/* 11. Frequently Asked Questions */}
-      <Faq />
-
-      {/* 12. Enterprise Footer */}
-      <Footer
-        whatsappNumber={settings.whatsappNumber}
-        supportEmail={settings.supportEmail}
-        supportPhone={settings.supportPhone}
+      <SearchModal
+        isOpen={searchModalOpen}
+        onClose={handleCloseSearch}
+        onSelectService={(id) => handleOpenQuote(id)}
       />
 
     </div>
