@@ -16,22 +16,22 @@ export default function Footer({
   whatsappNumber = '18005557282',
 }: FooterProps) {
   return (
-    <footer className="border-t border-white/10 bg-[#060810] text-slate-400 text-xs relative">
+    <footer className="border-t border-slate-800 bg-slate-950 text-slate-400 text-xs relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-14">
           
           {/* Col 1: Brand Info */}
           <div className="lg:col-span-2 space-y-4">
             <Link href="/" className="inline-flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-amber-500 flex items-center justify-center font-black text-white text-sm shadow-md">
-                <Shield className="w-5 h-5 text-slate-950" />
+              <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center font-black text-white text-sm shadow-md">
+                <Shield className="w-5 h-5 text-white" />
               </div>
               <div>
                 <div className="text-lg font-black tracking-tight text-white font-sans">
-                  APEX<span className="text-indigo-400">PATCHES</span>
+                  APEX<span className="text-blue-500">PATCHES</span>
                 </div>
-                <div className="text-[9px] font-mono tracking-widest uppercase text-slate-500">
-                  Custom Patch Manufacturing Facility
+                <div className="text-[9px] font-mono tracking-widest uppercase text-slate-400">
+                  Direct Custom Patch Factory
                 </div>
               </div>
             </Link>
@@ -52,12 +52,12 @@ export default function Footer({
               Patch Services
             </h4>
             <ul className="space-y-2">
-              <li><a href="#services" className="hover:text-indigo-400 transition-colors">Custom Embroidered</a></li>
-              <li><a href="#services" className="hover:text-indigo-400 transition-colors">3D Soft Molded PVC</a></li>
-              <li><a href="#services" className="hover:text-indigo-400 transition-colors">Laser-Cut Leatherette</a></li>
-              <li><a href="#services" className="hover:text-indigo-400 transition-colors">Vintage Varsity Chenille</a></li>
-              <li><a href="#services" className="hover:text-indigo-400 transition-colors">Jacquard Micro-Woven</a></li>
-              <li><a href="#services" className="hover:text-indigo-400 transition-colors">Dye-Sublimated Photo</a></li>
+              <li><a href="#services" className="hover:text-white transition-colors">Custom Embroidered</a></li>
+              <li><a href="#services" className="hover:text-white transition-colors">3D Soft Molded PVC</a></li>
+              <li><a href="#services" className="hover:text-white transition-colors">Laser-Cut Leatherette</a></li>
+              <li><a href="#services" className="hover:text-white transition-colors">Vintage Varsity Chenille</a></li>
+              <li><a href="#services" className="hover:text-white transition-colors">Jacquard Micro-Woven</a></li>
+              <li><a href="#services" className="hover:text-white transition-colors">Dye-Sublimated Photo</a></li>
             </ul>
           </div>
 
@@ -67,12 +67,12 @@ export default function Footer({
               Hardware &amp; Backings
             </h4>
             <ul className="space-y-2">
-              <li><a href="#backings" className="hover:text-indigo-400 transition-colors">Hook &amp; Loop (Velcro)</a></li>
-              <li><a href="#backings" className="hover:text-indigo-400 transition-colors">Thermal Iron-On Film</a></li>
-              <li><a href="#backings" className="hover:text-indigo-400 transition-colors">Reinforced Sew-On Edge</a></li>
-              <li><a href="#backings" className="hover:text-indigo-400 transition-colors">3M Heavy Peel &amp; Stick</a></li>
-              <li><a href="#backings" className="hover:text-indigo-400 transition-colors">Dual-Plate Magnetic Pinless</a></li>
-              <li><a href="#backings" className="hover:text-indigo-400 transition-colors">Merrowed Overlock Edges</a></li>
+              <li><a href="#backings" className="hover:text-white transition-colors">Hook &amp; Loop (Velcro)</a></li>
+              <li><a href="#backings" className="hover:text-white transition-colors">Thermal Iron-On Film</a></li>
+              <li><a href="#backings" className="hover:text-white transition-colors">Reinforced Sew-On Edge</a></li>
+              <li><a href="#backings" className="hover:text-white transition-colors">3M Heavy Peel &amp; Stick</a></li>
+              <li><a href="#backings" className="hover:text-white transition-colors">Dual-Plate Magnetic Pinless</a></li>
+              <li><a href="#backings" className="hover:text-white transition-colors">Merrowed Overlock Edges</a></li>
             </ul>
           </div>
 
@@ -83,11 +83,11 @@ export default function Footer({
             </h4>
             <ul className="space-y-2">
               <li className="flex items-center gap-1.5 text-slate-300">
-                <Mail className="w-3.5 h-3.5 text-indigo-400" />
+                <Mail className="w-3.5 h-3.5 text-blue-400" />
                 <span className="truncate">{supportEmail}</span>
               </li>
               <li className="flex items-center gap-1.5 text-slate-300">
-                <Phone className="w-3.5 h-3.5 text-indigo-400" />
+                <Phone className="w-3.5 h-3.5 text-blue-400" />
                 <span>{supportPhone}</span>
               </li>
               <li>
@@ -104,7 +104,7 @@ export default function Footer({
               <li className="pt-2">
                 <Link
                   href="/admin"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 hover:bg-indigo-500/20 font-mono text-[11px] font-bold"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-900 text-slate-300 hover:text-white font-mono text-[11px] font-bold"
                 >
                   <Lock className="w-3.5 h-3.5" />
                   <span>VIP Admin Portal</span>
@@ -116,10 +116,10 @@ export default function Footer({
         </div>
 
         {/* Bottom Bar: Copyright & Payment Badges */}
-        <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-slate-500 font-mono text-[11px]">
+        <div className="pt-8 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-slate-500 font-mono text-[11px]">
           <div>
             © 2026 ApexPatches Manufacturing Co. All rights reserved. •{' '}
-            <Link href="/admin" className="text-indigo-400 hover:underline font-bold">
+            <Link href="/admin" className="text-blue-400 hover:underline font-bold">
               Factory Admin
             </Link>
           </div>

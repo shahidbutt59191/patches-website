@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Sliders, Calculator, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Calculator as CalcIcon, CheckCircle2, ArrowRight, Sparkles } from 'lucide-react';
 
-interface PriceCalculatorProps {
+interface CalculatorProps {
   onApplySpecs?: (specs: {
     style: string;
     width: number;
@@ -13,7 +13,7 @@ interface PriceCalculatorProps {
   }) => void;
 }
 
-export default function PriceCalculator({ onApplySpecs }: PriceCalculatorProps) {
+export default function Calculator({ onApplySpecs }: CalculatorProps) {
   const [width, setWidth] = useState(3.0);
   const [height, setHeight] = useState(3.0);
   const [quantity, setQuantity] = useState(100);
@@ -62,23 +62,19 @@ export default function PriceCalculator({ onApplySpecs }: PriceCalculatorProps) 
   };
 
   return (
-    <section id="calculator" className="py-20 sm:py-28 bg-[#0a0d1e]/50 border-b border-white/10 relative scroll-mt-20 overflow-hidden">
-      
-      {/* Background Glow */}
-      <div className="pointer-events-none absolute right-1/4 top-1/2 -translate-y-1/2 h-96 w-96 rounded-full bg-indigo-600/8 blur-[130px]" />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+    <section id="calculator" className="py-20 sm:py-28 bg-slate-50 border-b border-slate-200 relative scroll-mt-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Title */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border text-[11px] font-bold uppercase tracking-[0.16em] bg-indigo-500/10 text-indigo-300 border-indigo-500/30 font-mono mb-3">
-            <Calculator className="w-3.5 h-3.5 text-indigo-400" />
+          <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border text-[11px] font-bold uppercase tracking-[0.16em] bg-blue-50 text-blue-700 border-blue-200 font-mono mb-3">
+            <CalcIcon className="w-3.5 h-3.5 text-blue-600" />
             Transparent Pricing Engine
           </span>
-          <h2 className="text-3xl sm:text-5xl font-extrabold tracking-[-0.035em] text-white leading-[1.12]">
+          <h2 className="text-3xl sm:text-5xl font-extrabold tracking-[-0.035em] text-slate-900 leading-[1.12]">
             Bulk Pricing &amp; Dimension Calculator
           </h2>
-          <p className="mt-4 text-sm sm:text-base text-slate-400">
+          <p className="mt-4 text-sm sm:text-base text-slate-600">
             Slide width, height, and quantity to see live tier discounts up to 52% off with 100% transparent factory rates.
           </p>
         </div>
@@ -87,24 +83,24 @@ export default function PriceCalculator({ onApplySpecs }: PriceCalculatorProps) 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
           
           {/* LEFT: Sliders & Options (7 Cols) */}
-          <div className="lg:col-span-7 bg-[#0c1020] border border-white/10 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl backdrop-blur-md">
+          <div className="lg:col-span-7 bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 space-y-6 shadow-sm">
             
             {/* Dimensions */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label className="text-xs font-mono font-bold text-slate-300 uppercase tracking-wider">
+                <label className="text-xs font-mono font-bold text-slate-700 uppercase tracking-wider">
                   Patch Dimensions (Inches)
                 </label>
-                <span className="text-xs font-mono font-bold text-indigo-400">
+                <span className="text-xs font-mono font-bold text-blue-600">
                   {width}&quot; W × {height}&quot; H ({areaSqIn} sq. in.)
                 </span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="bg-[#070913] p-4 rounded-2xl border border-white/10">
+                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200">
                   <div className="flex justify-between text-xs font-mono mb-2">
-                    <span className="text-slate-400">Width:</span>
-                    <span className="text-white font-bold">{width}&quot;</span>
+                    <span className="text-slate-500">Width:</span>
+                    <span className="text-slate-900 font-bold">{width}&quot;</span>
                   </div>
                   <input
                     type="range"
@@ -113,19 +109,19 @@ export default function PriceCalculator({ onApplySpecs }: PriceCalculatorProps) 
                     step="0.25"
                     value={width}
                     onChange={(e) => setWidth(parseFloat(e.target.value) || 3.0)}
-                    className="w-full accent-indigo-500 cursor-pointer h-2 bg-slate-800 rounded-lg"
+                    className="w-full accent-blue-600 cursor-pointer h-2 bg-slate-200 rounded-lg"
                   />
-                  <div className="flex justify-between text-[10px] font-mono text-slate-500 mt-1">
+                  <div className="flex justify-between text-[10px] font-mono text-slate-400 mt-1">
                     <span>1.5&quot;</span>
                     <span>3.5&quot;</span>
                     <span>6.0&quot;</span>
                   </div>
                 </div>
 
-                <div className="bg-[#070913] p-4 rounded-2xl border border-white/10">
+                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200">
                   <div className="flex justify-between text-xs font-mono mb-2">
-                    <span className="text-slate-400">Height:</span>
-                    <span className="text-white font-bold">{height}&quot;</span>
+                    <span className="text-slate-500">Height:</span>
+                    <span className="text-slate-900 font-bold">{height}&quot;</span>
                   </div>
                   <input
                     type="range"
@@ -134,9 +130,9 @@ export default function PriceCalculator({ onApplySpecs }: PriceCalculatorProps) 
                     step="0.25"
                     value={height}
                     onChange={(e) => setHeight(parseFloat(e.target.value) || 3.0)}
-                    className="w-full accent-indigo-500 cursor-pointer h-2 bg-slate-800 rounded-lg"
+                    className="w-full accent-blue-600 cursor-pointer h-2 bg-slate-200 rounded-lg"
                   />
-                  <div className="flex justify-between text-[10px] font-mono text-slate-500 mt-1">
+                  <div className="flex justify-between text-[10px] font-mono text-slate-400 mt-1">
                     <span>1.5&quot;</span>
                     <span>3.5&quot;</span>
                     <span>6.0&quot;</span>
@@ -148,15 +144,15 @@ export default function PriceCalculator({ onApplySpecs }: PriceCalculatorProps) 
             {/* Quantity Slider */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label className="text-xs font-mono font-bold text-slate-300 uppercase tracking-wider">
+                <label className="text-xs font-mono font-bold text-slate-700 uppercase tracking-wider">
                   Order Quantity (Pieces)
                 </label>
-                <span className="text-xs font-mono font-bold text-emerald-400">
+                <span className="text-xs font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
                   {quantity} pcs ({discountPct > 0 ? `${discountPct}% Bulk Savings` : 'Base Tier'})
                 </span>
               </div>
 
-              <div className="bg-[#070913] p-4 rounded-2xl border border-white/10 space-y-3">
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
                 <input
                   type="range"
                   min="10"
@@ -164,7 +160,7 @@ export default function PriceCalculator({ onApplySpecs }: PriceCalculatorProps) 
                   step="10"
                   value={quantity}
                   onChange={(e) => setQuantity(parseInt(e.target.value) || 100)}
-                  className="w-full accent-indigo-500 cursor-pointer h-2 bg-slate-800 rounded-lg"
+                  className="w-full accent-blue-600 cursor-pointer h-2 bg-slate-200 rounded-lg"
                 />
                 
                 <div className="grid grid-cols-4 sm:grid-cols-6 gap-1.5 font-mono text-xs">
@@ -175,8 +171,8 @@ export default function PriceCalculator({ onApplySpecs }: PriceCalculatorProps) 
                       onClick={() => setQuantity(q)}
                       className={`py-1.5 rounded-lg border text-center transition-all cursor-pointer ${
                         quantity === q
-                          ? 'border-indigo-500 bg-indigo-500/20 text-indigo-300 font-bold'
-                          : 'border-white/10 bg-[#0e1326] text-slate-400 hover:text-white'
+                          ? 'border-blue-600 bg-blue-600 text-white font-bold shadow-xs'
+                          : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-100'
                       }`}
                     >
                       {q} pcs
@@ -188,7 +184,7 @@ export default function PriceCalculator({ onApplySpecs }: PriceCalculatorProps) 
 
             {/* Material Style */}
             <div>
-              <label className="block text-xs font-mono font-bold text-slate-300 uppercase tracking-wider mb-2">
+              <label className="block text-xs font-mono font-bold text-slate-700 uppercase tracking-wider mb-2">
                 Select Patch Service
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs font-mono">
@@ -206,8 +202,8 @@ export default function PriceCalculator({ onApplySpecs }: PriceCalculatorProps) 
                     onClick={() => setPatchType(p.id)}
                     className={`p-2.5 rounded-xl border text-left font-bold transition-all cursor-pointer ${
                       patchType === p.id
-                        ? 'border-indigo-500 bg-indigo-500/20 text-indigo-300'
-                        : 'border-white/10 bg-[#070913] text-slate-400 hover:text-white'
+                        ? 'border-blue-600 bg-blue-50 text-blue-700'
+                        : 'border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100'
                     }`}
                   >
                     {p.name}
@@ -218,7 +214,7 @@ export default function PriceCalculator({ onApplySpecs }: PriceCalculatorProps) 
 
             {/* Backing Hardware */}
             <div>
-              <label className="block text-xs font-mono font-bold text-slate-300 uppercase tracking-wider mb-2">
+              <label className="block text-xs font-mono font-bold text-slate-700 uppercase tracking-wider mb-2">
                 Attachment Backing
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs font-mono">
@@ -235,12 +231,12 @@ export default function PriceCalculator({ onApplySpecs }: PriceCalculatorProps) 
                     onClick={() => setBacking(b.id)}
                     className={`p-2.5 rounded-xl border text-left font-bold transition-all cursor-pointer ${
                       backing === b.id
-                        ? 'border-indigo-500 bg-indigo-500/20 text-indigo-300'
-                        : 'border-white/10 bg-[#070913] text-slate-400 hover:text-white'
+                        ? 'border-blue-600 bg-blue-50 text-blue-700'
+                        : 'border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100'
                     }`}
                   >
                     <div>{b.name}</div>
-                    <div className="text-[10px] text-slate-500 mt-0.5">{b.cost}</div>
+                    <div className="text-[10px] text-slate-400 mt-0.5">{b.cost}</div>
                   </button>
                 ))}
               </div>
@@ -248,59 +244,59 @@ export default function PriceCalculator({ onApplySpecs }: PriceCalculatorProps) 
 
           </div>
 
-          {/* RIGHT: Live Quote Summary Card */}
-          <div className="lg:col-span-5 bg-gradient-to-b from-[#10152c] to-[#070913] border border-white/15 rounded-3xl p-6 sm:p-8 flex flex-col justify-between shadow-2xl relative">
+          {/* RIGHT: Live Quote Summary Card (5 Cols) */}
+          <div className="lg:col-span-5 bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 flex flex-col justify-between shadow-lg relative">
             
             <div>
-              <div className="flex items-center justify-between pb-4 border-b border-white/10">
-                <span className="text-xs font-mono font-bold text-indigo-400 uppercase tracking-wider">
+              <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+                <span className="text-xs font-mono font-bold text-slate-800 uppercase tracking-wider">
                   LIVE PRODUCTION BREAKDOWN
                 </span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/30">
-                  Guaranteed Lock-In Rate
+                <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold border border-emerald-200">
+                  Guaranteed Rate
                 </span>
               </div>
 
               <div className="py-6 space-y-4 font-mono text-xs">
-                <div className="flex justify-between text-slate-400">
+                <div className="flex justify-between text-slate-600">
                   <span>Patch Dimensions:</span>
-                  <span className="text-white font-bold">{width}&quot; × {height}&quot;</span>
+                  <span className="text-slate-900 font-bold">{width}&quot; × {height}&quot;</span>
                 </div>
-                <div className="flex justify-between text-slate-400">
+                <div className="flex justify-between text-slate-600">
                   <span>Batch Quantity:</span>
-                  <span className="text-white font-bold">{quantity} pieces</span>
+                  <span className="text-slate-900 font-bold">{quantity} pieces</span>
                 </div>
-                <div className="flex justify-between text-slate-400">
+                <div className="flex justify-between text-slate-600">
                   <span>Selected Material:</span>
-                  <span className="text-white font-bold capitalize">{patchType.replace('_', ' ')}</span>
+                  <span className="text-slate-900 font-bold capitalize">{patchType.replace('_', ' ')}</span>
                 </div>
-                <div className="flex justify-between text-slate-400">
+                <div className="flex justify-between text-slate-600">
                   <span>Backing Hardware:</span>
-                  <span className="text-white font-bold capitalize">{backing.replace('_', ' ')}</span>
+                  <span className="text-slate-900 font-bold capitalize">{backing.replace('_', ' ')}</span>
                 </div>
-                <div className="flex justify-between text-slate-400">
+                <div className="flex justify-between text-slate-600">
                   <span>Bulk Discount Applied:</span>
-                  <span className="text-emerald-400 font-bold">-{discountPct}% OFF</span>
+                  <span className="text-emerald-700 font-bold">-{discountPct}% OFF</span>
                 </div>
                 {Number(savings) > 0 && (
-                  <div className="flex justify-between text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 p-2.5 rounded-xl">
+                  <div className="flex justify-between text-emerald-800 bg-emerald-50 border border-emerald-200 p-2.5 rounded-xl font-bold">
                     <span>You Save:</span>
-                    <span className="font-bold">${savings}</span>
+                    <span>${savings}</span>
                   </div>
                 )}
               </div>
 
-              <div className="pt-6 border-t border-white/10 space-y-3">
+              <div className="pt-6 border-t border-slate-100 space-y-3">
                 <div className="flex items-baseline justify-between">
-                  <span className="text-xs font-mono text-slate-400 uppercase">Unit Price:</span>
-                  <div className="font-mono text-3xl font-black text-indigo-400">
-                    ${finalUnit} <span className="text-xs text-slate-400 font-normal">/patch</span>
+                  <span className="text-xs font-mono text-slate-500 uppercase font-bold">Unit Price:</span>
+                  <div className="font-mono text-3xl font-black text-blue-600">
+                    ${finalUnit} <span className="text-xs text-slate-500 font-normal">/patch</span>
                   </div>
                 </div>
 
                 <div className="flex items-baseline justify-between">
-                  <span className="text-xs font-mono text-slate-400 uppercase">Grand Total:</span>
-                  <div className="font-mono text-3xl font-black text-white">
+                  <span className="text-xs font-mono text-slate-500 uppercase font-bold">Grand Total:</span>
+                  <div className="font-mono text-3xl font-black text-slate-900">
                     ${grandTotal}
                   </div>
                 </div>
@@ -311,7 +307,7 @@ export default function PriceCalculator({ onApplySpecs }: PriceCalculatorProps) 
               <a
                 href="#quote"
                 onClick={handleApply}
-                className="w-full py-4 btn-primary-gradient text-white font-black text-xs uppercase tracking-wider rounded-2xl shadow-xl text-center block transition-all cursor-pointer"
+                className="w-full py-4 btn-primary-blue text-white font-black text-xs uppercase tracking-wider rounded-2xl shadow-md text-center block transition-all cursor-pointer"
               >
                 Apply Specs to Free Quote Form ↗
               </a>

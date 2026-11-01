@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { HelpCircle, ChevronDown } from 'lucide-react';
+import { HelpCircle } from 'lucide-react';
 
 const FAQS = [
   {
@@ -42,19 +42,19 @@ export default function Faq() {
   const [openIdx, setOpenIdx] = useState<number | null>(0);
 
   return (
-    <section id="faq" className="py-20 sm:py-28 bg-[#0a0d1e]/50 border-b border-white/10 relative scroll-mt-20">
+    <section id="faq" className="py-20 sm:py-28 bg-slate-50 border-b border-slate-200 relative scroll-mt-20">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}
         <div className="flex flex-col gap-2.5 text-center items-center mb-16">
-          <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border text-[11px] font-bold uppercase tracking-[0.16em] bg-indigo-500/10 text-indigo-300 border-indigo-500/30 font-mono">
-            <HelpCircle className="w-3.5 h-3.5 text-indigo-400" />
+          <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border text-[11px] font-bold uppercase tracking-[0.16em] bg-blue-50 text-blue-700 border-blue-200 font-mono">
+            <HelpCircle className="w-3.5 h-3.5 text-blue-600" />
             Answers &amp; Guidance
           </span>
-          <h2 className="text-3xl sm:text-5xl font-extrabold tracking-[-0.035em] text-white leading-[1.12]">
+          <h2 className="text-3xl sm:text-5xl font-extrabold tracking-[-0.035em] text-slate-900 leading-[1.12]">
             Frequently Asked Questions
           </h2>
-          <p className="text-sm sm:text-base leading-relaxed text-slate-400 mx-auto">
+          <p className="text-sm sm:text-base leading-relaxed text-slate-600 mx-auto">
             Everything you need to know about patch ordering, turnaround, backings, sample approvals, and factory guarantees.
           </p>
         </div>
@@ -66,21 +66,21 @@ export default function Faq() {
             return (
               <div
                 key={idx}
-                className="rounded-2xl border border-white/10 bg-[#0c1020] overflow-hidden transition-all duration-200"
+                className="rounded-2xl border border-slate-200 bg-white overflow-hidden transition-all duration-200 shadow-xs"
               >
                 <button
                   type="button"
                   onClick={() => setOpenIdx(isOpen ? null : idx)}
-                  className="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 font-bold text-white hover:text-indigo-300 transition-colors cursor-pointer"
+                  className="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 font-bold text-slate-900 hover:text-blue-600 transition-colors cursor-pointer"
                 >
                   <span className="text-sm sm:text-base">{item.q}</span>
-                  <span className="w-6 h-6 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-xs font-mono shrink-0">
+                  <span className="w-6 h-6 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-xs font-mono shrink-0 text-slate-700">
                     {isOpen ? '−' : '+'}
                   </span>
                 </button>
 
                 {isOpen && (
-                  <div className="px-5 sm:px-6 pb-6 text-xs sm:text-sm text-slate-400 leading-relaxed border-t border-white/5 pt-4 whitespace-pre-line font-sans">
+                  <div className="px-5 sm:px-6 pb-6 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-4 whitespace-pre-line font-sans">
                     {item.a}
                   </div>
                 )}

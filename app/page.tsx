@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import Services from '@/components/Services';
+import ComparisonTable from '@/components/ComparisonTable';
 import Calculator from '@/components/Calculator';
 import Backings from '@/components/Backings';
 import Process from '@/components/Process';
@@ -65,11 +66,11 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#070913] text-slate-100 selection:bg-indigo-600 selection:text-white font-sans antialiased">
+    <div className="min-h-screen bg-slate-50 text-slate-900 selection:bg-blue-600 selection:text-white font-sans antialiased">
       
       {/* Dynamic Top Announcement Banner */}
       {settings.announcementEnabled && settings.announcementText && (
-        <div className="bg-gradient-to-r from-indigo-700 via-purple-700 to-indigo-700 py-2.5 px-4 text-center text-xs font-bold text-white tracking-wide shadow-md">
+        <div className="bg-blue-600 py-2.5 px-4 text-center text-xs font-bold text-white tracking-wide shadow-sm">
           <span className="mr-2 inline-block rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-black uppercase text-white font-mono">
             Special Offer
           </span>
@@ -80,7 +81,7 @@ export default function HomePage() {
       {/* 1. Header & Navigation */}
       <Navbar whatsappNumber={settings.whatsappNumber} />
 
-      {/* 2. Hero Section: Direct Factory Value Proposition & Live Specimen Inspector */}
+      {/* 2. Hero Section: Core Value Proposition & Live Specimen Inspector */}
       <Hero
         whatsappNumber={settings.whatsappNumber}
         onSelectStyle={handleSelectStyle}
@@ -89,19 +90,22 @@ export default function HomePage() {
       {/* 3. Patch Services: 6 Core Materials Showcase */}
       <Services onSelectStyle={handleSelectStyle} />
 
-      {/* 4. Bulk Pricing Calculator: Live Dimension & Quantity Sliders */}
+      {/* 4. Side-by-Side Materials Comparison Guide */}
+      <ComparisonTable onSelectStyle={handleSelectStyle} />
+
+      {/* 5. Bulk Pricing Calculator: Live Dimension & Quantity Sliders */}
       <Calculator onApplySpecs={handleApplySpecsFromCalculator} />
 
-      {/* 5. Backings & Borders: Fasteners & Edge Finishes Guide */}
+      {/* 6. Backings & Borders: Fasteners & Edge Finishes Guide */}
       <Backings />
 
-      {/* 6. Production Process: 4 Transparent Steps & Photo Sample Guarantee */}
+      {/* 7. Production Process: 4 Transparent Steps & Photo Sample Guarantee */}
       <Process />
 
-      {/* 7. Gallery: Real Client Work Across Tactical, Biker, Headwear & Varsity */}
+      {/* 8. Gallery: Real Client Work Across Tactical, Biker, Headwear & Varsity */}
       <Gallery />
 
-      {/* 8. Free Quote & Artwork Submission Form */}
+      {/* 9. Free Quote & Artwork Submission Form */}
       <QuoteForm
         initialStyle={selectedStyle}
         initialWidth={selectedWidth}
@@ -110,13 +114,13 @@ export default function HomePage() {
         initialQuantity={selectedQuantity}
       />
 
-      {/* 9. Verified Customer Reviews & Quadruple Factory Guarantee */}
+      {/* 10. Verified Customer Reviews & Quadruple Factory Guarantee */}
       <Reviews />
 
-      {/* 10. Frequently Asked Questions */}
+      {/* 11. Frequently Asked Questions */}
       <Faq />
 
-      {/* 11. Enterprise Footer */}
+      {/* 12. Enterprise Footer */}
       <Footer
         whatsappNumber={settings.whatsappNumber}
         supportEmail={settings.supportEmail}

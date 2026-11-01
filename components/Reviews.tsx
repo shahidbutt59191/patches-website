@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Star, ShieldCheck, CheckCircle2, Award } from 'lucide-react';
+import { Star, ShieldCheck, CheckCircle2 } from 'lucide-react';
 
 const REVIEWS = [
   {
@@ -61,21 +61,21 @@ const GUARANTEES = [
   },
 ];
 
-export default function ReviewsAndGuarantees() {
+export default function Reviews() {
   return (
-    <section className="py-20 sm:py-28 bg-[#070913] border-b border-white/10 relative">
+    <section className="py-20 sm:py-28 bg-white border-b border-slate-200 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Reviews Section Header */}
         <div className="flex flex-col gap-2.5 text-center items-center mb-16">
-          <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border text-[11px] font-bold uppercase tracking-[0.16em] bg-indigo-500/10 text-indigo-300 border-indigo-500/30 font-mono">
-            <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+          <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border text-[11px] font-bold uppercase tracking-[0.16em] bg-blue-50 text-blue-700 border-blue-200 font-mono">
+            <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
             5.0★ Verified Customer Trust
           </span>
-          <h2 className="text-3xl sm:text-5xl font-extrabold tracking-[-0.035em] text-white leading-[1.12] max-w-3xl">
+          <h2 className="text-3xl sm:text-5xl font-extrabold tracking-[-0.035em] text-slate-900 leading-[1.12] max-w-3xl">
             Trusted by 3,800+ Brands, Teams &amp; Armed Forces
           </h2>
-          <p className="text-sm sm:text-base leading-relaxed text-slate-400 max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base leading-relaxed text-slate-600 max-w-2xl mx-auto">
             From tactical military units and first responders to collegiate varsity teams and international streetwear brands.
           </p>
         </div>
@@ -85,31 +85,31 @@ export default function ReviewsAndGuarantees() {
           {REVIEWS.map((r, i) => (
             <div
               key={i}
-              className="rounded-3xl border border-white/10 bg-[#0c1020] p-7 flex flex-col justify-between shadow-xl relative hover:border-indigo-500/30 transition-all"
+              className="rounded-3xl border border-slate-200 bg-slate-50 p-7 flex flex-col justify-between shadow-xs hover:border-blue-400 hover:shadow-md transition-all"
             >
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-1 text-amber-400">
+                  <div className="flex items-center gap-1 text-amber-500">
                     {[...Array(r.rating)].map((_, idx) => (
-                      <Star key={idx} className="w-4 h-4 fill-amber-400 text-amber-400" />
+                      <Star key={idx} className="w-4 h-4 fill-amber-400 text-amber-500" />
                     ))}
                   </div>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-bold">
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 font-bold">
                     ✓ Verified Production Batch
                   </span>
                 </div>
 
-                <p className="text-xs sm:text-sm text-slate-300 italic leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-700 italic leading-relaxed">
                   &ldquo;{r.text}&rdquo;
                 </p>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono">
+              <div className="mt-6 pt-4 border-t border-slate-200 flex items-center justify-between text-xs font-mono">
                 <div>
-                  <div className="font-bold text-white">{r.name}</div>
-                  <div className="text-[11px] text-slate-400">{r.role} • {r.org}</div>
+                  <div className="font-bold text-slate-900">{r.name}</div>
+                  <div className="text-[11px] text-slate-500">{r.role} • {r.org}</div>
                 </div>
-                <div className="text-right text-[10px] text-indigo-400">
+                <div className="text-right text-[10px] text-blue-600 font-bold">
                   {r.order}
                 </div>
               </div>
@@ -118,7 +118,7 @@ export default function ReviewsAndGuarantees() {
         </div>
 
         {/* Quadruple Factory Guarantee Banner */}
-        <div className="rounded-3xl bg-gradient-to-br from-[#10152c] to-[#0a0d1e] border border-white/10 p-8 sm:p-12">
+        <div className="rounded-3xl bg-slate-900 text-white p-8 sm:p-12 shadow-xl">
           <div className="text-center max-w-2xl mx-auto mb-10">
             <span className="text-xs font-mono font-bold uppercase tracking-wider text-amber-400 block mb-2">
               ✦ ZERO RISK COMMITMENT
@@ -126,7 +126,7 @@ export default function ReviewsAndGuarantees() {
             <h3 className="text-2xl sm:text-3xl font-black text-white">
               The Quadruple Factory Guarantee
             </h3>
-            <p className="text-xs sm:text-sm text-slate-400 mt-2">
+            <p className="text-xs sm:text-sm text-slate-300 mt-2">
               Every single patch batch leaving our facility is protected by 4 non-negotiable manufacturing standards.
             </p>
           </div>
@@ -137,9 +137,9 @@ export default function ReviewsAndGuarantees() {
                 <div>
                   <span className="text-3xl block mb-3">{g.icon}</span>
                   <h4 className="font-bold text-sm text-white mb-1.5">{g.title}</h4>
-                  <p className="text-xs text-slate-400 leading-relaxed">{g.desc}</p>
+                  <p className="text-xs text-slate-300 leading-relaxed">{g.desc}</p>
                 </div>
-                <div className="mt-4 pt-3 border-t border-white/5 text-[10px] font-mono text-emerald-400 flex items-center gap-1">
+                <div className="mt-4 pt-3 border-t border-white/10 text-[10px] font-mono text-emerald-400 flex items-center gap-1 font-bold">
                   <CheckCircle2 className="w-3.5 h-3.5" />
                   <span>100% Policy Backed</span>
                 </div>
