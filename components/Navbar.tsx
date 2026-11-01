@@ -147,9 +147,6 @@ export default function Navbar({
             <a href="#services" className="hover:text-orange-500 transition-colors">
               Custom Patches
             </a>
-            <a href="#comparison" className="hover:text-orange-500 transition-colors">
-              Compare Materials
-            </a>
             <a href="#portfolio" className="hover:text-orange-500 transition-colors">
               Portfolio
             </a>
@@ -211,13 +208,6 @@ export default function Navbar({
                 className="hover:text-orange-500"
               >
                 Custom Patches
-              </a>
-              <a
-                href="#comparison"
-                onClick={() => setMobileMenuOpen(false)}
-                className="hover:text-orange-500"
-              >
-                Compare Materials
               </a>
               <a
                 href="#portfolio"

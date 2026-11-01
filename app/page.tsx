@@ -6,7 +6,6 @@ import Hero from '@/components/Hero';
 import Services from '@/components/Services';
 import BeforeAfterSlider from '@/components/BeforeAfterSlider';
 import LivePatchStudio from '@/components/LivePatchStudio';
-import ComparisonTable from '@/components/ComparisonTable';
 import WhyChooseUs from '@/components/WhyChooseUs';
 import Process from '@/components/Process';
 import Portfolio from '@/components/Portfolio';
@@ -126,10 +125,7 @@ export default function HomePage() {
         {/* 5. Interactive Live Patch Studio & Real-Time Price Estimator */}
         <LivePatchStudio onOpenQuoteWithSpecs={handleOpenQuoteWithSpecs} />
 
-        {/* 6. Side-by-Side Materials Comparison Matrix */}
-        <ComparisonTable onOpenQuote={handleOpenQuote} />
-
-        {/* 7. Why Choose BDigitizing?: 4 Feature Icons + Stats + Stitched "CUSTOM PATCHES" Banner */}
+        {/* 6. Why Choose BDigitizing?: 4 Feature Icons + Stats + Stitched "CUSTOM PATCHES" Banner */}
         <WhyChooseUs />
 
         {/* 9. Simple Ordering Process: 4 Connected Numbered Steps with Timing Badges */}
