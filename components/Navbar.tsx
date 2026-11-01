@@ -153,8 +153,8 @@ export default function Navbar({
             <a href="#backings" className="hover:text-orange-500 transition-colors">
               Backings
             </a>
-            <a href="#gallery" className="hover:text-orange-500 transition-colors">
-              Gallery
+            <a href="#portfolio" className="hover:text-orange-500 transition-colors">
+              Portfolio
             </a>
             <a href="#why-us" className="hover:text-orange-500 transition-colors">
               About
@@ -230,11 +230,11 @@ export default function Navbar({
                 Backings &amp; Borders
               </a>
               <a
-                href="#gallery"
+                href="#portfolio"
                 onClick={() => setMobileMenuOpen(false)}
                 className="hover:text-orange-500"
               >
-                Client Gallery
+                Portfolio
               </a>
               <a
                 href="#why-us"

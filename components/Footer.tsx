@@ -42,6 +42,9 @@ export default function Footer({ onOpenQuote }: FooterProps) {
             <a href="#services" className="hover:text-orange-400 transition-colors">
               Custom Patches
             </a>
+            <a href="#portfolio" className="hover:text-orange-400 transition-colors">
+              Portfolio
+            </a>
             <a href="#why-us" className="hover:text-orange-400 transition-colors">
               About
             </a>

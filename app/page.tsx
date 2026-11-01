@@ -10,7 +10,7 @@ import ComparisonTable from '@/components/ComparisonTable';
 import Backings from '@/components/Backings';
 import WhyChooseUs from '@/components/WhyChooseUs';
 import Process from '@/components/Process';
-import Gallery from '@/components/Gallery';
+import Portfolio from '@/components/Portfolio';
 import Reviews from '@/components/Reviews';
 import FaqAndCta from '@/components/FaqAndCta';
 import Footer from '@/components/Footer';
@@ -139,8 +139,8 @@ export default function HomePage() {
         {/* 9. Simple Ordering Process: 4 Connected Numbered Steps with Timing Badges */}
         <Process onOpenQuote={() => handleOpenQuote()} />
 
-        {/* 10. Real Client Production Runs Gallery Across Tactical, Headwear, Biker & Varsity */}
-        <Gallery onOpenQuote={() => handleOpenQuote()} />
+        {/* 10. Real Client Production Portfolio with Rich Photography & Lightbox Zoom */}
+        <Portfolio onOpenQuote={handleOpenQuote} />
 
         {/* 11. What Our Customers Say: Dark Luxury Section with 5-Star Reviews & Order Tags */}
         <Reviews />
