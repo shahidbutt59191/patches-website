@@ -21,12 +21,15 @@ body {
   color: #ffffff;
   font-weight: 700;
   box-shadow: 0 4px 14px rgba(249, 115, 22, 0.35);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .btn-orange:hover {
-  box-shadow: 0 6px 20px rgba(249, 115, 22, 0.5);
+  box-shadow: 0 8px 24px rgba(249, 115, 22, 0.5);
   filter: brightness(1.06);
-  transform: translateY(-1.5px);
+  transform: translateY(-2px);
+}
+.btn-orange:active {
+  transform: translateY(0px);
 }
 
 /* Orange Outline Button */
@@ -41,12 +44,12 @@ body {
   background: #fff7ed;
   border-color: #ea580c;
   color: #ea580c;
-  transform: translateY(-1px);
+  transform: translateY(-1.5px);
 }
 
 /* Subtle Dot Grid */
 .bg-dot-pattern {
-  background-image: radial-gradient(circle at 1px 1px, rgba(15, 23, 42, 0.06) 1px, transparent 0);
+  background-image: radial-gradient(circle at 1px 1px, rgba(15, 23, 42, 0.07) 1px, transparent 0);
   background-size: 20px 20px;
 }
 
@@ -69,4 +72,63 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #f97316;
+}
+
+/* Thread Shimmer Gleam Animation */
+@keyframes threadGleam {
+  0% {
+    opacity: 0;
+    transform: translateX(-150%) skewX(-20deg);
+  }
+  50% {
+    opacity: 0.35;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(250%) skewX(-20deg);
+  }
+}
+
+.animate-thread-gleam {
+  position: relative;
+  overflow: hidden;
+}
+.animate-thread-gleam::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: threadGleam 4s infinite ease-in-out;
+  pointer-events: none;
+}
+
+/* Floating animation for patches */
+@keyframes floatGentle {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.animate-float-gentle {
+  animation: floatGentle 5s ease-in-out infinite;
+}
+
+/* Card 3D Flip Effects */
+.perspective-1000 {
+  perspective: 1000px;
+}
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+.backface-hidden {
+  backface-visibility: hidden;
+}
+.rotate-y-180 {
+  transform: rotateY(180deg);
 }
