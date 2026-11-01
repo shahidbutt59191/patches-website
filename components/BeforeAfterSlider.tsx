@@ -6,9 +6,25 @@ import { MountainShieldPatch } from './PatchVisuals';
 
 interface BeforeAfterSliderProps {
   onOpenQuote?: () => void;
+  beforeImage?: string;
+  afterImage?: string;
+  beforeLabel?: string;
+  afterLabel?: string;
+  title?: string;
+  subtitle?: string;
+  badge?: string;
 }
 
-export default function BeforeAfterSlider({ onOpenQuote }: BeforeAfterSliderProps) {
+export default function BeforeAfterSlider({
+  onOpenQuote,
+  beforeImage = 'https://images.unsplash.com/photo-1626785774573-4b799315345d?w=1000&auto=format&fit=crop&q=80',
+  afterImage = 'https://images.unsplash.com/photo-1584905066893-7d5c142ba4e1?w=1000&auto=format&fit=crop&q=80',
+  beforeLabel = 'Flat 2D Vector Artwork (Customer File)',
+  afterLabel = '3D Physical Embroidery (Madeira Poly)',
+  title = 'See Your 2D Artwork Turned into 3D Physical Stitches',
+  subtitle = 'Drag the slider to see how our digitizers convert flat graphic files into high-density embroidered thread textures.',
+  badge = 'Master Tajima Vector-to-Stitch Digitizing',
+}: BeforeAfterSliderProps) {
   const [sliderPos, setSliderPos] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -40,13 +56,13 @@ export default function BeforeAfterSlider({ onOpenQuote }: BeforeAfterSliderProp
         <div className="text-center max-w-2xl mx-auto mb-12">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-100 text-orange-600 text-xs font-bold mb-3">
             <Wand2 className="w-3.5 h-3.5" />
-            <span>Master Tajima Vector-to-Stitch Digitizing</span>
+            <span>{badge}</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
-            See Your 2D Artwork Turned into 3D Physical Stitches
+            {title}
           </h2>
           <p className="mt-2 text-sm sm:text-base text-slate-600">
-            Drag the slider to see how our digitizers convert flat graphic files into high-density embroidered thread textures.
+            {subtitle}
           </p>
         </div>
 
@@ -67,11 +83,25 @@ export default function BeforeAfterSlider({ onOpenQuote }: BeforeAfterSliderProp
             <div className="absolute inset-0 bg-[#12141c] flex items-center justify-center p-6">
               <div className="absolute inset-0 bg-fabric-pattern opacity-95" />
               
-              <div className="relative z-10 flex flex-col items-center">
-                <MountainShieldPatch className="w-52 h-64 sm:w-64 sm:h-76" />
-                <div className="absolute top-4 right-4 bg-orange-500/90 text-white text-[10px] sm:text-xs font-mono font-bold px-3 py-1 rounded-full shadow-md flex items-center gap-1">
+              <div className="relative z-10 w-full h-full flex flex-col items-center justify-center">
+                {afterImage ? (
+                  <div className="relative w-64 h-64 sm:w-84 sm:h-84 flex items-center justify-center">
+                    <img
+                      src={afterImage}
+                      alt={afterLabel}
+                      className="w-full h-full object-contain filter drop-shadow-[0_20px_35px_rgba(0,0,0,0.8)]"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLElement).style.display = 'none';
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <MountainShieldPatch className="w-52 h-64 sm:w-64 sm:h-76" />
+                )}
+
+                <div className="absolute top-4 right-4 bg-orange-500/95 text-white text-[10px] sm:text-xs font-mono font-bold px-3 py-1.5 rounded-full shadow-md flex items-center gap-1.5 backdrop-blur-xs z-20">
                   <Sparkles className="w-3 h-3" />
-                  <span>3D Physical Embroidery (Madeira Poly)</span>
+                  <span>{afterLabel}</span>
                 </div>
               </div>
             </div>
@@ -83,39 +113,48 @@ export default function BeforeAfterSlider({ onOpenQuote }: BeforeAfterSliderProp
             >
               <div className="absolute inset-0 bg-dot-pattern opacity-70" />
               
-              <div className="relative z-10 flex flex-col items-center">
-                {/* Flat Vector SVG Simulation */}
-                <div className="w-52 h-64 sm:w-64 sm:h-76 flex items-center justify-center">
-                  <svg viewBox="0 0 240 280" className="w-full h-full filter drop-shadow-sm">
-                    {/* Flat Vector Shield */}
-                    <path
-                      d="M 120 12 L 216 45 C 216 160 170 230 120 268 C 70 230 24 160 24 45 Z"
-                      fill="#e2e8f0"
-                      stroke="#0f172a"
-                      strokeWidth="6"
+              <div className="relative z-10 w-full h-full flex flex-col items-center justify-center">
+                {beforeImage ? (
+                  <div className="relative w-64 h-64 sm:w-84 sm:h-84 flex items-center justify-center">
+                    <img
+                      src={beforeImage}
+                      alt={beforeLabel}
+                      className="w-full h-full object-contain filter drop-shadow-md"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLElement).style.display = 'none';
+                      }}
                     />
-                    {/* Flat Mountains */}
-                    <polygon points="120,60 168,135 72,135" fill="#3b82f6" />
-                    <polygon points="80,82 120,135 48,135" fill="#60a5fa" />
-                    <polygon points="160,82 195,135 125,135" fill="#2563eb" />
-                    {/* Flat Trees */}
-                    <g fill="#10b981">
-                      <polygon points="90,116 100,136 80,136" />
-                      <polygon points="120,112 132,136 108,136" />
-                      <polygon points="150,116 160,136 140,136" />
-                    </g>
-                    {/* Flat Vector Text */}
-                    <text x="120" y="180" textAnchor="middle" fill="#0f172a" fontFamily="Arial, sans-serif" fontWeight="900" fontSize="24" letterSpacing="2">
-                      YOUR
-                    </text>
-                    <text x="120" y="212" textAnchor="middle" fill="#3b82f6" fontFamily="Arial, sans-serif" fontWeight="900" fontSize="26" letterSpacing="2.5">
-                      LOGO
-                    </text>
-                  </svg>
-                </div>
+                  </div>
+                ) : (
+                  /* Flat Vector SVG Simulation */
+                  <div className="w-52 h-64 sm:w-64 sm:h-76 flex items-center justify-center">
+                    <svg viewBox="0 0 240 280" className="w-full h-full filter drop-shadow-sm">
+                      <path
+                        d="M 120 12 L 216 45 C 216 160 170 230 120 268 C 70 230 24 160 24 45 Z"
+                        fill="#e2e8f0"
+                        stroke="#0f172a"
+                        strokeWidth="6"
+                      />
+                      <polygon points="120,60 168,135 72,135" fill="#3b82f6" />
+                      <polygon points="80,82 120,135 48,135" fill="#60a5fa" />
+                      <polygon points="160,82 195,135 125,135" fill="#2563eb" />
+                      <g fill="#10b981">
+                        <polygon points="90,116 100,136 80,136" />
+                        <polygon points="120,112 132,136 108,136" />
+                        <polygon points="150,116 160,136 140,136" />
+                      </g>
+                      <text x="120" y="180" textAnchor="middle" fill="#0f172a" fontFamily="Arial, sans-serif" fontWeight="900" fontSize="24" letterSpacing="2">
+                        YOUR
+                      </text>
+                      <text x="120" y="212" textAnchor="middle" fill="#3b82f6" fontFamily="Arial, sans-serif" fontWeight="900" fontSize="26" letterSpacing="2.5">
+                        LOGO
+                      </text>
+                    </svg>
+                  </div>
+                )}
 
-                <div className="absolute top-4 left-4 bg-slate-900/90 text-white text-[10px] sm:text-xs font-mono font-bold px-3 py-1 rounded-full shadow-md">
-                  Flat 2D Vector Artwork (Customer File)
+                <div className="absolute top-4 left-4 bg-slate-900/90 text-white text-[10px] sm:text-xs font-mono font-bold px-3 py-1.5 rounded-full shadow-md backdrop-blur-xs z-20">
+                  {beforeLabel}
                 </div>
               </div>
             </div>

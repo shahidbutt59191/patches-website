@@ -60,6 +60,15 @@ export interface SiteSettings {
 
   // Live Customer Reviews
   reviews: CustomerReviewItem[];
+
+  // Before / After Digitizing Slider Configuration
+  sliderBeforeImage: string;
+  sliderAfterImage: string;
+  sliderBeforeLabel: string;
+  sliderAfterLabel: string;
+  sliderTitle: string;
+  sliderSubtitle: string;
+  sliderBadge: string;
 }
 
 export const DEFAULT_PORTFOLIO: PortfolioItem[] = [
@@ -237,4 +246,13 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   // Default Portfolio & Reviews
   portfolio: DEFAULT_PORTFOLIO,
   reviews: DEFAULT_REVIEWS,
+
+  // Default Before / After Slider
+  sliderBeforeImage: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?w=1000&auto=format&fit=crop&q=80',
+  sliderAfterImage: 'https://images.unsplash.com/photo-1584905066893-7d5c142ba4e1?w=1000&auto=format&fit=crop&q=80',
+  sliderBeforeLabel: 'Flat 2D Vector Artwork (Customer File)',
+  sliderAfterLabel: '3D Physical Embroidery (Madeira Poly)',
+  sliderTitle: 'See Your 2D Artwork Turned into 3D Physical Stitches',
+  sliderSubtitle: 'Drag the slider to see how our digitizers convert flat graphic files into high-density embroidered thread textures.',
+  sliderBadge: 'Master Tajima Vector-to-Stitch Digitizing',
 };

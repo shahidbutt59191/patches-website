@@ -32,6 +32,7 @@ import {
   Mail,
   Truck,
   Sparkles,
+  Wand2,
 } from 'lucide-react';
 import { SiteSettings, DEFAULT_SETTINGS, PortfolioItem, CustomerReviewItem } from '@/lib/settings';
 
@@ -129,7 +130,7 @@ const INITIAL_ORDERS: PatchOrderItem[] = [
 export default function AdminDashboardPage() {
   // Navigation Tabs
   const [activeTab, setActiveTab] = useState<
-    'overview' | 'pricing' | 'portfolio' | 'orders' | 'reviews' | 'settings' | 'b2b'
+    'overview' | 'pricing' | 'portfolio' | 'slider' | 'orders' | 'reviews' | 'settings' | 'b2b'
   >('overview');
 
   // Live Settings
@@ -489,6 +490,7 @@ export default function AdminDashboardPage() {
             { id: 'orders', label: 'Quote Requests & Orders', icon: <ShoppingBag className="w-4 h-4" />, badge: orders.length },
             { id: 'pricing', label: 'Pricing & Discounts', icon: <DollarSign className="w-4 h-4" /> },
             { id: 'portfolio', label: 'Portfolio & Gallery', icon: <ImageIcon className="w-4 h-4" />, badge: (settings.portfolio || []).length },
+            { id: 'slider', label: 'Before/After Slider', icon: <Wand2 className="w-4 h-4" /> },
             { id: 'reviews', label: 'Customer Reviews', icon: <Star className="w-4 h-4" />, badge: (settings.reviews || []).length },
             { id: 'settings', label: 'Website Settings', icon: <Settings className="w-4 h-4" /> },
             { id: 'b2b', label: 'Wholesale B2B Accounts', icon: <Users className="w-4 h-4" /> },
@@ -1118,7 +1120,293 @@ export default function AdminDashboardPage() {
             </div>
           )}
 
-          {/* TAB 4: ORDERS & QUOTES */}
+          {/* TAB: BEFORE/AFTER SLIDER MANAGEMENT */}
+          {activeTab === 'slider' && (
+            <div className="space-y-6 animate-in fade-in duration-200">
+              
+              {/* Top Title & Save Button */}
+              <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                <div>
+                  <h1 className="text-2xl font-black text-white tracking-tight flex items-center gap-2">
+                    <Wand2 className="w-6 h-6 text-orange-500" />
+                    <span>Before &amp; After Digitizing Slider</span>
+                  </h1>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Upload or change the 2D Artwork image and 3D Embroidered Patch image shown in the interactive vector-to-stitch slider.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleSaveSettings()}
+                  disabled={isSavingSettings}
+                  className="btn-orange px-5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer self-start"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>{isSavingSettings ? 'Publishing...' : 'Publish Slider to Website'}</span>
+                </button>
+              </div>
+
+              {/* Preset Quick Chooser Strip */}
+              <div className="bg-[#141722] border border-slate-800 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <div className="text-xs font-bold text-white flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-orange-500" />
+                    <span>1-Click High-Quality Presets</span>
+                  </div>
+                  <div className="text-[11px] text-slate-400">
+                    Switch between verified photo pairs or enter your custom URLs below.
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const updated = {
+                        ...settings,
+                        sliderBeforeImage: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?w=1000&auto=format&fit=crop&q=80',
+                        sliderAfterImage: 'https://images.unsplash.com/photo-1584905066893-7d5c142ba4e1?w=1000&auto=format&fit=crop&q=80',
+                        sliderBeforeLabel: 'Flat 2D Vector Artwork (Customer File)',
+                        sliderAfterLabel: '3D Physical Embroidery (Madeira Poly)',
+                      };
+                      setSettings(updated);
+                      handleSaveSettings(updated);
+                    }}
+                    className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-orange-500 hover:text-white text-xs font-bold text-slate-300 transition-colors cursor-pointer"
+                  >
+                    Preset 1: Alpine Shield
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const updated = {
+                        ...settings,
+                        sliderBeforeImage: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1000&auto=format&fit=crop&q=80',
+                        sliderAfterImage: 'https://images.unsplash.com/photo-1579208575657-c595a05383b7?w=1000&auto=format&fit=crop&q=80',
+                        sliderBeforeLabel: '2D Digital Emblem Concept',
+                        sliderAfterLabel: '3D High-Density Tactical Stitch',
+                      };
+                      setSettings(updated);
+                      handleSaveSettings(updated);
+                    }}
+                    className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-orange-500 hover:text-white text-xs font-bold text-slate-300 transition-colors cursor-pointer"
+                  >
+                    Preset 2: Tactical Skull Crest
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const updated = {
+                        ...settings,
+                        sliderBeforeImage: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=1000&auto=format&fit=crop&q=80',
+                        sliderAfterImage: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=1000&auto=format&fit=crop&q=80',
+                        sliderBeforeLabel: 'Flat Motorcycle Club Artwork',
+                        sliderAfterLabel: 'Heavy Twill Embroidered Cut',
+                      };
+                      setSettings(updated);
+                      handleSaveSettings(updated);
+                    }}
+                    className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-orange-500 hover:text-white text-xs font-bold text-slate-300 transition-colors cursor-pointer"
+                  >
+                    Preset 3: Biker MC Cut
+                  </button>
+                </div>
+              </div>
+
+              {/* 2 Two Side-by-Side Image Control Cards */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                {/* CARD 1: BEFORE IMAGE (Flat 2D Artwork) */}
+                <div className="bg-[#141722] border border-slate-800 rounded-2xl p-6 space-y-4">
+                  <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+                    <div className="flex items-center gap-2">
+                      <span className="w-3 h-3 rounded-full bg-slate-400" />
+                      <h3 className="text-sm font-bold text-white">Left Side: Before (2D Graphic Artwork)</h3>
+                    </div>
+                    <span className="text-[10px] font-mono text-slate-400 bg-slate-800 px-2 py-0.5 rounded">
+                      Customer Vector File
+                    </span>
+                  </div>
+
+                  {/* Image Preview Box */}
+                  <div className="relative h-56 w-full rounded-xl bg-slate-900 border border-slate-800 overflow-hidden flex items-center justify-center p-4">
+                    {settings.sliderBeforeImage ? (
+                      <img
+                        src={settings.sliderBeforeImage}
+                        alt="Before Preview"
+                        className="w-full h-full object-contain filter drop-shadow-md"
+                        onError={(e) => {
+                          (e.currentTarget as HTMLElement).style.display = 'none';
+                        }}
+                      />
+                    ) : (
+                      <span className="text-xs text-slate-500">No Image Specified</span>
+                    )}
+                    <span className="absolute bottom-2 left-2 bg-black/80 backdrop-blur-xs text-white text-[10px] font-mono px-2 py-0.5 rounded">
+                      {settings.sliderBeforeLabel || 'Flat 2D Vector Artwork'}
+                    </span>
+                  </div>
+
+                  {/* URL Input */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 mb-1">
+                      Before Image URL (2D Vector/Graphic File)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="https://..."
+                      value={settings.sliderBeforeImage}
+                      onChange={(e) =>
+                        setSettings({ ...settings, sliderBeforeImage: e.target.value })
+                      }
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 font-mono text-xs text-white outline-none focus:border-orange-500"
+                    />
+                  </div>
+
+                  {/* Label Input */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 mb-1">
+                      Before Pill Label Text
+                    </label>
+                    <input
+                      type="text"
+                      value={settings.sliderBeforeLabel}
+                      onChange={(e) =>
+                        setSettings({ ...settings, sliderBeforeLabel: e.target.value })
+                      }
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white outline-none focus:border-orange-500"
+                    />
+                  </div>
+                </div>
+
+                {/* CARD 2: AFTER IMAGE (3D Embroidered Patch) */}
+                <div className="bg-[#141722] border border-slate-800 rounded-2xl p-6 space-y-4">
+                  <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+                    <div className="flex items-center gap-2">
+                      <span className="w-3 h-3 rounded-full bg-orange-500" />
+                      <h3 className="text-sm font-bold text-white">Right Side: After (3D Stitched Patch)</h3>
+                    </div>
+                    <span className="text-[10px] font-mono text-orange-400 bg-orange-500/20 px-2 py-0.5 rounded border border-orange-500/30">
+                      Tajima Stitched Patch
+                    </span>
+                  </div>
+
+                  {/* Image Preview Box */}
+                  <div className="relative h-56 w-full rounded-xl bg-[#12141c] border border-slate-800 overflow-hidden flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-fabric-pattern opacity-90" />
+                    {settings.sliderAfterImage ? (
+                      <img
+                        src={settings.sliderAfterImage}
+                        alt="After Preview"
+                        className="relative z-10 w-full h-full object-contain filter drop-shadow-[0_15px_25px_rgba(0,0,0,0.8)]"
+                        onError={(e) => {
+                          (e.currentTarget as HTMLElement).style.display = 'none';
+                        }}
+                      />
+                    ) : (
+                      <span className="text-xs text-slate-500 relative z-10">No Image Specified</span>
+                    )}
+                    <span className="absolute bottom-2 right-2 bg-orange-500/95 backdrop-blur-xs text-white text-[10px] font-mono font-bold px-2 py-0.5 rounded z-20">
+                      {settings.sliderAfterLabel || '3D Physical Embroidery'}
+                    </span>
+                  </div>
+
+                  {/* URL Input */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 mb-1">
+                      After Image URL (3D Embroidered Patch Photo)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="https://..."
+                      value={settings.sliderAfterImage}
+                      onChange={(e) =>
+                        setSettings({ ...settings, sliderAfterImage: e.target.value })
+                      }
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 font-mono text-xs text-white outline-none focus:border-orange-500"
+                    />
+                  </div>
+
+                  {/* Label Input */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 mb-1">
+                      After Pill Label Text
+                    </label>
+                    <input
+                      type="text"
+                      value={settings.sliderAfterLabel}
+                      onChange={(e) =>
+                        setSettings({ ...settings, sliderAfterLabel: e.target.value })
+                      }
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white outline-none focus:border-orange-500"
+                    />
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Section Headings & Explainer Content */}
+              <div className="bg-[#141722] border border-slate-800 rounded-2xl p-6 space-y-4">
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <Sliders className="w-4 h-4 text-orange-500" />
+                  <span>Section Titles &amp; Explainer Text</span>
+                </h3>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 mb-1">
+                      Section Badge Text
+                    </label>
+                    <input
+                      type="text"
+                      value={settings.sliderBadge ?? 'Master Tajima Vector-to-Stitch Digitizing'}
+                      onChange={(e) => setSettings({ ...settings, sliderBadge: e.target.value })}
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white outline-none focus:border-orange-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 mb-1">
+                      Main Heading Title
+                    </label>
+                    <input
+                      type="text"
+                      value={settings.sliderTitle ?? 'See Your 2D Artwork Turned into 3D Physical Stitches'}
+                      onChange={(e) => setSettings({ ...settings, sliderTitle: e.target.value })}
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white outline-none focus:border-orange-500"
+                    />
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-bold text-slate-400 mb-1">
+                      Subtitle Description
+                    </label>
+                    <textarea
+                      rows={2}
+                      value={settings.sliderSubtitle ?? 'Drag the slider to see how our digitizers convert flat graphic files into high-density embroidered thread textures.'}
+                      onChange={(e) => setSettings({ ...settings, sliderSubtitle: e.target.value })}
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white outline-none focus:border-orange-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-2 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => handleSaveSettings()}
+                    disabled={isSavingSettings}
+                    className="btn-orange px-6 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>Save &amp; Publish Slider Changes</span>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          )}
           {activeTab === 'orders' && (
             <div className="space-y-6 animate-in fade-in duration-200">
               

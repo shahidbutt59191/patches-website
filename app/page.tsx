@@ -123,7 +123,16 @@ export default function HomePage() {
         <Services onOpenQuote={handleOpenQuote} />
 
         {/* 4. Interactive Vector-to-Stitch Digitizing Before & After Slider */}
-        <BeforeAfterSlider onOpenQuote={() => handleOpenQuote()} />
+        <BeforeAfterSlider
+          onOpenQuote={() => handleOpenQuote()}
+          beforeImage={settings.sliderBeforeImage}
+          afterImage={settings.sliderAfterImage}
+          beforeLabel={settings.sliderBeforeLabel}
+          afterLabel={settings.sliderAfterLabel}
+          title={settings.sliderTitle}
+          subtitle={settings.sliderSubtitle}
+          badge={settings.sliderBadge}
+        />
 
         {/* 5. Interactive Live Patch Studio & Real-Time Price Estimator */}
         <LivePatchStudio
