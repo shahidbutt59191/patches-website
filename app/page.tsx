@@ -1,23 +1,23 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Navbar from '@/components/PatchServices/Navbar';
-import Hero from '@/components/PatchServices/Hero';
-import ServicesGrid from '@/components/PatchServices/ServicesGrid';
-import PriceCalculator from '@/components/PatchServices/PriceCalculator';
-import BackingsSection from '@/components/PatchServices/BackingsSection';
-import HowItWorks from '@/components/PatchServices/HowItWorks';
-import Portfolio from '@/components/PatchServices/Portfolio';
-import QuoteForm from '@/components/PatchServices/QuoteForm';
-import ReviewsAndGuarantees from '@/components/PatchServices/ReviewsAndGuarantees';
-import Faq from '@/components/PatchServices/Faq';
-import Footer from '@/components/PatchServices/Footer';
+import Navbar from '@/components/Navbar';
+import Hero from '@/components/Hero';
+import Services from '@/components/Services';
+import Calculator from '@/components/Calculator';
+import Backings from '@/components/Backings';
+import Process from '@/components/Process';
+import Gallery from '@/components/Gallery';
+import QuoteForm from '@/components/QuoteForm';
+import Reviews from '@/components/Reviews';
+import Faq from '@/components/Faq';
+import Footer from '@/components/Footer';
 import { SiteSettings, DEFAULT_SETTINGS } from '@/lib/settings';
 
-export default function PatchServicesPage() {
+export default function HomePage() {
   const [settings, setSettings] = useState<SiteSettings>(DEFAULT_SETTINGS);
-  
-  // Interactive Spec State shared across Calculator, Services, and QuoteForm
+
+  // Dynamic shared spec state
   const [selectedStyle, setSelectedStyle] = useState('embroidered');
   const [selectedWidth, setSelectedWidth] = useState(3.0);
   const [selectedHeight, setSelectedHeight] = useState(3.0);
@@ -25,7 +25,7 @@ export default function PatchServicesPage() {
   const [selectedQuantity, setSelectedQuantity] = useState(100);
 
   useEffect(() => {
-    // 1. Check local storage for settings
+    // 1. Check local storage
     try {
       const local = localStorage.getItem('apex_live_settings');
       if (local) {
@@ -80,28 +80,28 @@ export default function PatchServicesPage() {
       {/* 1. Header & Navigation */}
       <Navbar whatsappNumber={settings.whatsappNumber} />
 
-      {/* 2. Hero Section: Core Value Proposition & Live Specimen Inspector */}
+      {/* 2. Hero Section: Direct Factory Value Proposition & Live Specimen Inspector */}
       <Hero
         whatsappNumber={settings.whatsappNumber}
         onSelectStyle={handleSelectStyle}
       />
 
-      {/* 3. Patch Services: 6 Core Patch Materials Showcase */}
-      <ServicesGrid onSelectStyle={handleSelectStyle} />
+      {/* 3. Patch Services: 6 Core Materials Showcase */}
+      <Services onSelectStyle={handleSelectStyle} />
 
       {/* 4. Bulk Pricing Calculator: Live Dimension & Quantity Sliders */}
-      <PriceCalculator onApplySpecs={handleApplySpecsFromCalculator} />
+      <Calculator onApplySpecs={handleApplySpecsFromCalculator} />
 
       {/* 5. Backings & Borders: Fasteners & Edge Finishes Guide */}
-      <BackingsSection />
+      <Backings />
 
       {/* 6. Production Process: 4 Transparent Steps & Photo Sample Guarantee */}
-      <HowItWorks />
+      <Process />
 
       {/* 7. Gallery: Real Client Work Across Tactical, Biker, Headwear & Varsity */}
-      <Portfolio />
+      <Gallery />
 
-      {/* 8. Free Quote & Artwork Submission Form (Connected to Supabase / Orders API) */}
+      {/* 8. Free Quote & Artwork Submission Form */}
       <QuoteForm
         initialStyle={selectedStyle}
         initialWidth={selectedWidth}
@@ -111,13 +111,17 @@ export default function PatchServicesPage() {
       />
 
       {/* 9. Verified Customer Reviews & Quadruple Factory Guarantee */}
-      <ReviewsAndGuarantees />
+      <Reviews />
 
       {/* 10. Frequently Asked Questions */}
       <Faq />
 
       {/* 11. Enterprise Footer */}
-      <Footer whatsappNumber={settings.whatsappNumber} />
+      <Footer
+        whatsappNumber={settings.whatsappNumber}
+        supportEmail={settings.supportEmail}
+        supportPhone={settings.supportPhone}
+      />
 
     </div>
   );
