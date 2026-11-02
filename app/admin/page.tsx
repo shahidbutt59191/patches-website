@@ -170,6 +170,10 @@ export default function AdminDashboardPage() {
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
   });
 
+  // Edit item states
+  const [editingPortfolio, setEditingPortfolio] = useState<PortfolioItem | null>(null);
+  const [editingReview, setEditingReview] = useState<CustomerReviewItem | null>(null);
+
   // Selected Order for Detail Modal
   const [selectedOrder, setSelectedOrder] = useState<PatchOrderItem | null>(null);
 
@@ -188,6 +192,9 @@ export default function AdminDashboardPage() {
           merged.reviews = DEFAULT_SETTINGS.reviews;
         }
         setSettings(merged);
+        try {
+          localStorage.setItem('apex_live_settings', JSON.stringify(merged));
+        } catch (e) {}
       }
 
       // 2. Fetch Orders/Quotes
@@ -232,14 +239,32 @@ export default function AdminDashboardPage() {
   }, []);
 
   useEffect(() => {
+    // 1. Instantly read local cache so there is no blank screen or reset flash
+    try {
+      const local = localStorage.getItem('apex_live_settings');
+      if (local) {
+        setSettings({ ...DEFAULT_SETTINGS, ...JSON.parse(local) });
+      }
+    } catch (e) {}
+
+    // 2. Fetch latest server/database data
     refreshData();
   }, [refreshData]);
 
-  // Save Settings Function
+  // Save Settings Function (Saves to LocalStorage immediately + server disk/DB)
   const handleSaveSettings = async (customSettings?: SiteSettings) => {
     const toSave = customSettings && typeof customSettings.priceEmbroidered === 'number' ? customSettings : settings;
     setIsSavingSettings(true);
     setSaveToast('');
+
+    // Instant local save
+    try {
+      localStorage.setItem('apex_live_settings', JSON.stringify(toSave));
+    } catch (e) {
+      console.error('LocalStorage write error:', e);
+    }
+
+    // Server save to permanent project disk and cloud DB
     try {
       const res = await fetch('/api/settings', {
         method: 'POST',
@@ -249,15 +274,37 @@ export default function AdminDashboardPage() {
 
       if (!res.ok) throw new Error('Failed to save settings to server');
 
-      // Also persist to localStorage for instant client hydration
-      localStorage.setItem('apex_live_settings', JSON.stringify(toSave));
-      setSaveToast('All changes (prices, portfolio, reviews & settings) published to live site!');
+      setSaveToast('✓ All edits successfully saved and published live!');
       setTimeout(() => setSaveToast(''), 4000);
     } catch (err: any) {
-      setSaveToast(`Error: ${err.message || 'Could not save'}`);
+      setSaveToast(`Note: Saved locally. Server sync: ${err.message || 'error'}`);
     } finally {
       setIsSavingSettings(false);
     }
+  };
+
+  // Update existing portfolio item
+  const handleUpdatePortfolio = () => {
+    if (!editingPortfolio || !editingPortfolio.title) return;
+    const updated = (settings.portfolio || []).map((p) =>
+      String(p.id) === String(editingPortfolio.id) ? editingPortfolio : p
+    );
+    const updatedSettings = { ...settings, portfolio: updated };
+    setSettings(updatedSettings);
+    handleSaveSettings(updatedSettings);
+    setEditingPortfolio(null);
+  };
+
+  // Update existing review
+  const handleUpdateReview = () => {
+    if (!editingReview || !editingReview.author) return;
+    const updated = (settings.reviews || []).map((r) =>
+      String(r.id) === String(editingReview.id) ? editingReview : r
+    );
+    const updatedSettings = { ...settings, reviews: updated };
+    setSettings(updatedSettings);
+    handleSaveSettings(updatedSettings);
+    setEditingReview(null);
   };
 
   // Update Status Function
@@ -858,6 +905,18 @@ export default function AdminDashboardPage() {
                     />
                   </div>
                 </div>
+
+                <div className="pt-4 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => handleSaveSettings()}
+                    disabled={isSavingSettings}
+                    className="btn-orange px-6 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer shadow-lg"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>{isSavingSettings ? 'Publishing...' : 'Save & Publish All Pricing Changes'}</span>
+                  </button>
+                </div>
               </div>
 
             </div>
@@ -1048,6 +1107,168 @@ export default function AdminDashboardPage() {
                 </div>
               )}
 
+              {/* Edit Portfolio Modal */}
+              {editingPortfolio && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in">
+                  <div className="bg-[#141722] border-2 border-orange-500/80 rounded-3xl max-w-2xl w-full p-6 text-white space-y-4 max-h-[90vh] overflow-y-auto">
+                    <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+                      <h3 className="text-base font-bold text-white flex items-center gap-2">
+                        <Edit3 className="w-4 h-4 text-orange-500" />
+                        <span>Edit Portfolio Specimen</span>
+                      </h3>
+                      <button
+                        type="button"
+                        onClick={() => setEditingPortfolio(null)}
+                        className="text-slate-400 hover:text-white text-sm"
+                      >
+                        ✕
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 mb-1">Patch Title</label>
+                        <input
+                          type="text"
+                          value={editingPortfolio.title}
+                          onChange={(e) => setEditingPortfolio({ ...editingPortfolio, title: e.target.value })}
+                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 mb-1">Category</label>
+                        <select
+                          value={editingPortfolio.category}
+                          onChange={(e) =>
+                            setEditingPortfolio({
+                              ...editingPortfolio,
+                              category: e.target.value as any,
+                            })
+                          }
+                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                        >
+                          <option value="tactical">Tactical Units</option>
+                          <option value="headwear">Caps &amp; Beanies</option>
+                          <option value="biker">Biker MC</option>
+                          <option value="varsity">Varsity Athletics</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 mb-1">Base Price ($)</label>
+                        <input
+                          type="number"
+                          step="0.05"
+                          value={editingPortfolio.basePrice}
+                          onChange={(e) =>
+                            setEditingPortfolio({
+                              ...editingPortfolio,
+                              basePrice: parseFloat(e.target.value) || 1.85,
+                            })
+                          }
+                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 mb-1">Badge Tag</label>
+                        <input
+                          type="text"
+                          value={editingPortfolio.badge}
+                          onChange={(e) => setEditingPortfolio({ ...editingPortfolio, badge: e.target.value })}
+                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 mb-1">Batch Size</label>
+                        <input
+                          type="text"
+                          value={editingPortfolio.batch}
+                          onChange={(e) => setEditingPortfolio({ ...editingPortfolio, batch: e.target.value })}
+                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 mb-1">Style ID</label>
+                        <select
+                          value={editingPortfolio.styleId}
+                          onChange={(e) => setEditingPortfolio({ ...editingPortfolio, styleId: e.target.value })}
+                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                        >
+                          <option value="embroidered">Embroidered</option>
+                          <option value="iron-on">Iron-On</option>
+                          <option value="velcro">Velcro</option>
+                          <option value="woven">Woven</option>
+                          <option value="leather">Leather</option>
+                          <option value="pvc">PVC</option>
+                        </select>
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <label className="block text-xs font-bold text-slate-400 mb-1">Image URL (High-Res Photo)</label>
+                        <input
+                          type="text"
+                          value={editingPortfolio.image}
+                          onChange={(e) => setEditingPortfolio({ ...editingPortfolio, image: e.target.value })}
+                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                        />
+                      </div>
+
+                      <div className="sm:col-span-1">
+                        <label className="block text-xs font-bold text-slate-400 mb-1">Preview</label>
+                        <div className="h-10 rounded-lg overflow-hidden border border-slate-700 bg-slate-900 flex items-center justify-center">
+                          {editingPortfolio.image ? (
+                            <img src={editingPortfolio.image} alt="Preview" className="w-full h-full object-cover" />
+                          ) : (
+                            <span className="text-[10px] text-slate-500">No Image</span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="sm:col-span-3">
+                        <label className="block text-xs font-bold text-slate-400 mb-1">Specifications</label>
+                        <input
+                          type="text"
+                          value={editingPortfolio.specs}
+                          onChange={(e) => setEditingPortfolio({ ...editingPortfolio, specs: e.target.value })}
+                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                        />
+                      </div>
+
+                      <div className="sm:col-span-3">
+                        <label className="block text-xs font-bold text-slate-400 mb-1">Description</label>
+                        <textarea
+                          rows={2}
+                          value={editingPortfolio.desc}
+                          onChange={(e) => setEditingPortfolio({ ...editingPortfolio, desc: e.target.value })}
+                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end gap-2 pt-3 border-t border-slate-800">
+                      <button
+                        type="button"
+                        onClick={() => setEditingPortfolio(null)}
+                        className="px-4 py-2 rounded-lg bg-slate-800 text-xs font-bold text-slate-300 hover:text-white cursor-pointer"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleUpdatePortfolio}
+                        className="btn-orange px-6 py-2 rounded-lg text-xs font-bold cursor-pointer"
+                      >
+                        Update &amp; Save Specimen
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Portfolio Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {(settings.portfolio || []).map((item) => (
@@ -1104,14 +1325,25 @@ export default function AdminDashboardPage() {
                         <span className="text-slate-500 text-[10px] block">BASE PRICE</span>
                         <span className="text-white font-bold">${(item.basePrice || 1.85).toFixed(2)}/ea</span>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => handleDeletePortfolio(item.id)}
-                        className="text-slate-500 hover:text-red-400 p-1.5 transition-colors cursor-pointer"
-                        title="Delete Patch Specimen"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => setEditingPortfolio({ ...item })}
+                          className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-orange-500 hover:text-white text-slate-300 text-[11px] font-bold flex items-center gap-1 transition-colors cursor-pointer"
+                          title="Edit Patch Specimen"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" />
+                          <span>Edit</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDeletePortfolio(item.id)}
+                          className="text-slate-500 hover:text-red-400 p-1.5 transition-colors cursor-pointer"
+                          title="Delete Patch Specimen"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -1664,6 +1896,120 @@ export default function AdminDashboardPage() {
                 </div>
               )}
 
+              {/* Edit Review Modal */}
+              {editingReview && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in">
+                  <div className="bg-[#141722] border-2 border-orange-500/80 rounded-3xl max-w-xl w-full p-6 text-white space-y-4 max-h-[90vh] overflow-y-auto">
+                    <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+                      <h3 className="text-base font-bold text-white flex items-center gap-2">
+                        <Edit3 className="w-4 h-4 text-orange-500" />
+                        <span>Edit Customer Review</span>
+                      </h3>
+                      <button
+                        type="button"
+                        onClick={() => setEditingReview(null)}
+                        className="text-slate-400 hover:text-white text-sm"
+                      >
+                        ✕
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 mb-1">Author Name</label>
+                        <input
+                          type="text"
+                          value={editingReview.author}
+                          onChange={(e) => setEditingReview({ ...editingReview, author: e.target.value })}
+                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 mb-1">Company / Organization</label>
+                        <input
+                          type="text"
+                          value={editingReview.company}
+                          onChange={(e) => setEditingReview({ ...editingReview, company: e.target.value })}
+                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 mb-1">Country</label>
+                        <input
+                          type="text"
+                          value={editingReview.country}
+                          onChange={(e) => setEditingReview({ ...editingReview, country: e.target.value })}
+                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 mb-1">Rating</label>
+                        <select
+                          value={editingReview.rating}
+                          onChange={(e) =>
+                            setEditingReview({ ...editingReview, rating: parseInt(e.target.value) || 5 })
+                          }
+                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                        >
+                          <option value="5">★★★★★ (5 Stars - Exceptional)</option>
+                          <option value="4">★★★★☆ (4 Stars - Great)</option>
+                        </select>
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <label className="block text-xs font-bold text-slate-400 mb-1">Verified Order Tag</label>
+                        <input
+                          type="text"
+                          value={editingReview.verifiedOrder}
+                          onChange={(e) => setEditingReview({ ...editingReview, verifiedOrder: e.target.value })}
+                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                        />
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <label className="block text-xs font-bold text-slate-400 mb-1">Avatar Photo URL</label>
+                        <input
+                          type="text"
+                          value={editingReview.avatar}
+                          onChange={(e) => setEditingReview({ ...editingReview, avatar: e.target.value })}
+                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                        />
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <label className="block text-xs font-bold text-slate-400 mb-1">Testimonial Quote</label>
+                        <textarea
+                          rows={3}
+                          value={editingReview.comment}
+                          onChange={(e) => setEditingReview({ ...editingReview, comment: e.target.value })}
+                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end gap-2 pt-3 border-t border-slate-800">
+                      <button
+                        type="button"
+                        onClick={() => setEditingReview(null)}
+                        className="px-4 py-2 rounded-lg bg-slate-800 text-xs font-bold text-slate-300 hover:text-white cursor-pointer"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleUpdateReview}
+                        className="btn-orange px-6 py-2 rounded-lg text-xs font-bold cursor-pointer"
+                      >
+                        Update &amp; Save Review
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Reviews List */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {(settings.reviews || []).map((rev) => (
@@ -1708,14 +2054,25 @@ export default function AdminDashboardPage() {
                           </div>
                         </div>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => handleDeleteReview(rev.id)}
-                        className="text-slate-500 hover:text-red-400 p-1.5 transition-colors cursor-pointer"
-                        title="Delete Review"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => setEditingReview({ ...rev })}
+                          className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-orange-500 hover:text-white text-slate-300 text-[11px] font-bold flex items-center gap-1 transition-colors cursor-pointer"
+                          title="Edit Review"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" />
+                          <span>Edit</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteReview(rev.id)}
+                          className="text-slate-500 hover:text-red-400 p-1.5 transition-colors cursor-pointer"
+                          title="Delete Review"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -1854,6 +2211,18 @@ export default function AdminDashboardPage() {
                       className="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs font-medium text-white"
                     />
                   </div>
+                </div>
+
+                <div className="pt-4 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => handleSaveSettings()}
+                    disabled={isSavingSettings}
+                    className="btn-orange px-6 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer shadow-lg"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>{isSavingSettings ? 'Publishing...' : 'Save & Publish Website Settings'}</span>
+                  </button>
                 </div>
 
               </div>

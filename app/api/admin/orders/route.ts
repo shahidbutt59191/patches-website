@@ -8,7 +8,7 @@ export async function GET() {
       supabase.from('orders').select('*').order('created_at', { ascending: false }),
     ]);
 
-    const quotes = quotesRes.data || [];
+    const quotes = (quotesRes.data || []).filter((q) => q.ref_code !== 'APEX_SYSTEM_SETTINGS');
     const orders = ordersRes.data || [];
 
     // Calculate factory KPIs
