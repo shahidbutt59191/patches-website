@@ -25,17 +25,6 @@ export default function Navbar({
 
   return (
     <header className="sticky top-0 z-50 w-full transition-all duration-300">
-      
-      {/* 0. Top Dynamic Announcement Strip if enabled */}
-      {announcementEnabled && announcementText && (
-        <div className="bg-gradient-to-r from-orange-600 via-orange-500 to-amber-600 text-white py-2 px-4 text-center text-xs font-bold tracking-wide shadow-xs flex items-center justify-center gap-2">
-          <span className="rounded-full bg-white/20 px-2.5 py-0.5 text-[10px] font-black uppercase font-mono">
-            Special Promo
-          </span>
-          <span>{announcementText}</span>
-        </div>
-      )}
-
       {/* 1. Dark Charcoal Top Announcement & Trust Bar */}
       <div className="bg-[#111318] text-slate-300 py-2 px-4 sm:px-6 text-xs border-b border-slate-800">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 text-[11px] sm:text-xs">

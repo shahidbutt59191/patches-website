@@ -3018,7 +3018,7 @@ export default function AdminDashboardPage() {
                     Comprehensive Website &amp; Brand Settings
                   </h1>
                   <p className="text-xs text-slate-400 mt-1">
-                    Manage header announcements, hero messaging, factory contact info, social links, stats, and SEO.
+                    Manage hero messaging, factory contact info, social links, stats, and SEO.
                   </p>
                 </div>
                 <button
@@ -3032,55 +3032,11 @@ export default function AdminDashboardPage() {
                 </button>
               </div>
 
-              {/* 1. Header & Top Announcement Bar */}
-              <div className="bg-[#141722] border border-slate-800 rounded-2xl p-6 space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-orange-500" />
-                    <span>1. Top Promo Announcement Strip</span>
-                  </h3>
-                  <label className="flex items-center gap-2 text-xs font-bold text-slate-300 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={settings.announcementEnabled}
-                      onChange={(e) => setSettings({ ...settings, announcementEnabled: e.target.checked })}
-                      className="w-4 h-4 rounded text-orange-500"
-                    />
-                    <span>Announcement Enabled</span>
-                  </label>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="sm:col-span-2">
-                    <label className="block text-xs font-bold text-slate-400 mb-1">
-                      Banner Text Message
-                    </label>
-                    <input
-                      type="text"
-                      value={settings.announcementText}
-                      onChange={(e) => setSettings({ ...settings, announcementText: e.target.value })}
-                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 mb-1">
-                      Promo Discount Code
-                    </label>
-                    <input
-                      type="text"
-                      value={settings.promoCode}
-                      onChange={(e) => setSettings({ ...settings, promoCode: e.target.value })}
-                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-mono font-bold text-orange-400"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* 2. Hero Section Content */}
+              {/* 1. Hero Section Content */}
               <div className="bg-[#141722] border border-slate-800 rounded-2xl p-6 space-y-4">
                 <h3 className="text-sm font-bold text-white flex items-center gap-2">
                   <Tag className="w-4 h-4 text-orange-500" />
-                  <span>2. Hero Section Messaging</span>
+                  <span>1. Hero Section Messaging</span>
                 </h3>
 
                 <div className="space-y-3">
