@@ -2,18 +2,15 @@
 
 import React, { useState } from 'react';
 import {
-  Check,
-  Sparkles,
+  Layers,
+  PenTool,
+  Tag,
+  Clock,
+  CheckCircle2,
   ArrowRight,
   ShieldCheck,
-  Clock,
-  Truck,
-  Tag,
+  Sparkles,
   Zap,
-  Star,
-  Award,
-  Flame,
-  Layers,
 } from 'lucide-react';
 import { SiteSettings, DEFAULT_SETTINGS } from '@/lib/settings';
 
@@ -34,485 +31,505 @@ export default function PricingCards({
   onOpenQuoteWithSpecs,
   settings = DEFAULT_SETTINGS,
 }: PricingCardsProps) {
-  const [pricingMode, setPricingMode] = useState<'tiers' | 'styles'>('tiers');
+  const [activeTab, setActiveTab] = useState<'core' | 'bulk'>('core');
 
-  // Dynamic base rates from settings
-  const pEmbroidered = settings.priceEmbroidered ?? 1.85;
-  const pIronOn = settings.priceIronOn ?? 1.95;
-  const pVelcro = settings.priceVelcro ?? 2.35;
-  const pWoven = settings.priceWoven ?? 1.65;
-  const pLeather = settings.priceLeather ?? 2.45;
-  const pPvc = settings.pricePvc ?? 2.55;
-
-  const handleSelectTier = (qty: number, style: string = 'embroidered', backing: string = 'iron_on') => {
-    if (onOpenQuoteWithSpecs) {
-      onOpenQuoteWithSpecs({
-        style,
-        width: 3.0,
-        height: 3.0,
-        backing,
-        quantity: qty,
-      });
-    } else if (onOpenQuote) {
-      onOpenQuote(style);
+  const handleOrder = (type: string, quantity: number = 100, price: number = 10.0) => {
+    if (type === 'patches') {
+      if (onOpenQuoteWithSpecs) {
+        onOpenQuoteWithSpecs({
+          style: 'embroidered',
+          width: 3.0,
+          height: 3.0,
+          backing: 'iron_on',
+          quantity: quantity,
+        });
+      } else if (onOpenQuote) {
+        onOpenQuote('embroidered');
+      }
+    } else {
+      if (onOpenQuote) {
+        onOpenQuote(type);
+      }
     }
   };
 
-  // Quantity Tier Packages
-  const tierPackages = [
-    {
-      id: 'tier-50',
-      name: 'Starter & Squad Trial',
-      quantity: 50,
-      badge: 'Testing & Prototypes',
-      badgeClass: 'bg-slate-100 text-slate-700 border-slate-200',
-      unitPrice: (pEmbroidered * 1.05).toFixed(2),
-      totalPrice: ((pEmbroidered * 1.05) * 50).toFixed(2),
-      savingsText: 'Low MOQ Entry',
-      turnaround: '10-12 Days',
-      popular: false,
-      desc: 'Ideal for club tests, pilot squad batches, and artwork sample runs with zero setup charge.',
-      features: [
-        'Up to 7 Madeira Polyneon thread colors',
-        'Heat-Seal Iron-On or Plain Sew-On',
-        'Classic Merrowed Overlock border',
-        '100% Free 6-Hour digital proof scan',
-        'Free vector artwork conversion',
-        'Free tracked courier shipping worldwide',
-      ],
-      buttonText: 'Order 50 Patches',
-      buttonClass: 'bg-slate-900 hover:bg-slate-800 text-white',
-    },
-    {
-      id: 'tier-100',
-      name: 'Popular Squadron & Brand',
-      quantity: 100,
-      badge: '⭐ MOST POPULAR • SAVE 20%',
-      badgeClass: 'bg-gradient-to-r from-orange-500 to-amber-500 text-white border-transparent shadow-xs',
-      unitPrice: (pEmbroidered * 0.85).toFixed(2),
-      totalPrice: ((pEmbroidered * 0.85) * 100).toFixed(2),
-      savingsText: 'Save 20% vs. Starter',
-      turnaround: '10-12 Days',
-      popular: true,
-      desc: 'The gold benchmark for tactical units, streetwear brands, and corporate uniforms worldwide.',
-      features: [
-        'Up to 9 Madeira Polyneon thread colors',
-        'Choice of Mil-Spec Velcro or Heat-Seal',
-        'Merrowed or Precision Laser-Cut edge',
-        '100% Free 6-Hour digital proof scan',
-        'Unlimited free digital proof revisions',
-        'High-density 100% Tajima thread coverage',
-        'Free tracked courier shipping worldwide',
-      ],
-      buttonText: 'Order 100 Patches (Popular)',
-      buttonClass: 'btn-orange shadow-lg shadow-orange-500/25',
-    },
-    {
-      id: 'tier-250',
-      name: 'Regiment & Apparel Batch',
-      quantity: 250,
-      badge: 'BEST VALUE • SAVE 32%',
-      badgeClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-      unitPrice: (pEmbroidered * 0.72).toFixed(2),
-      totalPrice: ((pEmbroidered * 0.72) * 250).toFixed(2),
-      savingsText: 'Save 32% Wholesale',
-      turnaround: '10-14 Days',
-      popular: false,
-      desc: 'High-volume production tier with multi-thread specialty options and priority loom scheduling.',
-      features: [
-        'Up to 12 Madeira thread colors',
-        'Metallic Gold & Silver thread option',
-        'All backings available (Velcro, 3M, Iron-on)',
-        'Priority Tajima automated loom scheduling',
-        '100% Free 6-Hour digital proof scan',
-        'Pre-production digital scan approval',
-        'Free tracked courier shipping worldwide',
-      ],
-      buttonText: 'Order 250 Patches',
-      buttonClass: 'bg-slate-900 hover:bg-slate-800 text-white',
-    },
-    {
-      id: 'tier-500',
-      name: 'Master Wholesale Production',
-      quantity: 500,
-      badge: 'FACTORY DIRECT • 45% OFF',
-      badgeClass: 'bg-purple-50 text-purple-700 border-purple-200',
-      unitPrice: (pEmbroidered * 0.58).toFixed(2),
-      totalPrice: ((pEmbroidered * 0.58) * 500).toFixed(2),
-      savingsText: 'Maximum Factory Discount',
-      turnaround: '12-14 Days',
-      popular: false,
-      desc: 'Complete wholesale factory contract pricing for government departments, large outfitters, and global brands.',
-      features: [
-        'Unlimited thread colors & colorways',
-        'Free pre-production sew-out physical sample',
-        'Any backing & custom die-cut border style',
-        'Dedicated senior Tajima master digitizer',
-        'VIP direct WhatsApp production desk',
-        'Custom bulk polybagging & carton packing',
-        'Free tracked express courier worldwide',
-      ],
-      buttonText: 'Order 500+ Wholesale',
-      buttonClass: 'bg-slate-900 hover:bg-slate-800 text-white',
-    },
-  ];
-
-  // Material Style Cards
-  const styleCards = [
-    {
-      id: 'embroidered',
-      name: 'Embroidered Patches',
-      startingPrice: pEmbroidered.toFixed(2),
-      tag: 'Classic & Durable',
-      badge: 'Most Popular',
-      minOrder: '10 pcs',
-      turnaround: '10-14 Days',
-      desc: 'Heavy twill backing with 100% high-sheen Madeira polyester thread and rolled merrowed overlock borders.',
-      features: [
-        'Classic 3D textured thread sheen',
-        'Heavy cotton/poly duck twill foundation',
-        'Merrowed or laser-cut sealed border',
-        'Withstands 100+ commercial wash cycles',
-      ],
-    },
-    {
-      id: 'velcro',
-      name: 'Tactical Velcro Patches',
-      startingPrice: pVelcro.toFixed(2),
-      tag: 'Combat & Morale',
-      badge: 'Mil-Spec Hook & Loop',
-      minOrder: '10 pcs',
-      turnaround: '10-14 Days',
-      desc: 'Military-specification hook fastener backing pre-sewn with double reinforced lock-stitching around the entire perimeter.',
-      features: [
-        'Pre-attached male hook backing',
-        'Includes matching soft female loop swatch',
-        'Weatherproof & mud/water impervious',
-        'Rated for 5,000+ attachment peels',
-      ],
-    },
-    {
-      id: 'iron-on',
-      name: 'Heat-Seal Iron-On Patches',
-      startingPrice: pIronOn.toFixed(2),
-      tag: 'Zero Sewing Required',
-      badge: 'Fast Thermal Film',
-      minOrder: '10 pcs',
-      turnaround: '10-14 Days',
-      desc: 'Industrial thermal adhesive coating. Bonds permanently to denim, canvas, cotton, and polyester in 20 seconds.',
-      features: [
-        'Pre-coated commercial heat-seal glue',
-        'Applies with household iron or heat press',
-        'Permanently fuses at 320°F (160°C)',
-        'Zero needle holes or sewing required',
-      ],
-    },
-    {
-      id: 'woven',
-      name: 'Jacquard Micro-Woven',
-      startingPrice: pWoven.toFixed(2),
-      tag: 'Micro Detail & Text',
-      badge: '50-Denier Damask',
-      minOrder: '25 pcs',
-      turnaround: '10-14 Days',
-      desc: 'Loomed from scratch using 50-denier micro-threads to resolve 0.5mm lettering, crisp vector lines, and gradients.',
-      features: [
-        'Ultra-flat smooth snag-free surface',
-        'Crisp readability down to 0.5mm text',
-        'Laser hot-cut non-fraying perimeter',
-        'Lightweight for sportswear & beanies',
-      ],
-    },
-    {
-      id: 'leather',
-      name: 'Laser-Debossed Leather',
-      startingPrice: pLeather.toFixed(2),
-      tag: 'Rustic Luxury',
-      badge: 'Fiber Laser Etched',
-      minOrder: '25 pcs',
-      turnaround: '10-14 Days',
-      desc: 'Rich caramel and dark espresso synthetic leatherette debossed with microscopic precision fiber lasers.',
-      features: [
-        'Deep tone-on-tone scorch debossing',
-        'Heavy-duty 3M adhesive or stitch channel',
-        'Waterproof, sweat-proof & weather-resistant',
-        'The gold standard for trucker snapbacks',
-      ],
-    },
-    {
-      id: 'pvc',
-      name: '3D Soft Molded PVC',
-      startingPrice: pPvc.toFixed(2),
-      tag: 'Tactical & Outdoor',
-      badge: '3D Sculpted Rubber',
-      minOrder: '25 pcs',
-      turnaround: '12-14 Days',
-      desc: 'Multi-tiered 3D liquid PVC casting with recessed perimeter stitch canal and vibrant waterproof colors.',
-      features: [
-        'Multi-level 3D sculpted relief depth',
-        '100% waterproof & mud/grit resistant',
-        'Glow-in-the-dark pigment options',
-        'Impervious to extreme weather & UV sun',
-      ],
-    },
-  ];
-
   return (
-    <section id="pricing" className="py-16 sm:py-24 bg-slate-50/70 border-b border-slate-200/80 relative">
+    <section id="pricing" className="py-16 sm:py-24 bg-[#f8fafc] border-b border-slate-200/90 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Section Heading */}
-        <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-orange-100/80 border border-orange-200 text-orange-600 text-xs font-bold mb-3 shadow-xs">
-            <Tag className="w-3.5 h-3.5" />
-            <span>Direct Factory Pricing • No Middleman Markups</span>
+        {/* Section Header */}
+        <div className="text-center max-w-3xl mx-auto mb-14">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-50 border border-blue-200 text-[#0a58ca] text-xs font-bold mb-3 shadow-2xs">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Factory Direct Rates • 100% Guaranteed Quality</span>
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight">
-            Transparent Pricing Built for Every Run
+            Transparent Pricing Plans
           </h2>
           <p className="mt-3 text-sm sm:text-base text-slate-600 leading-relaxed">
-            Free 6-hour digital proof scan, free vector artwork optimization, zero digitizing setup fees, and 100% free tracked worldwide delivery on all custom orders.
+            Professional embroidery digitizing, precision vector conversion, and physical patch manufacturing with free digital proofing and rapid turnaround.
           </p>
 
-          {/* Toggle Switcher */}
-          <div className="inline-flex items-center p-1.5 rounded-2xl bg-slate-200/80 border border-slate-300/80 mt-8 shadow-xs">
+          {/* Tab Selector */}
+          <div className="inline-flex items-center p-1.5 rounded-2xl bg-slate-200/80 border border-slate-300/80 mt-6 shadow-2xs">
             <button
               type="button"
-              onClick={() => setPricingMode('tiers')}
+              onClick={() => setActiveTab('core')}
               className={`px-5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
-                pricingMode === 'tiers'
+                activeTab === 'core'
                   ? 'bg-white text-slate-950 shadow-md'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <span>By Batch Volume (50, 100, 250, 500 pcs)</span>
+              <span>Core Services (Digitizing, Vector &amp; Patches)</span>
             </button>
             <button
               type="button"
-              onClick={() => setPricingMode('styles')}
+              onClick={() => setActiveTab('bulk')}
               className={`px-5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
-                pricingMode === 'styles'
+                activeTab === 'bulk'
                   ? 'bg-white text-slate-950 shadow-md'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <span>By Patch Material Style</span>
+              <span>Volume Patch Tiers (100, 250, 500+ Pcs)</span>
             </button>
           </div>
         </div>
 
-        {/* 1. BATCH VOLUME TIER PRICING CARDS */}
-        {pricingMode === 'tiers' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
-            {tierPackages.map((pkg) => (
-              <div
-                key={pkg.id}
-                className={`rounded-3xl p-6 sm:p-7 flex flex-col justify-between transition-all duration-300 relative ${
-                  pkg.popular
-                    ? 'bg-white border-2 border-orange-500 shadow-xl shadow-orange-500/10 lg:-translate-y-2'
-                    : 'bg-white border border-slate-200/90 shadow-md hover:shadow-lg'
-                }`}
-              >
-                {/* Popular Pill */}
-                {pkg.popular && (
-                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                    <span className="bg-gradient-to-r from-orange-600 to-orange-500 text-white text-[11px] font-black uppercase tracking-wider px-3.5 py-1 rounded-full shadow-md flex items-center gap-1.5">
-                      <Flame className="w-3.5 h-3.5 fill-current" />
-                      <span>Most Popular Run</span>
+        {/* 1. CORE SERVICES EXACT 3-CARD LAYOUT (MATCHING USER'S SCREENSHOT) */}
+        {activeTab === 'core' && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch pt-4">
+            
+            {/* CARD 1: EMBROIDERY DIGITIZING */}
+            <div className="bg-white border border-slate-200 rounded-3xl p-7 flex flex-col justify-between shadow-sm hover:shadow-xl transition-all duration-300 relative pt-8 group">
+              {/* Top Blue Pill Badge */}
+              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
+                <span className="bg-[#0a58ca] text-white text-xs font-black uppercase tracking-wider px-5 py-1 rounded-full shadow-sm">
+                  BASIC
+                </span>
+              </div>
+
+              <div>
+                {/* Header: Icon + Category + Title */}
+                <div className="flex items-start gap-3 mb-2.5">
+                  <div className="w-10 h-10 rounded-xl bg-[#eef3ff] border border-blue-100 flex items-center justify-center shrink-0 text-[#0a58ca]">
+                    <Layers className="w-5 h-5 stroke-[2.2]" />
+                  </div>
+                  <div>
+                    <span className="text-[#0a58ca] font-mono font-black text-[11px] tracking-wider uppercase block">
+                      EMBROIDERY DIGITIZING
                     </span>
-                  </div>
-                )}
-
-                <div>
-                  {/* Badge & Title */}
-                  <div className="mb-4">
-                    <span
-                      className={`inline-block text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full border mb-2 ${pkg.badgeClass}`}
-                    >
-                      {pkg.badge}
-                    </span>
-                    <h3 className="text-xl font-black text-slate-900">{pkg.name}</h3>
-                    <p className="text-xs text-slate-500 mt-1 leading-relaxed">{pkg.desc}</p>
-                  </div>
-
-                  {/* Price Box */}
-                  <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 mb-6">
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-3xl sm:text-4xl font-black text-slate-950 font-mono tracking-tight">
-                        ${pkg.unitPrice}
-                      </span>
-                      <span className="text-xs text-slate-500 font-bold font-mono">/ patch</span>
-                    </div>
-                    <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-200/60 text-xs font-mono">
-                      <span className="text-slate-600 font-semibold">{pkg.quantity} Patches Total:</span>
-                      <span className="font-black text-emerald-600">${pkg.totalPrice}</span>
-                    </div>
-                  </div>
-
-                  {/* Turnaround Pill */}
-                  <div className="flex items-center gap-4 text-xs text-slate-600 mb-6 font-semibold">
-                    <div className="flex items-center gap-1.5">
-                      <Clock className="w-3.5 h-3.5 text-orange-500" />
-                      <span>{pkg.turnaround}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <Truck className="w-3.5 h-3.5 text-orange-500" />
-                      <span>Free Shipping</span>
-                    </div>
-                  </div>
-
-                  {/* Features List */}
-                  <div className="space-y-2.5 mb-8">
-                    <div className="text-[11px] font-mono uppercase font-bold text-slate-400">
-                      Included with this package:
-                    </div>
-                    {pkg.features.map((feat, idx) => (
-                      <div key={idx} className="flex items-start gap-2.5 text-xs text-slate-700 leading-snug">
-                        <Check className="w-4 h-4 text-orange-500 shrink-0 mt-0.5" />
-                        <span>{feat}</span>
-                      </div>
-                    ))}
+                    <h3 className="text-xl font-black text-slate-900 tracking-tight mt-0.5">
+                      BASIC
+                    </h3>
                   </div>
                 </div>
 
-                {/* CTA Button */}
+                <p className="text-xs text-slate-600 leading-relaxed mb-5">
+                  Commercial stitch files for caps, polos, shirts &amp; jackets (.DST, .PES, .EMB)
+                </p>
+
+                {/* Light Blue Price Highlight Box */}
+                <div className="bg-[#edf2fe] border border-[#d6e2ff] rounded-2xl p-5 text-center mb-6">
+                  <div className="flex items-baseline justify-center gap-1.5">
+                    <span className="text-[#0a58ca] text-4xl font-black font-sans tracking-tight">
+                      $10.00
+                    </span>
+                    <span className="line-through text-slate-400 text-base font-bold">
+                      $15.00
+                    </span>
+                  </div>
+                  <div className="text-[11px] font-black uppercase tracking-widest text-slate-800 font-mono mt-1">
+                    / DESIGN
+                  </div>
+                </div>
+
+                {/* Features Checklist */}
+                <div className="space-y-3 mb-7">
+                  {[
+                    'Up to 4" x 4" Dimensions',
+                    'DST, PES, EMB & PDF File Formats',
+                    '100% Manual Hand-Mapped Pathing (No Auto-Trace)',
+                    'Cap Curved Profile Optimization',
+                    'Optimized Stitch Pathing for Smooth Production',
+                    'Production PDF Color Sequence Sheet Included',
+                  ].map((feat, idx) => (
+                    <div key={idx} className="flex items-start gap-2.5 text-xs text-slate-700 leading-snug font-medium">
+                      <CheckCircle2 className="w-4 h-4 text-[#10b981] shrink-0 mt-0.5" />
+                      <span>{feat}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Action Button & Turnaround Footer */}
+              <div>
                 <button
                   type="button"
-                  onClick={() => handleSelectTier(pkg.quantity, 'embroidered', 'velcro')}
-                  className={`w-full py-3.5 px-4 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 cursor-pointer transition-all ${pkg.buttonClass}`}
+                  onClick={() => handleOrder('digitizing', 1, 10.0)}
+                  className="w-full bg-[#1a56db] hover:bg-blue-700 text-white font-bold py-3.5 px-5 rounded-xl flex items-center justify-center gap-2 text-xs sm:text-sm shadow-md transition-all cursor-pointer"
                 >
-                  <span>{pkg.buttonText}</span>
+                  <span>Order Left Chest Logo</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
+
+                <div className="flex items-center justify-center gap-1.5 text-xs text-slate-500 font-medium mt-3.5">
+                  <Clock className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Express Delivery: 4–12 Hours</span>
+                </div>
               </div>
-            ))}
-          </div>
-        )}
+            </div>
 
-        {/* 2. MATERIAL STYLE PRICING CARDS */}
-        {pricingMode === 'styles' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {styleCards.map((sc) => (
-              <div
-                key={sc.id}
-                className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-7 flex flex-col justify-between shadow-md hover:shadow-xl hover:border-orange-500/50 transition-all duration-300 group"
-              >
-                <div>
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-orange-600 bg-orange-50 px-2.5 py-0.5 rounded-full border border-orange-200">
-                        {sc.badge}
-                      </span>
-                      <h3 className="text-xl font-black text-slate-900 mt-2">{sc.name}</h3>
-                      <p className="text-xs text-slate-500 mt-0.5">{sc.tag}</p>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-[10px] text-slate-400 font-mono block">From</span>
-                      <span className="text-2xl font-black text-slate-950 font-mono">
-                        ${sc.startingPrice}
-                      </span>
-                      <span className="text-[10px] text-slate-500 font-mono block">/ each</span>
-                    </div>
+            {/* CARD 2: VECTOR ART CONVERSION */}
+            <div className="bg-white border border-slate-200 rounded-3xl p-7 flex flex-col justify-between shadow-sm hover:shadow-xl transition-all duration-300 relative pt-8 group">
+              {/* Top Blue Pill Badge */}
+              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
+                <span className="bg-[#0a58ca] text-white text-xs font-black uppercase tracking-wider px-5 py-1 rounded-full shadow-sm">
+                  BASIC
+                </span>
+              </div>
+
+              <div>
+                {/* Header: Icon + Category + Title */}
+                <div className="flex items-start gap-3 mb-2.5">
+                  <div className="w-10 h-10 rounded-xl bg-[#eef3ff] border border-blue-100 flex items-center justify-center shrink-0 text-[#0a58ca]">
+                    <PenTool className="w-5 h-5 stroke-[2.2]" />
                   </div>
-
-                  <p className="text-xs text-slate-600 leading-relaxed mb-5">
-                    {sc.desc}
-                  </p>
-
-                  <div className="grid grid-cols-2 gap-2 p-3 rounded-2xl bg-slate-50 border border-slate-100 text-xs font-mono mb-5">
-                    <div>
-                      <span className="text-slate-400 text-[10px] block">Min Order</span>
-                      <span className="font-bold text-slate-800">{sc.minOrder}</span>
-                    </div>
-                    <div>
-                      <span className="text-slate-400 text-[10px] block">Turnaround</span>
-                      <span className="font-bold text-slate-800">{sc.turnaround}</span>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2 mb-6">
-                    {sc.features.map((f, i) => (
-                      <div key={i} className="flex items-start gap-2 text-xs text-slate-700">
-                        <Check className="w-3.5 h-3.5 text-orange-500 shrink-0 mt-0.5" />
-                        <span>{f}</span>
-                      </div>
-                    ))}
+                  <div>
+                    <span className="text-[#0a58ca] font-mono font-black text-[11px] tracking-wider uppercase block">
+                      VECTOR ART CONVERSION
+                    </span>
+                    <h3 className="text-xl font-black text-slate-900 tracking-tight mt-0.5">
+                      BASIC
+                    </h3>
                   </div>
                 </div>
 
+                <p className="text-xs text-slate-600 leading-relaxed mb-5">
+                  Simple logos, text, symbols, and basic shapes.
+                </p>
+
+                {/* Light Blue Price Highlight Box */}
+                <div className="bg-[#edf2fe] border border-[#d6e2ff] rounded-2xl p-5 text-center mb-6">
+                  <div className="flex items-baseline justify-center gap-1.5">
+                    <span className="text-[#0a58ca] text-4xl font-black font-sans tracking-tight">
+                      $10.00
+                    </span>
+                    <span className="line-through text-slate-400 text-base font-bold">
+                      $15.00
+                    </span>
+                  </div>
+                  <div className="text-[11px] font-black uppercase tracking-widest text-slate-800 font-mono mt-1">
+                    / DESIGN
+                  </div>
+                </div>
+
+                {/* Features Checklist */}
+                <div className="space-y-3 mb-7">
+                  {[
+                    'Professional Vector Redraw',
+                    'Clean & Smooth Lines',
+                    'Fully Scalable Without Quality Loss',
+                    'AI, EPS, SVG & PDF Formats',
+                    '100% Manual Hand Trace Tracing',
+                    'Free Basic Revisions',
+                  ].map((feat, idx) => (
+                    <div key={idx} className="flex items-start gap-2.5 text-xs text-slate-700 leading-snug font-medium">
+                      <CheckCircle2 className="w-4 h-4 text-[#10b981] shrink-0 mt-0.5" />
+                      <span>{feat}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Action Button & Turnaround Footer */}
+              <div>
                 <button
                   type="button"
-                  onClick={() => onOpenQuote && onOpenQuote(sc.id)}
-                  className="w-full py-3 px-4 rounded-xl bg-slate-900 group-hover:bg-orange-500 text-white text-xs font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                  onClick={() => handleOrder('vector', 1, 10.0)}
+                  className="w-full bg-[#1a56db] hover:bg-blue-700 text-white font-bold py-3.5 px-5 rounded-xl flex items-center justify-center gap-2 text-xs sm:text-sm shadow-md transition-all cursor-pointer"
                 >
-                  <span>Customize {sc.name}</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <span>Order Simple Redraw</span>
+                  <ArrowRight className="w-4 h-4" />
                 </button>
+
+                <div className="flex items-center justify-center gap-1.5 text-xs text-slate-500 font-medium mt-3.5">
+                  <Clock className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Express Delivery: 6–12 Hours</span>
+                </div>
               </div>
-            ))}
+            </div>
+
+            {/* CARD 3: CUSTOM MANUFACTURED PATCHES */}
+            <div className="bg-white border-2 border-[#00875a]/70 rounded-3xl p-7 flex flex-col justify-between shadow-md hover:shadow-xl transition-all duration-300 relative pt-8 group">
+              {/* Top Green Pill Badge */}
+              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
+                <span className="bg-[#00875a] text-white text-xs font-black uppercase tracking-wider px-5 py-1 rounded-full shadow-sm">
+                  SAMPLE RUN
+                </span>
+              </div>
+
+              <div>
+                {/* Header: Icon + Category + Title */}
+                <div className="flex items-start gap-3 mb-2.5">
+                  <div className="w-10 h-10 rounded-xl bg-[#e6f6ee] border border-emerald-100 flex items-center justify-center shrink-0 text-[#00875a]">
+                    <Tag className="w-5 h-5 stroke-[2.2]" />
+                  </div>
+                  <div>
+                    <span className="text-[#00875a] font-mono font-black text-[11px] tracking-wider uppercase block">
+                      CUSTOM MANUFACTURED PATCHES
+                    </span>
+                    <h3 className="text-xl font-black text-slate-900 tracking-tight mt-0.5">
+                      Sample Batch (50+ Pcs)
+                    </h3>
+                  </div>
+                </div>
+
+                <p className="text-xs text-slate-600 leading-relaxed mb-5">
+                  Low-minimum run perfect for small brands, clubs, prototypes, and event samples.
+                </p>
+
+                {/* Light Green Price Highlight Box */}
+                <div className="bg-[#ebf8f2] border border-[#c1ebd6] rounded-2xl p-5 text-center mb-6">
+                  <div className="flex items-baseline justify-center gap-1.5">
+                    <span className="text-[#00875a] text-4xl font-black font-sans tracking-tight">
+                      $3.50
+                    </span>
+                    <span className="line-through text-slate-400 text-base font-bold">
+                      $4.00
+                    </span>
+                  </div>
+                  <div className="text-[11px] font-black uppercase tracking-widest text-slate-800 font-mono mt-1">
+                    / PIECE
+                  </div>
+                </div>
+
+                {/* Features Checklist */}
+                <div className="space-y-3 mb-7">
+                  {[
+                    'Low Minimum Order – Starting from 50 Pieces',
+                    'Free Digital Artwork & Mockup',
+                    'Custom Embroidered, Woven or PVC Patches',
+                    'Choice of Standard Backing Options',
+                    'Quality Check Before Shipping',
+                    '10–14 Business Days Production After Proof Approval',
+                  ].map((feat, idx) => (
+                    <div key={idx} className="flex items-start gap-2.5 text-xs text-slate-700 leading-snug font-medium">
+                      <CheckCircle2 className="w-4 h-4 text-[#10b981] shrink-0 mt-0.5" />
+                      <span>{feat}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Action Button & Turnaround Footer */}
+              <div>
+                <button
+                  type="button"
+                  onClick={() => handleOrder('patches', 50, 3.50)}
+                  className="w-full bg-[#00875a] hover:bg-emerald-800 text-white font-bold py-3.5 px-5 rounded-xl flex items-center justify-center gap-2 text-xs sm:text-sm shadow-md transition-all cursor-pointer"
+                >
+                  <span>Order Sample Run</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+
+                <div className="flex items-center justify-center gap-1.5 text-xs text-slate-500 font-medium mt-3.5">
+                  <Clock className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Express Delivery: 10–14 Business Days</span>
+                </div>
+              </div>
+            </div>
+
           </div>
         )}
 
-        {/* Bottom Trust & Guarantee Bar */}
-        <div className="mt-12 sm:mt-16 bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-sm">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 text-center sm:text-left">
-            <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center shrink-0">
-                <ShieldCheck className="w-5 h-5" />
+        {/* 2. VOLUME PATCH BATCH TIERS (100, 250, 500+ PCS) */}
+        {activeTab === 'bulk' && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch pt-4">
+            
+            {/* TIER 1: 100 PCS */}
+            <div className="bg-white border-2 border-orange-500 rounded-3xl p-7 flex flex-col justify-between shadow-lg relative pt-8">
+              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
+                <span className="bg-orange-500 text-white text-xs font-black uppercase tracking-wider px-5 py-1 rounded-full shadow-sm">
+                  POPULAR SQUADRON (100 PCS)
+                </span>
               </div>
+
               <div>
-                <h4 className="text-xs font-black uppercase tracking-wide text-slate-900">
-                  Best Price Guarantee
-                </h4>
-                <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">
-                  Found a lower verified quote? We beat any legitimate factory price by 10%.
+                <span className="text-orange-600 font-mono font-black text-[11px] tracking-wider uppercase block">
+                  BULK MANUFACTURED PATCHES
+                </span>
+                <h3 className="text-xl font-black text-slate-900 mt-1">100 Pieces Batch</h3>
+                <p className="text-xs text-slate-500 mt-1 mb-5">
+                  The standard run for military units, tactical teams, biker MCs, and brand merch.
                 </p>
+
+                <div className="bg-orange-50/70 border border-orange-200/80 rounded-2xl p-5 text-center mb-6">
+                  <div className="flex items-baseline justify-center gap-1.5">
+                    <span className="text-orange-600 text-4xl font-black font-sans">$1.85</span>
+                    <span className="line-through text-slate-400 text-base font-bold">$2.50</span>
+                  </div>
+                  <div className="text-[11px] font-black uppercase tracking-widest text-slate-800 font-mono mt-1">
+                    / PIECE ($185.00 TOTAL)
+                  </div>
+                </div>
+
+                <div className="space-y-3 mb-7">
+                  {[
+                    'Choice of Mil-Spec Velcro, Iron-On or Sew-On',
+                    'Up to 9 Madeira Polyneon Thread Colors',
+                    'Merrowed Overlock or Laser-Cut Die Edge',
+                    '100% Free 6-Hour Digital Proof Scan',
+                    'Unlimited Free Proof Revisions',
+                    '100% Free Tracked Courier Shipping Worldwide',
+                  ].map((feat, idx) => (
+                    <div key={idx} className="flex items-start gap-2.5 text-xs text-slate-700 leading-snug font-medium">
+                      <CheckCircle2 className="w-4 h-4 text-[#10b981] shrink-0 mt-0.5" />
+                      <span>{feat}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <button
+                  type="button"
+                  onClick={() => handleOrder('patches', 100, 1.85)}
+                  className="w-full btn-orange font-bold py-3.5 px-5 rounded-xl flex items-center justify-center gap-2 text-xs sm:text-sm shadow-md cursor-pointer"
+                >
+                  <span>Order 100 Patches Run</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+                <div className="flex items-center justify-center gap-1.5 text-xs text-slate-500 font-medium mt-3.5">
+                  <Clock className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Express Delivery: 10–12 Business Days</span>
+                </div>
               </div>
             </div>
 
-            <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
-                <Clock className="w-5 h-5" />
+            {/* TIER 2: 250 PCS */}
+            <div className="bg-white border border-slate-200 rounded-3xl p-7 flex flex-col justify-between shadow-sm hover:shadow-xl transition-all relative pt-8">
+              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
+                <span className="bg-slate-900 text-white text-xs font-black uppercase tracking-wider px-5 py-1 rounded-full shadow-sm">
+                  VOLUME TIER (250 PCS)
+                </span>
               </div>
+
               <div>
-                <h4 className="text-xs font-black uppercase tracking-wide text-slate-900">
-                  Free 6-Hour Digital Proof
-                </h4>
-                <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">
-                  High-definition digital stitch scan sent within 6 hours. Unlimited free revisions.
+                <span className="text-slate-700 font-mono font-black text-[11px] tracking-wider uppercase block">
+                  REGIMENT APPAREL BATCH
+                </span>
+                <h3 className="text-xl font-black text-slate-900 mt-1">250 Pieces Batch</h3>
+                <p className="text-xs text-slate-500 mt-1 mb-5">
+                  Larger volume with specialty metallic thread options and priority loom scheduling.
                 </p>
+
+                <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 text-center mb-6">
+                  <div className="flex items-baseline justify-center gap-1.5">
+                    <span className="text-slate-900 text-4xl font-black font-sans">$1.45</span>
+                    <span className="line-through text-slate-400 text-base font-bold">$2.20</span>
+                  </div>
+                  <div className="text-[11px] font-black uppercase tracking-widest text-slate-800 font-mono mt-1">
+                    / PIECE ($362.50 TOTAL)
+                  </div>
+                </div>
+
+                <div className="space-y-3 mb-7">
+                  {[
+                    'Up to 12 Madeira Thread Colors',
+                    'Metallic Gold & Silver Thread Option',
+                    'All Backings Available (Velcro, 3M, Iron-On)',
+                    'Priority Tajima Automated Loom Scheduling',
+                    '100% Free 6-Hour Digital Proof Scan',
+                    '100% Free Tracked Courier Shipping Worldwide',
+                  ].map((feat, idx) => (
+                    <div key={idx} className="flex items-start gap-2.5 text-xs text-slate-700 leading-snug font-medium">
+                      <CheckCircle2 className="w-4 h-4 text-[#10b981] shrink-0 mt-0.5" />
+                      <span>{feat}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <button
+                  type="button"
+                  onClick={() => handleOrder('patches', 250, 1.45)}
+                  className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 px-5 rounded-xl flex items-center justify-center gap-2 text-xs sm:text-sm shadow-md cursor-pointer"
+                >
+                  <span>Order 250 Patches Run</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+                <div className="flex items-center justify-center gap-1.5 text-xs text-slate-500 font-medium mt-3.5">
+                  <Clock className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Express Delivery: 10–14 Business Days</span>
+                </div>
               </div>
             </div>
 
-            <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
-                <Zap className="w-5 h-5" />
+            {/* TIER 3: 500+ PCS */}
+            <div className="bg-white border border-slate-200 rounded-3xl p-7 flex flex-col justify-between shadow-sm hover:shadow-xl transition-all relative pt-8">
+              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
+                <span className="bg-[#00875a] text-white text-xs font-black uppercase tracking-wider px-5 py-1 rounded-full shadow-sm">
+                  MASTER WHOLESALE (500+ PCS)
+                </span>
               </div>
+
               <div>
-                <h4 className="text-xs font-black uppercase tracking-wide text-slate-900">
-                  Zero Setup or Mold Fees
-                </h4>
-                <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">
-                  Zero vector artwork setup, digitizing fees, or machine setup charges.
+                <span className="text-[#00875a] font-mono font-black text-[11px] tracking-wider uppercase block">
+                  FACTORY DIRECT WHOLESALE
+                </span>
+                <h3 className="text-xl font-black text-slate-900 mt-1">500+ Pieces Batch</h3>
+                <p className="text-xs text-slate-500 mt-1 mb-5">
+                  Direct contract pricing for government departments, large outfitters, and brands.
                 </p>
+
+                <div className="bg-[#ebf8f2] border border-[#c1ebd6] rounded-2xl p-5 text-center mb-6">
+                  <div className="flex items-baseline justify-center gap-1.5">
+                    <span className="text-[#00875a] text-4xl font-black font-sans">$0.99</span>
+                    <span className="line-through text-slate-400 text-base font-bold">$1.85</span>
+                  </div>
+                  <div className="text-[11px] font-black uppercase tracking-widest text-slate-800 font-mono mt-1">
+                    / PIECE ($495.00 TOTAL)
+                  </div>
+                </div>
+
+                <div className="space-y-3 mb-7">
+                  {[
+                    'Unlimited Thread Colors & Colorways',
+                    'Free Pre-Production Sew-Out Sample Proof',
+                    'Any Backing & Custom Die-Cut Border Shape',
+                    'Dedicated Senior Tajima Master Digitizer',
+                    'VIP Direct WhatsApp Production Coordinator',
+                    '100% Free Express Courier Shipping Worldwide',
+                  ].map((feat, idx) => (
+                    <div key={idx} className="flex items-start gap-2.5 text-xs text-slate-700 leading-snug font-medium">
+                      <CheckCircle2 className="w-4 h-4 text-[#10b981] shrink-0 mt-0.5" />
+                      <span>{feat}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <button
+                  type="button"
+                  onClick={() => handleOrder('patches', 500, 0.99)}
+                  className="w-full bg-[#00875a] hover:bg-emerald-800 text-white font-bold py-3.5 px-5 rounded-xl flex items-center justify-center gap-2 text-xs sm:text-sm shadow-md cursor-pointer"
+                >
+                  <span>Order 500+ Wholesale</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+                <div className="flex items-center justify-center gap-1.5 text-xs text-slate-500 font-medium mt-3.5">
+                  <Clock className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Express Delivery: 12–14 Business Days</span>
+                </div>
               </div>
             </div>
 
-            <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center shrink-0">
-                <Truck className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="text-xs font-black uppercase tracking-wide text-slate-900">
-                  Free Worldwide Shipping
-                </h4>
-                <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">
-                  Fully tracked courier delivery straight to your doorstep worldwide at $0 cost.
-                </p>
-              </div>
-            </div>
           </div>
-        </div>
+        )}
 
       </div>
     </section>
