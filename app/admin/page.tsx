@@ -54,6 +54,8 @@ import {
   FaqItem,
   BulkTierItem,
   PatchPricingCardItem,
+  HeroPatchItem,
+  DEFAULT_HERO_PATCHES,
   DEFAULT_PATCH_PRICING_CARDS,
   DEFAULT_PORTFOLIO,
   DEFAULT_REVIEWS,
@@ -323,6 +325,9 @@ export default function AdminDashboardPage() {
         }
         if (!merged.patchPricingCards || merged.patchPricingCards.length === 0) {
           merged.patchPricingCards = DEFAULT_PATCH_PRICING_CARDS;
+        }
+        if (!merged.heroPatches || merged.heroPatches.length === 0) {
+          merged.heroPatches = DEFAULT_HERO_PATCHES;
         }
         if (!merged.faqs || merged.faqs.length === 0) {
           merged.faqs = DEFAULT_SETTINGS.faqs;
@@ -3106,6 +3111,113 @@ export default function AdminDashboardPage() {
                       className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
                     />
                   </div>
+                </div>
+              </div>
+
+              {/* 2B. Hero Showcase Patches (5 Featured Specimens) */}
+              <div className="bg-[#141722] border border-slate-800 rounded-2xl p-6 space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-orange-500" />
+                    <span>2B. Hero Showcase Patches (5 Featured Specimens)</span>
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSettings({ ...settings, heroPatches: DEFAULT_HERO_PATCHES });
+                    }}
+                    className="text-xs text-slate-400 hover:text-white flex items-center gap-1 cursor-pointer transition-colors"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" />
+                    <span>Reset Default Badges</span>
+                  </button>
+                </div>
+                <p className="text-xs text-slate-400">
+                  Manage the 5 physical custom patch specimens floating on the Hero stage: customize title, technical specs, and custom patch photo image URLs.
+                </p>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                  {(settings.heroPatches || DEFAULT_HERO_PATCHES).map((patch, idx) => (
+                    <div
+                      key={patch.id || idx}
+                      className="bg-[#181b26] p-4 rounded-xl border border-slate-800 space-y-3"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-mono font-bold uppercase text-orange-400 bg-orange-500/10 px-2 py-0.5 rounded border border-orange-500/20">
+                          Position {idx + 1}: {['Top-Left', 'Top-Right', 'Center Focal', 'Lower-Center', 'Far Right'][idx] || `Patch ${idx + 1}`}
+                        </span>
+                        <span className="text-[10px] font-mono text-slate-400 font-bold">
+                          {patch.badge}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={patch.image}
+                          alt={patch.name}
+                          className="w-16 h-16 rounded-xl object-cover bg-slate-900 border border-slate-700 shrink-0 shadow-md"
+                        />
+                        <div className="flex-1 space-y-2">
+                          <input
+                            type="text"
+                            value={patch.name}
+                            onChange={(e) => {
+                              const updated = [...(settings.heroPatches || DEFAULT_HERO_PATCHES)];
+                              updated[idx] = { ...updated[idx], name: e.target.value };
+                              setSettings({ ...settings, heroPatches: updated });
+                            }}
+                            placeholder="Patch Title"
+                            className="w-full p-2 rounded-lg bg-slate-900 border border-slate-700 text-xs font-bold text-white focus:border-orange-500 outline-none"
+                          />
+                          <input
+                            type="text"
+                            value={patch.badge}
+                            onChange={(e) => {
+                              const updated = [...(settings.heroPatches || DEFAULT_HERO_PATCHES)];
+                              updated[idx] = { ...updated[idx], badge: e.target.value };
+                              setSettings({ ...settings, heroPatches: updated });
+                            }}
+                            placeholder="Badge Pill Text"
+                            className="w-full p-1.5 rounded-lg bg-slate-900 border border-slate-700 text-[11px] font-mono font-bold text-orange-400 focus:border-orange-500 outline-none"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-[10px] font-bold text-slate-400 mb-1">
+                          Specifications Line
+                        </label>
+                        <input
+                          type="text"
+                          value={patch.specs}
+                          onChange={(e) => {
+                            const updated = [...(settings.heroPatches || DEFAULT_HERO_PATCHES)];
+                            updated[idx] = { ...updated[idx], specs: e.target.value };
+                            setSettings({ ...settings, heroPatches: updated });
+                          }}
+                          placeholder="e.g. 100% Madeira Polyester • 24,500 Stitches"
+                          className="w-full p-2 rounded-lg bg-slate-900 border border-slate-700 text-xs font-mono text-slate-300 focus:border-orange-500 outline-none"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[10px] font-bold text-slate-400 mb-1">
+                          Patch Image URL
+                        </label>
+                        <input
+                          type="text"
+                          value={patch.image}
+                          onChange={(e) => {
+                            const updated = [...(settings.heroPatches || DEFAULT_HERO_PATCHES)];
+                            updated[idx] = { ...updated[idx], image: e.target.value };
+                            setSettings({ ...settings, heroPatches: updated });
+                          }}
+                          placeholder="https://..."
+                          className="w-full p-2 rounded-lg bg-slate-900 border border-slate-700 text-xs font-mono text-slate-400 focus:border-orange-500 outline-none truncate"
+                        />
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
 

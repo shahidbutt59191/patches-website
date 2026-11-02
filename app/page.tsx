@@ -118,6 +118,7 @@ export default function HomePage() {
           badge={settings.heroBadge}
           headline={settings.heroHeadline}
           subheadline={settings.heroSubheadline}
+          patches={settings.heroPatches}
         />
 
         {/* 3. Our Patch Services: All 8 Custom Patch Styles */}

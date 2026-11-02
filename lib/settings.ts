@@ -55,6 +55,15 @@ export interface BulkTierItem {
   label: string;
 }
 
+export interface HeroPatchItem {
+  id: string;
+  name: string;
+  specs: string;
+  image: string;
+  style: string;
+  badge: string;
+}
+
 export interface PatchPricingCardItem {
   id: string;
   name: string;
@@ -115,6 +124,9 @@ export interface SiteSettings {
 
   // 8 Custom Patch Pricing Cards
   patchPricingCards: PatchPricingCardItem[];
+
+  // Hero Section 5 Featured Patches
+  heroPatches?: HeroPatchItem[];
 
   // Services Catalog
   services: ServiceSettingItem[];
@@ -605,6 +617,49 @@ export const DEFAULT_PATCH_PRICING_CARDS: PatchPricingCardItem[] = [
   },
 ];
 
+export const DEFAULT_HERO_PATCHES: HeroPatchItem[] = [
+  {
+    id: 'patch-1',
+    name: 'Tactical Special Operations Crest',
+    specs: '100% Madeira Polyester • 24,500 Stitches • Merrowed Gold Border',
+    style: 'embroidered',
+    badge: '100% Embroidered',
+    image: 'https://images.unsplash.com/photo-1584905066893-7d5c142ba4e1?w=800&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'patch-2',
+    name: 'Artisan Laser-Debossed Leather',
+    specs: 'Vegetable-Tanned Caramel Leatherette • Fiber Laser Etched • Cap Stitch Groove',
+    style: 'leather',
+    badge: 'Debossed Leather',
+    image: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=800&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'patch-3',
+    name: '3D Soft Molded PVC Tactical Morale',
+    specs: 'Multi-Level 3D Relief • 100% Weatherproof & Mud-Impervious • Hook Velcro',
+    style: 'pvc',
+    badge: '3D Soft PVC',
+    image: 'https://images.unsplash.com/photo-1579208575657-c595a05383b7?w=800&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'patch-4',
+    name: 'Jacquard Micro-Woven Tactical Tab',
+    specs: '50-Denier Damask Weave • Razor-Sharp 0.5mm Text • Precision Laser Hot-Cut',
+    style: 'woven',
+    badge: 'Micro-Woven',
+    image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=800&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'patch-5',
+    name: 'Collegiate Varsity Gold Chenille',
+    specs: 'High-Pile Plush Loop Yarn Moss Stitch • Wool Felt • Chainstitch Accent',
+    style: 'chenille',
+    badge: 'Vintage Chenille',
+    image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800&auto=format&fit=crop&q=80',
+  },
+];
+
 export const DEFAULT_SETTINGS: SiteSettings = {
   // Brand & Header
   announcementText: '🔥 Use code BDIGITIZE15 for 15% Off Your First Bulk Run • Free Digital Proof in 6 Hours',
@@ -649,6 +704,9 @@ export const DEFAULT_SETTINGS: SiteSettings = {
 
   // 8 Custom Patch Pricing Cards
   patchPricingCards: DEFAULT_PATCH_PRICING_CARDS,
+
+  // 5 Hero Showcase Patches
+  heroPatches: DEFAULT_HERO_PATCHES,
 
   // Services Catalog
   services: DEFAULT_SERVICES,
