@@ -312,8 +312,8 @@ export default function AdminDashboardPage() {
   // Fetch Settings & Quotes from API
   const refreshData = useCallback(async () => {
     try {
-      // 1. Fetch Settings
-      const setRes = await fetch('/api/settings');
+      // 1. Fetch Settings with cache-busting
+      const setRes = await fetch(`/api/settings?t=${Date.now()}`, { cache: 'no-store' });
       if (setRes.ok) {
         const setData = await setRes.json();
         const merged = { ...DEFAULT_SETTINGS, ...setData };
@@ -342,7 +342,7 @@ export default function AdminDashboardPage() {
       }
 
       // 2. Fetch Orders/Quotes
-      const ordRes = await fetch('/api/admin/orders');
+      const ordRes = await fetch(`/api/admin/orders?t=${Date.now()}`, { cache: 'no-store' });
       if (ordRes.ok) {
         const ordData = await ordRes.json();
         if (ordData.quotes && ordData.quotes.length > 0) {
@@ -418,7 +418,15 @@ export default function AdminDashboardPage() {
 
       if (!res.ok) throw new Error('Failed to save settings to server');
 
-      setSaveToast('✓ All edits successfully saved and published live!');
+      const data = await res.json();
+      if (data?.settings) {
+        setSettings(data.settings);
+        try {
+          localStorage.setItem('apex_live_settings', JSON.stringify(data.settings));
+        } catch (e) {}
+      }
+
+      setSaveToast('✓ All edits successfully saved and published live to database!');
       setTimeout(() => setSaveToast(''), 4000);
     } catch (err: any) {
       setSaveToast(`Note: Saved locally. Server sync: ${err.message || 'error'}`);

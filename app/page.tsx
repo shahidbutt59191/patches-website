@@ -44,11 +44,15 @@ export default function HomePage() {
       console.log('Local settings note:', e);
     }
 
-    fetch('/api/settings')
+    fetch(`/api/settings?t=${Date.now()}`, { cache: 'no-store' })
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data) {
-          setSettings({ ...DEFAULT_SETTINGS, ...data });
+          const merged = { ...DEFAULT_SETTINGS, ...data };
+          setSettings(merged);
+          try {
+            localStorage.setItem('apex_live_settings', JSON.stringify(merged));
+          } catch (e) {}
         }
       })
       .catch((err) => console.log('Settings fetch note:', err));

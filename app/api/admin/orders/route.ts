@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export async function GET() {
   try {
     const [quotesRes, ordersRes] = await Promise.all([
@@ -8,7 +11,13 @@ export async function GET() {
       supabase.from('orders').select('*').order('created_at', { ascending: false }),
     ]);
 
-    const quotes = (quotesRes.data || []).filter((q) => q.ref_code !== 'APEX_SYSTEM_SETTINGS');
+    const quotes = (quotesRes.data || []).filter(
+      (q) =>
+        q.ref_code !== 'APEX_SYSTEM_SETTINGS' &&
+        !q.ref_code?.startsWith('SETTINGS_') &&
+        q.patch_type !== 'system_settings' &&
+        q.patch_type !== 'settings'
+    );
     const orders = ordersRes.data || [];
 
     // Calculate factory KPIs
@@ -16,16 +25,23 @@ export async function GET() {
     const pendingProduction = orders.filter((o) => o.status === 'production' || o.status === 'pending').length;
     const totalRevenue = orders.reduce((acc, curr) => acc + (parseFloat(curr.total_amount) || 0), 0);
 
-    return NextResponse.json({
-      quotes,
-      orders,
-      stats: {
-        totalOrders: totalOrdersCount,
-        pendingProduction,
-        totalRevenue: totalRevenue.toFixed(2),
-        totalQuotes: quotes.length,
+    return NextResponse.json(
+      {
+        quotes,
+        orders,
+        stats: {
+          totalOrders: totalOrdersCount,
+          pendingProduction,
+          totalRevenue: totalRevenue.toFixed(2),
+          totalQuotes: quotes.length,
+        },
       },
-    });
+      {
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate',
+        },
+      }
+    );
   } catch (err: unknown) {
     const error = err as Error;
     return NextResponse.json({ error: error.message }, { status: 500 });
