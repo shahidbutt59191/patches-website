@@ -120,7 +120,7 @@ export default function HomePage() {
           subheadline={settings.heroSubheadline}
         />
 
-        {/* 3. Our Patch Services: 5 Cards (Embroidered, Iron-On, Velcro, Woven, Leather) */}
+        {/* 3. Our Patch Services: All 8 Custom Patch Styles */}
         <Services onOpenQuote={handleOpenQuote} />
 
         {/* 4. Transparent Batch Volume & Material Pricing Cards */}

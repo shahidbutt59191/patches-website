@@ -526,3 +526,172 @@ export function IronOnPatchVisual({ className = "w-28 h-28" }: { className?: str
     </div>
   );
 }
+
+// 10. 3D Soft Molded PVC Rubber Patch Visual
+export function PvcRubberMoldedPatch({ className = "w-28 h-28" }: { className?: string }) {
+  return (
+    <div className={`relative filter drop-shadow-md ${className}`}>
+      <svg viewBox="0 0 120 120" className="w-full h-full">
+        <defs>
+          <linearGradient id="pvcBaseGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#1e293b" />
+            <stop offset="100%" stopColor="#0f172a" />
+          </linearGradient>
+          <linearGradient id="pvcTealGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#2dd4bf" />
+            <stop offset="100%" stopColor="#0d9488" />
+          </linearGradient>
+          <filter id="pvc3dDepth" x="-10%" y="-10%" width="120%" height="120%">
+            <feDropShadow dx="1.5" dy="2.5" stdDeviation="1.5" floodColor="#000000" floodOpacity="0.8" />
+          </filter>
+        </defs>
+
+        {/* Outer Hexagon / Shield Rubber Body */}
+        <path
+          d="M 60 12 L 105 32 L 105 82 L 60 108 L 15 82 L 15 32 Z"
+          fill="url(#pvcBaseGrad)"
+          stroke="#334155"
+          strokeWidth="3.5"
+        />
+
+        {/* Recessed Sewing Channel Groove */}
+        <path
+          d="M 60 18 L 99 35 L 99 78 L 60 101 L 21 78 L 21 35 Z"
+          fill="none"
+          stroke="#090d16"
+          strokeWidth="2"
+        />
+
+        {/* 3D Elevated Rubber Plate */}
+        <path
+          d="M 60 24 L 92 39 L 92 74 L 60 93 L 28 74 L 28 39 Z"
+          fill="#1e293b"
+          filter="url(#pvc3dDepth)"
+        />
+
+        {/* 3D Multi-Level Sculpted Symbol: Star & Chevrons */}
+        <g filter="url(#pvc3dDepth)">
+          {/* Top Star */}
+          <polygon points="60,33 63,42 72,42 65,47 67,56 60,51 53,56 55,47 48,42 57,42" fill="url(#pvcTealGrad)" />
+          {/* Dual Tactical Chevrons */}
+          <path d="M 44 60 L 60 70 L 76 60 L 76 66 L 60 76 L 44 66 Z" fill="url(#pvcTealGrad)" />
+          <path d="M 48 72 L 60 80 L 72 72 L 72 77 L 60 85 L 48 77 Z" fill="#f97316" />
+        </g>
+
+        {/* 3D PVC Indicator Tag */}
+        <text x="60" y="27" textAnchor="middle" fill="#94a3b8" fontFamily="Arial, sans-serif" fontWeight="900" fontSize="6" letterSpacing="0.8">
+          3D MOLDED PVC
+        </text>
+      </svg>
+    </div>
+  );
+}
+
+// 11. Vintage Chenille Collegiate Letterman Patch Visual
+export function ChenilleLettermanPatch({ className = "w-28 h-28" }: { className?: string }) {
+  return (
+    <div className={`relative filter drop-shadow-md ${className}`}>
+      <svg viewBox="0 0 120 120" className="w-full h-full">
+        <defs>
+          <pattern id="chenilleMossLoop" width="4" height="4" patternUnits="userSpaceOnUse">
+            <circle cx="2" cy="2" r="1.5" fill="#facc15" />
+            <circle cx="2" cy="2" r="0.8" fill="#eab308" />
+          </pattern>
+          <linearGradient id="goldChainstitch" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#fef08a" />
+            <stop offset="50%" stopColor="#eab308" />
+            <stop offset="100%" stopColor="#ca8a04" />
+          </linearGradient>
+        </defs>
+
+        {/* 1st Layer: Heavy Base Felt (Navy) */}
+        <path
+          d="M 32 18 L 82 18 C 96 18 104 26 104 40 C 104 49 98 56 88 58 C 100 61 106 70 106 84 C 106 98 96 106 80 106 L 32 106 Z"
+          fill="#0f172a"
+          stroke="#1e293b"
+          strokeWidth="3"
+        />
+
+        {/* 2nd Layer: Stiff Cream Wool Felt Backing */}
+        <path
+          d="M 36 22 L 80 22 C 92 22 99 29 99 41 C 99 49 94 55 84 57 C 95 59 101 68 101 81 C 101 94 92 102 78 102 L 36 102 Z"
+          fill="#fefce8"
+        />
+
+        {/* Golden Chainstitch Perimeter Accent */}
+        <path
+          d="M 36 22 L 80 22 C 92 22 99 29 99 41 C 99 49 94 55 84 57 C 95 59 101 68 101 81 C 101 94 92 102 78 102 L 36 102 Z"
+          fill="none"
+          stroke="url(#goldChainstitch)"
+          strokeWidth="2.5"
+          strokeDasharray="3 2"
+        />
+
+        {/* 3rd Layer: High-Pile Plush Moss Loop Chenille Letter "B" */}
+        <path
+          d="M 42 28 L 76 28 C 86 28 92 33 92 42 C 92 49 87 54 78 55 C 89 57 94 64 94 76 C 94 87 86 94 74 94 L 42 94 Z"
+          fill="url(#chenilleMossLoop)"
+        />
+
+        {/* Top Loop Hole Cutout */}
+        <rect x="52" y="36" width="22" height="15" rx="3" fill="#fefce8" stroke="#ca8a04" strokeWidth="1.5" />
+        {/* Bottom Loop Hole Cutout */}
+        <rect x="52" y="65" width="24" height="19" rx="3" fill="#fefce8" stroke="#ca8a04" strokeWidth="1.5" />
+      </svg>
+    </div>
+  );
+}
+
+// 12. Full-Color Sublimated Dye-Printed Patch Visual
+export function SublimatedPrintPatch({ className = "w-28 h-28" }: { className?: string }) {
+  return (
+    <div className={`relative filter drop-shadow-md ${className}`}>
+      <svg viewBox="0 0 120 120" className="w-full h-full">
+        <defs>
+          <linearGradient id="sublimatedSunset" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#4338ca" />
+            <stop offset="35%" stopColor="#db2777" />
+            <stop offset="65%" stopColor="#f97316" />
+            <stop offset="100%" stopColor="#facc15" />
+          </linearGradient>
+          <clipPath id="circleClip">
+            <circle cx="60" cy="60" r="48" />
+          </clipPath>
+          <linearGradient id="merrowBorderIndigo" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#6366f1" />
+            <stop offset="50%" stopColor="#4f46e5" />
+            <stop offset="100%" stopColor="#3730a3" />
+          </linearGradient>
+        </defs>
+
+        {/* Embroidered Merrowed Overlock Frame */}
+        <circle cx="60" cy="60" r="54" fill="#1e1b4b" stroke="url(#merrowBorderIndigo)" strokeWidth="6" />
+
+        {/* Inner Satin Photographic Canvas */}
+        <g clipPath="url(#circleClip)">
+          {/* Gradient Sunset Sky */}
+          <rect x="10" y="10" width="100" height="100" fill="url(#sublimatedSunset)" />
+
+          {/* Sun Disc */}
+          <circle cx="60" cy="68" r="18" fill="#ffffff" opacity="0.9" />
+
+          {/* Fine Photographic Mountain Ridge Silhouette */}
+          <polygon points="12,95 38,72 58,85 82,66 108,95 108,110 12,110" fill="#1e1b4b" />
+          <polygon points="25,98 48,82 68,92 90,78 108,98 108,110 25,110" fill="#0f172a" />
+
+          {/* Micro Geometric Grid Lines */}
+          <line x1="20" y1="92" x2="100" y2="92" stroke="#f472b6" strokeWidth="1" opacity="0.6" />
+          <line x1="30" y1="97" x2="90" y2="97" stroke="#f472b6" strokeWidth="1" opacity="0.6" />
+        </g>
+
+        {/* Inner Precision Stitch Line */}
+        <circle cx="60" cy="60" r="48" fill="none" stroke="#a5b4fc" strokeWidth="1.5" strokeDasharray="3 2" />
+
+        {/* Sublimated Label */}
+        <text x="60" y="40" textAnchor="middle" fill="#ffffff" fontFamily="Arial, sans-serif" fontWeight="900" fontSize="7" letterSpacing="1.2">
+          PHOTO HD
+        </text>
+      </svg>
+    </div>
+  );
+}

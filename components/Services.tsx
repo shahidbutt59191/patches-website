@@ -8,6 +8,9 @@ import {
   VelcroBackingVisual,
   EagleWovenPatch,
   LeatherDebossedPatch,
+  PvcRubberMoldedPatch,
+  ChenilleLettermanPatch,
+  SublimatedPrintPatch,
 } from './PatchVisuals';
 
 interface ServicesProps {
@@ -32,7 +35,7 @@ export const SERVICES_LIST = [
     subtitle: 'Easy to Apply',
     tag: 'Fast Heat Seal',
     tagColor: 'bg-blue-50 text-blue-600 border-blue-200',
-    category: ['all', 'apparel'],
+    category: ['all', 'apparel', 'lifestyle'],
     stitchMetric: '30-Sec Press',
     desc: 'Pre-coated with industrial heat-seal backing. Bonds permanently to denim, canvas, cotton, and polyester.',
     visual: <IronOnPatchVisual className="w-24 h-24 mx-auto" />,
@@ -43,7 +46,7 @@ export const SERVICES_LIST = [
     subtitle: 'Strong & Reusable',
     tag: 'Combat Grade',
     tagColor: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    category: ['all', 'tactical'],
+    category: ['all', 'tactical', 'lifestyle'],
     stitchMetric: '5,000+ Peels',
     desc: 'Mil-spec hook & loop fasteners pre-attached with double perimeter lock-stitching. Ideal for tactical gear & vests.',
     visual: <VelcroBackingVisual className="w-24 h-24 mx-auto" />,
@@ -54,9 +57,9 @@ export const SERVICES_LIST = [
     subtitle: 'Smooth & Detailed',
     tag: 'Micro Precision',
     tagColor: 'bg-purple-50 text-purple-600 border-purple-200',
-    category: ['all', 'apparel'],
+    category: ['all', 'apparel', 'lifestyle'],
     stitchMetric: '50-Denier Thread',
-    desc: 'Thin micro-threads loomed from scratch for razor-sharp typography, gradients, and intricate line artwork down to 1.5mm.',
+    desc: 'Thin micro-threads loomed from scratch for razor-sharp typography, gradients, and intricate line artwork down to 0.5mm.',
     visual: <EagleWovenPatch className="w-24 h-24 mx-auto" />,
   },
   {
@@ -65,10 +68,43 @@ export const SERVICES_LIST = [
     subtitle: 'Stylish & Elegant',
     tag: 'Luxury Debossed',
     tagColor: 'bg-amber-50 text-amber-700 border-amber-200',
-    category: ['all', 'lifestyle', 'apparel'],
+    category: ['all', 'lifestyle', 'apparel', 'tactical'],
     stitchMetric: 'Laser Vaporized',
     desc: 'Rich caramel and dark roast synthetic leather debossed with precision fiber lasers. The benchmark for trucker snapbacks.',
     visual: <LeatherDebossedPatch className="w-24 h-24 mx-auto" />,
+  },
+  {
+    id: 'pvc',
+    title: '3D Molded PVC Patches',
+    subtitle: 'Weatherproof & Rugged',
+    tag: '100% Waterproof',
+    tagColor: 'bg-teal-50 text-teal-700 border-teal-200',
+    category: ['all', 'tactical', 'lifestyle'],
+    stitchMetric: '3D Sculpted Depth',
+    desc: 'Multi-tiered flexible rubber PVC with sculpted 3D relief depth and recessed sewing channel. Impervious to mud and water.',
+    visual: <PvcRubberMoldedPatch className="w-24 h-24 mx-auto" />,
+  },
+  {
+    id: 'chenille',
+    title: 'Vintage Chenille Patches',
+    subtitle: 'Textured & Collegiate',
+    tag: 'Varsity Letterman',
+    tagColor: 'bg-yellow-50 text-yellow-700 border-yellow-200',
+    category: ['all', 'apparel', 'lifestyle'],
+    stitchMetric: 'Plush Moss Loop',
+    desc: 'Thick plush moss towel loop stitching on double stiff wool felt with metallic chainstitch border. The letterman jacket icon.',
+    visual: <ChenilleLettermanPatch className="w-24 h-24 mx-auto" />,
+  },
+  {
+    id: 'sublimated',
+    title: 'Sublimated Printed Patches',
+    subtitle: 'Infinite Color Gradients',
+    tag: 'Photo Realism',
+    tagColor: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+    category: ['all', 'apparel', 'lifestyle'],
+    stitchMetric: '1200 DPI Fidelity',
+    desc: 'Full photographic dye-sublimation on high-density poly-satin framed with merrowed embroidery. Handles intricate art & photos.',
+    visual: <SublimatedPrintPatch className="w-24 h-24 mx-auto" />,
   },
 ];
 
@@ -99,7 +135,7 @@ export default function Services({ onOpenQuote }: ServicesProps) {
           {/* Creative Category Pills */}
           <div className="flex flex-wrap items-center justify-center gap-2 pt-6">
             {[
-              { id: 'all', label: 'All Styles (5)' },
+              { id: 'all', label: `All Styles (${SERVICES_LIST.length})` },
               { id: 'tactical', label: 'Tactical & Uniforms' },
               { id: 'apparel', label: 'Apparel & Headwear' },
               { id: 'lifestyle', label: 'Lifestyle & Bags' },
@@ -120,8 +156,8 @@ export default function Services({ onOpenQuote }: ServicesProps) {
           </div>
         </div>
 
-        {/* 5 Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+        {/* All Patch Styles Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filteredServices.map((service) => (
             <div
               key={service.id}
