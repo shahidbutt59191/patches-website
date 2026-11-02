@@ -20,19 +20,39 @@
   "velcroFee": 0.45,
   "ironOnFee": 0.2,
   "peelStickFee": 0.35,
-  "sewOnFee": 0.0,
-  "merrowedFee": 0.0,
+  "sewOnFee": 0,
+  "merrowedFee": 0,
   "laserCutFee": 0.15,
   "metallicThreadFee": 0.15,
   "glowThreadFee": 0.25,
-  "rushOrderFee": 45.0,
-  "freeShippingThreshold": 99.0,
+  "rushOrderFee": 45,
+  "freeShippingThreshold": 99,
   "bulkTiers": [
-    { "qty": 50, "discountPct": 0, "label": "Standard Run" },
-    { "qty": 100, "discountPct": 10, "label": "Batch Discount (10% Off)" },
-    { "qty": 250, "discountPct": 20, "label": "Squadron Tier (20% Off)" },
-    { "qty": 500, "discountPct": 30, "label": "Regimental Tier (30% Off)" },
-    { "qty": 1000, "discountPct": 40, "label": "Wholesale Master (40% Off)" }
+    {
+      "qty": 50,
+      "discountPct": 0,
+      "label": "Standard Run"
+    },
+    {
+      "qty": 100,
+      "discountPct": 10,
+      "label": "Batch Discount (10% Off)"
+    },
+    {
+      "qty": 250,
+      "discountPct": 20,
+      "label": "Squadron Tier (20% Off)"
+    },
+    {
+      "qty": 500,
+      "discountPct": 30,
+      "label": "Regimental Tier (30% Off)"
+    },
+    {
+      "qty": 1000,
+      "discountPct": 40,
+      "label": "Wholesale Master (40% Off)"
+    }
   ],
   "services": [
     {
@@ -41,7 +61,11 @@
       "subtitle": "Classic & Durable",
       "tag": "Most Popular",
       "tagColor": "bg-orange-50 text-orange-600 border-orange-200",
-      "category": ["all", "tactical", "apparel"],
+      "category": [
+        "all",
+        "tactical",
+        "apparel"
+      ],
       "stitchMetric": "22,000+ Stitches",
       "desc": "Dense Madeira polyester thread construction woven into heavy duck twill base. Rolled merrowed overlock borders.",
       "startingPrice": 1.85,
@@ -54,7 +78,10 @@
       "subtitle": "Easy to Apply",
       "tag": "Fast Heat Seal",
       "tagColor": "bg-blue-50 text-blue-600 border-blue-200",
-      "category": ["all", "apparel"],
+      "category": [
+        "all",
+        "apparel"
+      ],
       "stitchMetric": "30-Sec Press",
       "desc": "Pre-coated with industrial heat-seal backing. Bonds permanently to denim, canvas, cotton, and polyester.",
       "startingPrice": 1.95,
@@ -67,7 +94,10 @@
       "subtitle": "Strong & Reusable",
       "tag": "Combat Grade",
       "tagColor": "bg-emerald-50 text-emerald-700 border-emerald-200",
-      "category": ["all", "tactical"],
+      "category": [
+        "all",
+        "tactical"
+      ],
       "stitchMetric": "5,000+ Peels",
       "desc": "Mil-spec hook & loop fasteners pre-attached with double perimeter lock-stitching. Ideal for tactical gear & vests.",
       "startingPrice": 2.35,
@@ -80,7 +110,10 @@
       "subtitle": "Smooth & Detailed",
       "tag": "Micro Precision",
       "tagColor": "bg-purple-50 text-purple-600 border-purple-200",
-      "category": ["all", "apparel"],
+      "category": [
+        "all",
+        "apparel"
+      ],
       "stitchMetric": "50-Denier Thread",
       "desc": "Thin micro-threads loomed from scratch for razor-sharp typography, gradients, and intricate line artwork down to 1.5mm.",
       "startingPrice": 1.65,
@@ -93,7 +126,11 @@
       "subtitle": "Stylish & Elegant",
       "tag": "Luxury Debossed",
       "tagColor": "bg-amber-50 text-amber-700 border-amber-200",
-      "category": ["all", "lifestyle", "apparel"],
+      "category": [
+        "all",
+        "lifestyle",
+        "apparel"
+      ],
       "stitchMetric": "Laser Vaporized",
       "desc": "Rich caramel and dark roast synthetic leather debossed with precision fiber lasers. The benchmark for trucker snapbacks.",
       "startingPrice": 2.45,
@@ -308,5 +345,211 @@
   "socialProofEnabled": true,
   "socialProofIntervalSeconds": 12,
   "siteTitle": "BDigitizing | Custom Patches Manufacturer & Digitizing",
-  "metaDescription": "Order custom embroidered, velcro, leather, and woven patches directly from the factory. Free digital proof in 6 hours, fast worldwide shipping."
+  "metaDescription": "Order custom embroidered, velcro, leather, and woven patches directly from the factory. Free digital proof in 6 hours, fast worldwide shipping.",
+  "patchPricingCards": [
+    {
+      "id": "embroidered",
+      "name": "100% Tajima Embroidered",
+      "category": [
+        "all",
+        "popular",
+        "apparel"
+      ],
+      "badgePill": "MOST POPULAR",
+      "pillColor": "orange",
+      "desc": "Classic thread sheen with high-density Madeira polyester threads woven into heavy twill backing.",
+      "price": 1.85,
+      "strikePrice": 2.5,
+      "features": [
+        "Classic 3D textured embroidery thread sheen",
+        "100% Madeira Polyneon high-tensile threads",
+        "Rolled merrowed overlock fray-proof border",
+        "Withstands 100+ commercial wash cycles",
+        "Free 6-Hour digital embroidery stitch proof",
+        "Free vector setup & worldwide tracked delivery"
+      ],
+      "buttonText": "Order Embroidered Patches",
+      "turnaround": "Express Delivery: 10–12 Business Days",
+      "featured": true,
+      "active": true
+    },
+    {
+      "id": "velcro",
+      "name": "Tactical Mil-Spec Velcro",
+      "category": [
+        "all",
+        "popular",
+        "tactical"
+      ],
+      "badgePill": "COMBAT GRADE",
+      "pillColor": "blue",
+      "desc": "Military-specification hook fastener backing pre-sewn with double reinforced lock-stitching for combat vests.",
+      "price": 2.35,
+      "strikePrice": 2.95,
+      "features": [
+        "Pre-attached heavy-duty male hook backing",
+        "Matching soft female loop fabric swatch included",
+        "Double perimeter lock-stitching for zero peel",
+        "Rated for 5,000+ tactical attachment peels",
+        "100% weatherproof & mud/water impervious",
+        "Free 6-Hour digital proof scan included"
+      ],
+      "buttonText": "Order Tactical Velcro",
+      "turnaround": "Express Delivery: 10–12 Business Days",
+      "featured": false,
+      "active": true
+    },
+    {
+      "id": "iron_on",
+      "name": "Heat-Seal Thermal Iron-On",
+      "category": [
+        "all",
+        "popular",
+        "apparel"
+      ],
+      "badgePill": "EASIEST APPLICATION",
+      "pillColor": "green",
+      "desc": "Commercial thermal adhesive coating. Fuses permanently to denim, cotton, jackets and polyester in 20 seconds.",
+      "price": 1.95,
+      "strikePrice": 2.6,
+      "features": [
+        "Commercial-grade heat-activated glue backing",
+        "Applies easily with household iron or heat press",
+        "Permanently fuses at 320°F (160°C) with zero sewing",
+        "Zero needle holes or garment puncture damage",
+        "Flexible soft drape with permanent bond durability",
+        "Free 6-Hour digital proof scan included"
+      ],
+      "buttonText": "Order Iron-On Patches",
+      "turnaround": "Express Delivery: 10–12 Business Days",
+      "featured": false,
+      "active": true
+    },
+    {
+      "id": "woven",
+      "name": "Jacquard Micro-Woven",
+      "category": [
+        "all",
+        "apparel"
+      ],
+      "badgePill": "MICRO PRECISION",
+      "pillColor": "purple",
+      "desc": "Loomed from scratch using 50-denier micro-threads to resolve 0.5mm small text, thin outlines, and gradients.",
+      "price": 1.65,
+      "strikePrice": 2.25,
+      "features": [
+        "Ultra-flat snag-free surface for streetwear merch",
+        "Crystal-clear legibility down to 0.5mm micro text",
+        "Precision laser hot-cut perimeter prevents fraying",
+        "Lightweight & flexible on caps, beanies & sleeves",
+        "Up to 12 vivid thread colors woven simultaneously",
+        "Free 6-Hour digital woven layout proof scan"
+      ],
+      "buttonText": "Order Woven Patches",
+      "turnaround": "Express Delivery: 10–14 Business Days",
+      "featured": false,
+      "active": true
+    },
+    {
+      "id": "leather",
+      "name": "Laser-Debossed Leather",
+      "category": [
+        "all",
+        "apparel",
+        "tactical"
+      ],
+      "badgePill": "RUSTIC LUXURY",
+      "pillColor": "amber",
+      "desc": "Rich caramel and dark espresso synthetic leatherette debossed with microscopic precision fiber lasers.",
+      "price": 2.45,
+      "strikePrice": 3.2,
+      "features": [
+        "Deep tone-on-tone scorch debossed branding",
+        "Ultra-strong 3M heavy pressure-sensitive adhesive",
+        "Perimeter recessed stitch canal for cap needle sewing",
+        "Sweat-proof, waterproof & UV sun fade resistant",
+        "The gold standard benchmark for trucker snapbacks",
+        "Free digital laser layout artwork proofs"
+      ],
+      "buttonText": "Order Leather Patches",
+      "turnaround": "Express Delivery: 10–14 Business Days",
+      "featured": false,
+      "active": true
+    },
+    {
+      "id": "pvc",
+      "name": "3D Soft Molded PVC Rubber",
+      "category": [
+        "all",
+        "tactical"
+      ],
+      "badgePill": "100% WATERPROOF",
+      "pillColor": "teal",
+      "desc": "Multi-tiered 3D liquid PVC casting with sculpted physical relief, recessed stitch canal, and waterproof rubber.",
+      "price": 2.55,
+      "strikePrice": 3.4,
+      "features": [
+        "Multi-level 3D sculpted physical relief depth",
+        "100% impervious to torrential rain, mud & salt water",
+        "Glow-in-the-dark & fluorescent pigment options",
+        "Embedded perimeter sewing channel for durability",
+        "Mil-spec hook velcro or heat-seal film backing",
+        "Free 3D mold digital proof rendering included"
+      ],
+      "buttonText": "Order 3D PVC Patches",
+      "turnaround": "Express Delivery: 12–14 Business Days",
+      "featured": false,
+      "active": true
+    },
+    {
+      "id": "chenille",
+      "name": "Vintage Chenille (Letterman)",
+      "category": [
+        "all",
+        "apparel"
+      ],
+      "badgePill": "VINTAGE COLLEGIATE",
+      "pillColor": "yellow",
+      "desc": "Traditional varsity collegiate letterman jacket patch with heavy plush towel loop yarn on double stiff felt.",
+      "price": 2.65,
+      "strikePrice": 3.5,
+      "features": [
+        "High-pile plush loop yarn towel moss stitching",
+        "Double-layer stiff wool blend felt foundation",
+        "Gold & silver metallic chainstitch border accent",
+        "Traditional varsity letterman jacket cut",
+        "Choice of sew-on twill or heavy thermal film",
+        "Free 6-Hour digital chenille layout proof scan"
+      ],
+      "buttonText": "Order Chenille Patches",
+      "turnaround": "Express Delivery: 12–14 Business Days",
+      "featured": false,
+      "active": true
+    },
+    {
+      "id": "sublimated",
+      "name": "Sublimated Dye-Printed",
+      "category": [
+        "all",
+        "apparel"
+      ],
+      "badgePill": "PHOTO REALISM",
+      "pillColor": "indigo",
+      "desc": "Full-color photographic heat-sublimation on poly-satin with embroidered borders for complex photo art.",
+      "price": 1.75,
+      "strikePrice": 2.4,
+      "features": [
+        "Photographic 1200 DPI edge-to-edge color fidelity",
+        "Infinite color gradients, fine paintings & faces",
+        "Merrowed overlock embroidered frame boundary",
+        "Will not crack, peel, fade or scratch over time",
+        "Choice of Iron-On, Velcro, or Plain Sew-On",
+        "Free 6-Hour digital print & stitch proof scan"
+      ],
+      "buttonText": "Order Sublimated Patches",
+      "turnaround": "Express Delivery: 10–12 Business Days",
+      "featured": false,
+      "active": true
+    }
+  ]
 }

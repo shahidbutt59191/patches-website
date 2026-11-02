@@ -44,6 +44,7 @@ import {
   Tag,
   Check,
   ChevronDown,
+  RotateCcw,
 } from 'lucide-react';
 import {
   SiteSettings,
@@ -51,12 +52,12 @@ import {
   PortfolioItem,
   CustomerReviewItem,
   FaqItem,
-  ServiceSettingItem,
   BulkTierItem,
+  PatchPricingCardItem,
+  DEFAULT_PATCH_PRICING_CARDS,
   DEFAULT_PORTFOLIO,
   DEFAULT_REVIEWS,
   DEFAULT_FAQS,
-  DEFAULT_SERVICES,
   DEFAULT_BULK_TIERS,
 } from '@/lib/settings';
 
@@ -217,8 +218,8 @@ export default function AdminDashboardPage() {
   const [activeTab, setActiveTab] = useState<
     | 'overview'
     | 'orders'
+    | 'pricing_cards'
     | 'pricing'
-    | 'services'
     | 'portfolio'
     | 'slider'
     | 'reviews'
@@ -290,7 +291,8 @@ export default function AdminDashboardPage() {
   // Edit item states
   const [editingPortfolio, setEditingPortfolio] = useState<PortfolioItem | null>(null);
   const [editingReview, setEditingReview] = useState<CustomerReviewItem | null>(null);
-  const [editingService, setEditingService] = useState<ServiceSettingItem | null>(null);
+  const [editingPricingCard, setEditingPricingCard] = useState<PatchPricingCardItem | null>(null);
+  const [cardFeaturesText, setCardFeaturesText] = useState<string>('');
   const [editingFaq, setEditingFaq] = useState<FaqItem | null>(null);
 
   // Selected Order for Detail Modal
@@ -319,8 +321,8 @@ export default function AdminDashboardPage() {
         if (!merged.reviews || merged.reviews.length === 0) {
           merged.reviews = DEFAULT_SETTINGS.reviews;
         }
-        if (!merged.services || merged.services.length === 0) {
-          merged.services = DEFAULT_SETTINGS.services;
+        if (!merged.patchPricingCards || merged.patchPricingCards.length === 0) {
+          merged.patchPricingCards = DEFAULT_PATCH_PRICING_CARDS;
         }
         if (!merged.faqs || merged.faqs.length === 0) {
           merged.faqs = DEFAULT_SETTINGS.faqs;
@@ -525,16 +527,70 @@ export default function AdminDashboardPage() {
     handleSaveSettings(updatedSettings);
   };
 
-  // Update Service
-  const handleUpdateService = () => {
-    if (!editingService) return;
-    const updated = (settings.services || DEFAULT_SERVICES).map((s) =>
-      s.id === editingService.id ? editingService : s
+  // Open Edit Patch Pricing Card
+  const openEditPricingCard = (card: PatchPricingCardItem) => {
+    setEditingPricingCard({ ...card });
+    setCardFeaturesText(card.features ? card.features.join('\n') : '');
+  };
+
+  // Update Patch Pricing Card
+  const handleUpdatePricingCard = () => {
+    if (!editingPricingCard) return;
+    const featuresList = cardFeaturesText
+      .split('\n')
+      .map((f) => f.trim())
+      .filter((f) => f.length > 0);
+
+    const updatedCard: PatchPricingCardItem = {
+      ...editingPricingCard,
+      features: featuresList,
+    };
+
+    const currentCards =
+      settings.patchPricingCards && settings.patchPricingCards.length > 0
+        ? settings.patchPricingCards
+        : DEFAULT_PATCH_PRICING_CARDS;
+
+    const updated = currentCards.map((c) =>
+      c.id === updatedCard.id ? updatedCard : c
     );
-    const updatedSettings = { ...settings, services: updated };
+
+    const updatedSettings = { ...settings, patchPricingCards: updated };
     setSettings(updatedSettings);
     handleSaveSettings(updatedSettings);
-    setEditingService(null);
+    setEditingPricingCard(null);
+  };
+
+  // Quick Toggle Active on Storefront
+  const handleToggleCardActive = (cardId: string) => {
+    const currentCards =
+      settings.patchPricingCards && settings.patchPricingCards.length > 0
+        ? settings.patchPricingCards
+        : DEFAULT_PATCH_PRICING_CARDS;
+
+    const updated = currentCards.map((c) =>
+      c.id === cardId ? { ...c, active: c.active === false ? true : false } : c
+    );
+
+    const updatedSettings = { ...settings, patchPricingCards: updated };
+    setSettings(updatedSettings);
+    handleSaveSettings(updatedSettings);
+  };
+
+  // Reset All Cards to Factory Defaults
+  const handleResetCardsToDefault = () => {
+    if (
+      confirm(
+        'Are you sure you want to reset all 8 patch pricing cards to default specifications & rates?'
+      )
+    ) {
+      const updatedSettings = {
+        ...settings,
+        patchPricingCards: DEFAULT_PATCH_PRICING_CARDS,
+      };
+      setSettings(updatedSettings);
+      handleSaveSettings(updatedSettings);
+    }
   };
 
   // Add FAQ
@@ -836,8 +892,8 @@ export default function AdminDashboardPage() {
           {[
             { id: 'overview', label: 'Dashboard Overview', icon: <LayoutDashboard className="w-4 h-4" /> },
             { id: 'orders', label: 'Quote Requests & Orders', icon: <ShoppingBag className="w-4 h-4" />, badge: orders.length },
+            { id: 'pricing_cards', label: 'Patch Pricing Cards', icon: <Tag className="w-4 h-4" />, badge: (settings.patchPricingCards || DEFAULT_PATCH_PRICING_CARDS).length },
             { id: 'pricing', label: 'Pricing & Surcharges', icon: <DollarSign className="w-4 h-4" /> },
-            { id: 'services', label: 'Services & Materials', icon: <Sparkles className="w-4 h-4" />, badge: (settings.services || DEFAULT_SERVICES).length },
             { id: 'portfolio', label: 'Portfolio Specimens', icon: <ImageIcon className="w-4 h-4" />, badge: (settings.portfolio || []).length },
             { id: 'slider', label: 'Before/After Slider', icon: <Wand2 className="w-4 h-4" /> },
             { id: 'reviews', label: 'Customer Reviews', icon: <Star className="w-4 h-4" />, badge: (settings.reviews || []).length },
@@ -978,11 +1034,11 @@ export default function AdminDashboardPage() {
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   <button
                     type="button"
-                    onClick={() => setActiveTab('pricing')}
+                    onClick={() => setActiveTab('pricing_cards')}
                     className="p-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-left text-xs font-bold text-white transition-all cursor-pointer flex items-center gap-2"
                   >
-                    <DollarSign className="w-4 h-4 text-orange-400" />
-                    <span>Update Pricing Rates</span>
+                    <Tag className="w-4 h-4 text-orange-400" />
+                    <span>Edit Patch Pricing Cards</span>
                   </button>
                   <button
                     type="button"
@@ -1583,183 +1639,438 @@ export default function AdminDashboardPage() {
             </div>
           )}
 
-          {/* TAB 4: SERVICES & MATERIALS */}
-          {activeTab === 'services' && (
+          {/* TAB 4: 8 CUSTOM PATCH PRICING CARDS */}
+          {activeTab === 'pricing_cards' && (
             <div className="space-y-6 animate-in fade-in duration-200">
               
               <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
                 <div>
-                  <h1 className="text-2xl font-black text-white tracking-tight">
-                    Patch Services &amp; Material Specifications
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                      8 Standard Patch Styles
+                    </span>
+                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                      Live Storefront Sync
+                    </span>
+                  </div>
+                  <h1 className="text-2xl font-black text-white tracking-tight flex items-center gap-2">
+                    <Tag className="w-6 h-6 text-orange-500" />
+                    <span>Patch Pricing Cards Manager</span>
                   </h1>
                   <p className="text-xs text-slate-400 mt-1">
-                    Manage service cards displayed on the storefront: titles, stitch metrics, MOQ, and starting rates.
+                    Control public pricing cards: live unit rates, comparison strike prices, top badge pills, bullet features list, and turnaround time.
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => handleSaveSettings()}
-                  disabled={isSavingSettings}
-                  className="btn-orange px-5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer self-start shadow-lg"
-                >
-                  <Save className="w-4 h-4" />
-                  <span>{isSavingSettings ? 'Publishing...' : 'Publish Services'}</span>
-                </button>
-              </div>
-
-              {/* Services Cards List */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {(settings.services || DEFAULT_SERVICES).map((srv) => (
-                  <div
-                    key={srv.id}
-                    className="bg-[#141722] border border-slate-800 rounded-2xl p-5 space-y-3 relative group"
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleResetCardsToDefault}
+                    className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold flex items-center gap-2 transition-colors cursor-pointer border border-slate-700"
+                    title="Reset cards back to factory defaults"
                   >
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <span className="inline-block text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-orange-500/10 text-orange-400 border border-orange-500/20 mb-1.5">
-                          {srv.tag || 'Most Popular'}
-                        </span>
-                        <h3 className="text-base font-bold text-white">{srv.title}</h3>
-                        <p className="text-xs text-slate-400">{srv.subtitle}</p>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => setEditingService({ ...srv })}
-                        className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-orange-500 hover:text-white text-slate-300 text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer"
-                      >
-                        <Edit3 className="w-3.5 h-3.5" />
-                        <span>Edit</span>
-                      </button>
-                    </div>
-
-                    <p className="text-xs text-slate-300 leading-relaxed">
-                      {srv.desc}
-                    </p>
-
-                    <div className="grid grid-cols-3 gap-2 pt-2 border-t border-slate-800 text-center font-mono">
-                      <div className="bg-slate-900/80 p-2 rounded-lg">
-                        <span className="text-[10px] text-slate-500 block">Stitch Metric</span>
-                        <span className="text-xs font-bold text-slate-300">{srv.stitchMetric}</span>
-                      </div>
-                      <div className="bg-slate-900/80 p-2 rounded-lg">
-                        <span className="text-[10px] text-slate-500 block">Starting Rate</span>
-                        <span className="text-xs font-bold text-emerald-400">${srv.startingPrice?.toFixed(2)}</span>
-                      </div>
-                      <div className="bg-slate-900/80 p-2 rounded-lg">
-                        <span className="text-[10px] text-slate-500 block">Turnaround</span>
-                        <span className="text-xs font-bold text-slate-300">{srv.turnaroundDays}</span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+                    <RotateCcw className="w-4 h-4 text-slate-400" />
+                    <span>Reset Defaults</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleSaveSettings()}
+                    disabled={isSavingSettings}
+                    className="btn-orange px-5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer shadow-lg"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>{isSavingSettings ? 'Publishing...' : 'Publish Cards to Store'}</span>
+                  </button>
+                </div>
               </div>
 
-              {/* Edit Service Modal */}
-              {editingService && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in">
-                  <div className="bg-[#141722] border border-slate-700 rounded-3xl max-w-xl w-full p-6 text-white space-y-4">
+              {/* Quick Summary Pill Bar */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div className="bg-[#141722] border border-slate-800 p-4 rounded-xl">
+                  <span className="text-[10px] font-mono uppercase text-slate-500 block mb-1">Total Patch Types</span>
+                  <span className="text-lg font-black text-white font-mono">
+                    {(settings.patchPricingCards || DEFAULT_PATCH_PRICING_CARDS).length} Cards
+                  </span>
+                </div>
+                <div className="bg-[#141722] border border-slate-800 p-4 rounded-xl">
+                  <span className="text-[10px] font-mono uppercase text-slate-500 block mb-1">Storefront Visible</span>
+                  <span className="text-lg font-black text-emerald-400 font-mono">
+                    {(settings.patchPricingCards || DEFAULT_PATCH_PRICING_CARDS).filter(c => c.active !== false).length} Active
+                  </span>
+                </div>
+                <div className="bg-[#141722] border border-slate-800 p-4 rounded-xl">
+                  <span className="text-[10px] font-mono uppercase text-slate-500 block mb-1">Starting Price Range</span>
+                  <span className="text-lg font-black text-amber-400 font-mono">$1.65 – $2.65 / ea</span>
+                </div>
+                <div className="bg-[#141722] border border-slate-800 p-4 rounded-xl">
+                  <span className="text-[10px] font-mono uppercase text-slate-500 block mb-1">Database Sync</span>
+                  <span className="text-lg font-black text-blue-400 font-mono">Real-Time Cloud</span>
+                </div>
+              </div>
+
+              {/* 8 Cards Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                {(settings.patchPricingCards || DEFAULT_PATCH_PRICING_CARDS).map((card) => {
+                  const isActive = card.active !== false;
+                  
+                  // Color helpers
+                  const getPillBadgeStyle = (color: string) => {
+                    switch (color) {
+                      case 'orange': return 'bg-orange-500 text-white';
+                      case 'blue': return 'bg-blue-600 text-white';
+                      case 'green': return 'bg-emerald-600 text-white';
+                      case 'purple': return 'bg-purple-600 text-white';
+                      case 'amber': return 'bg-amber-600 text-white';
+                      case 'teal': return 'bg-teal-600 text-white';
+                      case 'yellow': return 'bg-yellow-400 text-slate-950 font-black';
+                      case 'indigo': return 'bg-indigo-600 text-white';
+                      default: return 'bg-blue-600 text-white';
+                    }
+                  };
+
+                  return (
+                    <div
+                      key={card.id}
+                      className={`bg-[#141722] border rounded-2xl p-5 flex flex-col justify-between transition-all duration-200 relative group ${
+                        isActive ? 'border-slate-800 hover:border-slate-700 shadow-md' : 'border-dashed border-slate-800/60 opacity-60'
+                      }`}
+                    >
+                      {/* Top Bar with Badge Pill & Active Toggle */}
+                      <div>
+                        <div className="flex items-center justify-between gap-2 mb-3">
+                          <span className={`text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${getPillBadgeStyle(card.pillColor || 'blue')}`}>
+                            {card.badgePill || 'PATCH'}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleToggleCardActive(card.id)}
+                            className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full cursor-pointer transition-colors ${
+                              isActive
+                                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20'
+                                : 'bg-slate-800 text-slate-400 border border-slate-700 hover:bg-slate-700'
+                            }`}
+                            title="Click to toggle card visibility"
+                          >
+                            {isActive ? '● Live' : '○ Hidden'}
+                          </button>
+                        </div>
+
+                        <h3 className="text-base font-black text-white leading-snug mb-1">
+                          {card.name}
+                        </h3>
+
+                        <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed mb-4">
+                          {card.desc}
+                        </p>
+
+                        {/* Price Box */}
+                        <div className="bg-[#181b26] border border-slate-800/80 rounded-xl p-3 mb-4 text-center">
+                          <div className="flex items-baseline justify-center gap-2">
+                            <span className="text-2xl font-black text-emerald-400 font-mono">
+                              ${card.price.toFixed(2)}
+                            </span>
+                            {card.strikePrice && (
+                              <span className="text-xs font-mono text-slate-500 line-through">
+                                ${card.strikePrice.toFixed(2)}
+                              </span>
+                            )}
+                            <span className="text-[10px] font-mono font-bold text-slate-400 uppercase">
+                              / piece
+                            </span>
+                          </div>
+                          <div className="text-[10px] text-slate-400 font-medium flex items-center justify-center gap-1 mt-1">
+                            <Clock className="w-3 h-3 text-orange-400" />
+                            <span className="truncate">{card.turnaround}</span>
+                          </div>
+                        </div>
+
+                        {/* Features preview */}
+                        <div className="space-y-1.5 mb-4">
+                          <span className="text-[10px] font-mono font-bold uppercase text-slate-500 block">
+                            Included Specs ({card.features?.length || 0})
+                          </span>
+                          {(card.features || []).slice(0, 3).map((feat, i) => (
+                            <div key={i} className="flex items-start gap-1.5 text-xs text-slate-300">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                              <span className="line-clamp-1">{feat}</span>
+                            </div>
+                          ))}
+                          {(card.features?.length || 0) > 3 && (
+                            <span className="text-[10px] text-slate-500 font-mono block pl-5">
+                              + {(card.features.length - 3)} more bullet features
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Card Action Buttons */}
+                      <div className="pt-3 border-t border-slate-800/80 flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => openEditPricingCard(card)}
+                          className="flex-1 py-2 px-3 rounded-xl bg-slate-800 hover:bg-orange-500 hover:text-white text-slate-200 text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" />
+                          <span>Edit Card</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleToggleCardActive(card.id)}
+                          className={`p-2 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
+                            isActive
+                              ? 'bg-slate-900 border-slate-800 text-slate-400 hover:text-amber-400'
+                              : 'bg-emerald-950/40 border-emerald-800 text-emerald-400 hover:bg-emerald-900/60'
+                          }`}
+                          title={isActive ? 'Hide from public view' : 'Show on public site'}
+                        >
+                          {isActive ? <Eye className="w-4 h-4" /> : <Check className="w-4 h-4" />}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Edit Patch Pricing Card Modal */}
+              {editingPricingCard && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-sm animate-in fade-in">
+                  <div className="bg-[#141722] border border-slate-700 rounded-3xl max-w-2xl w-full p-6 text-white space-y-4 max-h-[90vh] overflow-y-auto shadow-2xl">
                     <div className="flex justify-between items-center border-b border-slate-800 pb-3">
-                      <h3 className="text-base font-bold text-white flex items-center gap-2">
-                        <Edit3 className="w-4 h-4 text-orange-400" />
-                        <span>Edit Material Service: {editingService.title}</span>
-                      </h3>
+                      <div className="flex items-center gap-2.5">
+                        <div className="p-2 rounded-xl bg-orange-500/10 border border-orange-500/20 text-orange-400">
+                          <Tag className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <h3 className="text-base font-bold text-white">
+                            Edit Patch Pricing Card
+                          </h3>
+                          <span className="text-[11px] font-mono text-slate-400">
+                            Identifier: {editingPricingCard.id}
+                          </span>
+                        </div>
+                      </div>
                       <button
                         type="button"
-                        onClick={() => setEditingService(null)}
-                        className="text-slate-400 hover:text-white"
+                        onClick={() => setEditingPricingCard(null)}
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
                       >
                         ✕
                       </button>
                     </div>
 
-                    <div className="space-y-3 text-xs">
+                    <div className="space-y-4 text-xs">
+                      {/* Name & Badge Pill */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-slate-400 mb-1 font-bold">
+                            Patch Style Title
+                          </label>
+                          <input
+                            type="text"
+                            value={editingPricingCard.name}
+                            onChange={(e) =>
+                              setEditingPricingCard({ ...editingPricingCard, name: e.target.value })
+                            }
+                            placeholder="e.g. 100% Tajima Embroidered"
+                            className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white focus:border-orange-500 outline-none"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-slate-400 mb-1 font-bold">
+                            Top Badge Pill Text
+                          </label>
+                          <input
+                            type="text"
+                            value={editingPricingCard.badgePill}
+                            onChange={(e) =>
+                              setEditingPricingCard({ ...editingPricingCard, badgePill: e.target.value })
+                            }
+                            placeholder="e.g. MOST POPULAR, COMBAT GRADE"
+                            className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white focus:border-orange-500 outline-none"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Pill Color theme */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-slate-400 mb-1 font-bold">
+                            Top Badge Pill Color Theme
+                          </label>
+                          <select
+                            value={editingPricingCard.pillColor || 'blue'}
+                            onChange={(e) =>
+                              setEditingPricingCard({ ...editingPricingCard, pillColor: e.target.value })
+                            }
+                            className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white focus:border-orange-500 outline-none"
+                          >
+                            <option value="orange">Orange (Brand Highlight / Most Popular)</option>
+                            <option value="blue">Blue (Tactical Combat)</option>
+                            <option value="green">Green (Easy Heat-Seal Application)</option>
+                            <option value="purple">Purple (Micro Precision Woven)</option>
+                            <option value="amber">Amber (Rustic Laser Leather)</option>
+                            <option value="teal">Teal (100% Waterproof PVC)</option>
+                            <option value="yellow">Yellow (Vintage Chenille Varsity)</option>
+                            <option value="indigo">Indigo (Photographic Sublimation)</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-slate-400 mb-1 font-bold">
+                            CTA Button Text
+                          </label>
+                          <input
+                            type="text"
+                            value={editingPricingCard.buttonText}
+                            onChange={(e) =>
+                              setEditingPricingCard({ ...editingPricingCard, buttonText: e.target.value })
+                            }
+                            placeholder="e.g. Order Embroidered Patches"
+                            className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white focus:border-orange-500 outline-none"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Prices & Turnaround */}
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                          <label className="block text-slate-400 mb-1 font-bold">
+                            Live Unit Price ($ / pc)
+                          </label>
+                          <div className="relative">
+                            <span className="absolute left-3 top-2.5 text-slate-500 font-mono text-xs">$</span>
+                            <input
+                              type="number"
+                              step="0.05"
+                              value={editingPricingCard.price}
+                              onChange={(e) =>
+                                setEditingPricingCard({
+                                  ...editingPricingCard,
+                                  price: parseFloat(e.target.value) || 0,
+                                })
+                              }
+                              className="w-full pl-7 pr-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white font-mono text-sm font-bold focus:border-orange-500 outline-none"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-slate-400 mb-1 font-bold">
+                            Strike-Through Price ($)
+                          </label>
+                          <div className="relative">
+                            <span className="absolute left-3 top-2.5 text-slate-500 font-mono text-xs">$</span>
+                            <input
+                              type="number"
+                              step="0.05"
+                              value={editingPricingCard.strikePrice}
+                              onChange={(e) =>
+                                setEditingPricingCard({
+                                  ...editingPricingCard,
+                                  strikePrice: parseFloat(e.target.value) || 0,
+                                })
+                              }
+                              className="w-full pl-7 pr-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white font-mono text-sm font-bold focus:border-orange-500 outline-none"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-slate-400 mb-1 font-bold">
+                            Delivery Turnaround
+                          </label>
+                          <input
+                            type="text"
+                            value={editingPricingCard.turnaround}
+                            onChange={(e) =>
+                              setEditingPricingCard({
+                                ...editingPricingCard,
+                                turnaround: e.target.value,
+                              })
+                            }
+                            placeholder="e.g. Express Delivery: 10–12 Business Days"
+                            className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white focus:border-orange-500 outline-none"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Technical Description */}
                       <div>
-                        <label className="block text-slate-400 mb-1 font-bold">Service Title</label>
-                        <input
-                          type="text"
-                          value={editingService.title}
-                          onChange={(e) => setEditingService({ ...editingService, title: e.target.value })}
-                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
-                        />
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-3">
-                        <div>
-                          <label className="block text-slate-400 mb-1 font-bold">Subtitle</label>
-                          <input
-                            type="text"
-                            value={editingService.subtitle}
-                            onChange={(e) => setEditingService({ ...editingService, subtitle: e.target.value })}
-                            className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-slate-400 mb-1 font-bold">Badge Tag</label>
-                          <input
-                            type="text"
-                            value={editingService.tag}
-                            onChange={(e) => setEditingService({ ...editingService, tag: e.target.value })}
-                            className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-3 gap-3">
-                        <div>
-                          <label className="block text-slate-400 mb-1 font-bold">Stitch Metric</label>
-                          <input
-                            type="text"
-                            value={editingService.stitchMetric}
-                            onChange={(e) => setEditingService({ ...editingService, stitchMetric: e.target.value })}
-                            className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-slate-400 mb-1 font-bold">Starting Price ($)</label>
-                          <input
-                            type="number"
-                            step="0.05"
-                            value={editingService.startingPrice}
-                            onChange={(e) => setEditingService({ ...editingService, startingPrice: parseFloat(e.target.value) || 1.85 })}
-                            className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-slate-400 mb-1 font-bold">Turnaround</label>
-                          <input
-                            type="text"
-                            value={editingService.turnaroundDays}
-                            onChange={(e) => setEditingService({ ...editingService, turnaroundDays: e.target.value })}
-                            className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
-                          />
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="block text-slate-400 mb-1 font-bold">Technical Description</label>
+                        <label className="block text-slate-400 mb-1 font-bold">
+                          Technical Description (1-2 sentences)
+                        </label>
                         <textarea
-                          rows={3}
-                          value={editingService.desc}
-                          onChange={(e) => setEditingService({ ...editingService, desc: e.target.value })}
-                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                          rows={2}
+                          value={editingPricingCard.desc}
+                          onChange={(e) =>
+                            setEditingPricingCard({ ...editingPricingCard, desc: e.target.value })
+                          }
+                          placeholder="Brief technical summary of thread density, backing, and material construction..."
+                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white focus:border-orange-500 outline-none"
                         />
+                      </div>
+
+                      {/* Bullet Features Textarea */}
+                      <div>
+                        <div className="flex justify-between items-center mb-1">
+                          <label className="block text-slate-400 font-bold">
+                            Bullet Features (One per line)
+                          </label>
+                          <span className="text-[10px] text-slate-500 font-mono">
+                            Each line will display with a green checkmark
+                          </span>
+                        </div>
+                        <textarea
+                          rows={6}
+                          value={cardFeaturesText}
+                          onChange={(e) => setCardFeaturesText(e.target.value)}
+                          placeholder={'Classic 3D textured embroidery thread sheen\n100% Madeira Polyneon high-tensile threads\nRolled merrowed overlock fray-proof border\nWithstands 100+ commercial wash cycles\nFree 6-Hour digital embroidery stitch proof'}
+                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-mono font-medium text-white focus:border-orange-500 outline-none leading-relaxed"
+                        />
+                      </div>
+
+                      {/* Storefront Active Checkbox */}
+                      <div className="bg-[#181b26] p-3 rounded-xl border border-slate-800 flex items-center justify-between">
+                        <div>
+                          <span className="text-xs font-bold text-white block">
+                            Card Active on Public Storefront
+                          </span>
+                          <span className="text-[11px] text-slate-400">
+                            Uncheck if you temporarily want to hide this patch style from customers.
+                          </span>
+                        </div>
+                        <label className="relative inline-flex items-center cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={editingPricingCard.active !== false}
+                            onChange={(e) =>
+                              setEditingPricingCard({
+                                ...editingPricingCard,
+                                active: e.target.checked,
+                              })
+                            }
+                            className="sr-only peer"
+                          />
+                          <div className="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+                        </label>
                       </div>
                     </div>
 
                     <div className="flex justify-end gap-2 pt-3 border-t border-slate-800">
                       <button
                         type="button"
-                        onClick={() => setEditingService(null)}
-                        className="px-4 py-2 rounded-lg bg-slate-800 text-xs font-bold text-slate-300 hover:text-white"
+                        onClick={() => setEditingPricingCard(null)}
+                        className="px-4 py-2 rounded-xl bg-slate-800 text-xs font-bold text-slate-300 hover:text-white transition-colors cursor-pointer"
                       >
                         Cancel
                       </button>
                       <button
                         type="button"
-                        onClick={handleUpdateService}
-                        className="btn-orange px-6 py-2 rounded-lg text-xs font-bold"
+                        onClick={handleUpdatePricingCard}
+                        className="btn-orange px-6 py-2 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer shadow-lg"
                       >
-                        Update &amp; Save Service
+                        <Save className="w-4 h-4" />
+                        <span>Update &amp; Save Card</span>
                       </button>
                     </div>
                   </div>

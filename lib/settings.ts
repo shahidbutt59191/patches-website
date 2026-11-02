@@ -55,6 +55,22 @@ export interface BulkTierItem {
   label: string;
 }
 
+export interface PatchPricingCardItem {
+  id: string;
+  name: string;
+  category: string[];
+  badgePill: string;
+  pillColor: string;
+  desc: string;
+  price: number;
+  strikePrice: number;
+  features: string[];
+  buttonText: string;
+  turnaround: string;
+  featured?: boolean;
+  active?: boolean;
+}
+
 export interface SiteSettings {
   // Brand & Header
   announcementText: string;
@@ -96,6 +112,9 @@ export interface SiteSettings {
 
   // Bulk Discount Tiers
   bulkTiers: BulkTierItem[];
+
+  // 8 Custom Patch Pricing Cards
+  patchPricingCards: PatchPricingCardItem[];
 
   // Services Catalog
   services: ServiceSettingItem[];
@@ -407,6 +426,185 @@ export const DEFAULT_BULK_TIERS: BulkTierItem[] = [
   { qty: 1000, discountPct: 40, label: 'Wholesale Master (40% Off)' },
 ];
 
+export const DEFAULT_PATCH_PRICING_CARDS: PatchPricingCardItem[] = [
+  {
+    id: 'embroidered',
+    name: '100% Tajima Embroidered',
+    category: ['all', 'popular', 'apparel'],
+    badgePill: 'MOST POPULAR',
+    pillColor: 'orange',
+    desc: 'Classic thread sheen with high-density Madeira polyester threads woven into heavy twill backing.',
+    price: 1.85,
+    strikePrice: 2.50,
+    features: [
+      'Classic 3D textured embroidery thread sheen',
+      '100% Madeira Polyneon high-tensile threads',
+      'Rolled merrowed overlock fray-proof border',
+      'Withstands 100+ commercial wash cycles',
+      'Free 6-Hour digital embroidery stitch proof',
+      'Free vector setup & worldwide tracked delivery',
+    ],
+    buttonText: 'Order Embroidered Patches',
+    turnaround: 'Express Delivery: 10–12 Business Days',
+    featured: true,
+    active: true,
+  },
+  {
+    id: 'velcro',
+    name: 'Tactical Mil-Spec Velcro',
+    category: ['all', 'popular', 'tactical'],
+    badgePill: 'COMBAT GRADE',
+    pillColor: 'blue',
+    desc: 'Military-specification hook fastener backing pre-sewn with double reinforced lock-stitching for combat vests.',
+    price: 2.35,
+    strikePrice: 2.95,
+    features: [
+      'Pre-attached heavy-duty male hook backing',
+      'Matching soft female loop fabric swatch included',
+      'Double perimeter lock-stitching for zero peel',
+      'Rated for 5,000+ tactical attachment peels',
+      '100% weatherproof & mud/water impervious',
+      'Free 6-Hour digital proof scan included',
+    ],
+    buttonText: 'Order Tactical Velcro',
+    turnaround: 'Express Delivery: 10–12 Business Days',
+    featured: false,
+    active: true,
+  },
+  {
+    id: 'iron_on',
+    name: 'Heat-Seal Thermal Iron-On',
+    category: ['all', 'popular', 'apparel'],
+    badgePill: 'EASIEST APPLICATION',
+    pillColor: 'green',
+    desc: 'Commercial thermal adhesive coating. Fuses permanently to denim, cotton, jackets and polyester in 20 seconds.',
+    price: 1.95,
+    strikePrice: 2.60,
+    features: [
+      'Commercial-grade heat-activated glue backing',
+      'Applies easily with household iron or heat press',
+      'Permanently fuses at 320°F (160°C) with zero sewing',
+      'Zero needle holes or garment puncture damage',
+      'Flexible soft drape with permanent bond durability',
+      'Free 6-Hour digital proof scan included',
+    ],
+    buttonText: 'Order Iron-On Patches',
+    turnaround: 'Express Delivery: 10–12 Business Days',
+    featured: false,
+    active: true,
+  },
+  {
+    id: 'woven',
+    name: 'Jacquard Micro-Woven',
+    category: ['all', 'apparel'],
+    badgePill: 'MICRO PRECISION',
+    pillColor: 'purple',
+    desc: 'Loomed from scratch using 50-denier micro-threads to resolve 0.5mm small text, thin outlines, and gradients.',
+    price: 1.65,
+    strikePrice: 2.25,
+    features: [
+      'Ultra-flat snag-free surface for streetwear merch',
+      'Crystal-clear legibility down to 0.5mm micro text',
+      'Precision laser hot-cut perimeter prevents fraying',
+      'Lightweight & flexible on caps, beanies & sleeves',
+      'Up to 12 vivid thread colors woven simultaneously',
+      'Free 6-Hour digital woven layout proof scan',
+    ],
+    buttonText: 'Order Woven Patches',
+    turnaround: 'Express Delivery: 10–14 Business Days',
+    featured: false,
+    active: true,
+  },
+  {
+    id: 'leather',
+    name: 'Laser-Debossed Leather',
+    category: ['all', 'apparel', 'tactical'],
+    badgePill: 'RUSTIC LUXURY',
+    pillColor: 'amber',
+    desc: 'Rich caramel and dark espresso synthetic leatherette debossed with microscopic precision fiber lasers.',
+    price: 2.45,
+    strikePrice: 3.20,
+    features: [
+      'Deep tone-on-tone scorch debossed branding',
+      'Ultra-strong 3M heavy pressure-sensitive adhesive',
+      'Perimeter recessed stitch canal for cap needle sewing',
+      'Sweat-proof, waterproof & UV sun fade resistant',
+      'The gold standard benchmark for trucker snapbacks',
+      'Free digital laser layout artwork proofs',
+    ],
+    buttonText: 'Order Leather Patches',
+    turnaround: 'Express Delivery: 10–14 Business Days',
+    featured: false,
+    active: true,
+  },
+  {
+    id: 'pvc',
+    name: '3D Soft Molded PVC Rubber',
+    category: ['all', 'tactical'],
+    badgePill: '100% WATERPROOF',
+    pillColor: 'teal',
+    desc: 'Multi-tiered 3D liquid PVC casting with sculpted physical relief, recessed stitch canal, and waterproof rubber.',
+    price: 2.55,
+    strikePrice: 3.40,
+    features: [
+      'Multi-level 3D sculpted physical relief depth',
+      '100% impervious to torrential rain, mud & salt water',
+      'Glow-in-the-dark & fluorescent pigment options',
+      'Embedded perimeter sewing channel for durability',
+      'Mil-spec hook velcro or heat-seal film backing',
+      'Free 3D mold digital proof rendering included',
+    ],
+    buttonText: 'Order 3D PVC Patches',
+    turnaround: 'Express Delivery: 12–14 Business Days',
+    featured: false,
+    active: true,
+  },
+  {
+    id: 'chenille',
+    name: 'Vintage Chenille (Letterman)',
+    category: ['all', 'apparel'],
+    badgePill: 'VINTAGE COLLEGIATE',
+    pillColor: 'yellow',
+    desc: 'Traditional varsity collegiate letterman jacket patch with heavy plush towel loop yarn on double stiff felt.',
+    price: 2.65,
+    strikePrice: 3.50,
+    features: [
+      'High-pile plush loop yarn towel moss stitching',
+      'Double-layer stiff wool blend felt foundation',
+      'Gold & silver metallic chainstitch border accent',
+      'Traditional varsity letterman jacket cut',
+      'Choice of sew-on twill or heavy thermal film',
+      'Free 6-Hour digital chenille layout proof scan',
+    ],
+    buttonText: 'Order Chenille Patches',
+    turnaround: 'Express Delivery: 12–14 Business Days',
+    featured: false,
+    active: true,
+  },
+  {
+    id: 'sublimated',
+    name: 'Sublimated Dye-Printed',
+    category: ['all', 'apparel'],
+    badgePill: 'PHOTO REALISM',
+    pillColor: 'indigo',
+    desc: 'Full-color photographic heat-sublimation on poly-satin with embroidered borders for complex photo art.',
+    price: 1.75,
+    strikePrice: 2.40,
+    features: [
+      'Photographic 1200 DPI edge-to-edge color fidelity',
+      'Infinite color gradients, fine paintings & faces',
+      'Merrowed overlock embroidered frame boundary',
+      'Will not crack, peel, fade or scratch over time',
+      'Choice of Iron-On, Velcro, or Plain Sew-On',
+      'Free 6-Hour digital print & stitch proof scan',
+    ],
+    buttonText: 'Order Sublimated Patches',
+    turnaround: 'Express Delivery: 10–12 Business Days',
+    featured: false,
+    active: true,
+  },
+];
+
 export const DEFAULT_SETTINGS: SiteSettings = {
   // Brand & Header
   announcementText: '🔥 Use code BDIGITIZE15 for 15% Off Your First Bulk Run • Free Digital Proof in 6 Hours',
@@ -448,6 +646,9 @@ export const DEFAULT_SETTINGS: SiteSettings = {
 
   // Bulk Tiers
   bulkTiers: DEFAULT_BULK_TIERS,
+
+  // 8 Custom Patch Pricing Cards
+  patchPricingCards: DEFAULT_PATCH_PRICING_CARDS,
 
   // Services Catalog
   services: DEFAULT_SERVICES,
