@@ -6,7 +6,6 @@ import Hero from '@/components/Hero';
 import Services from '@/components/Services';
 import PricingCards from '@/components/PricingCards';
 import BeforeAfterSlider from '@/components/BeforeAfterSlider';
-import LivePatchStudio from '@/components/LivePatchStudio';
 import WhyChooseUs from '@/components/WhyChooseUs';
 import Process from '@/components/Process';
 import Portfolio from '@/components/Portfolio';
@@ -141,15 +140,6 @@ export default function HomePage() {
           title={settings.sliderTitle}
           subtitle={settings.sliderSubtitle}
           badge={settings.sliderBadge}
-        />
-
-        {/* 5. Interactive Live Patch Studio & Real-Time Price Estimator */}
-        <LivePatchStudio
-          onOpenQuoteWithSpecs={handleOpenQuoteWithSpecs}
-          basePrice={settings.priceEmbroidered}
-          velcroFee={settings.velcroFee}
-          ironOnFee={settings.ironOnFee}
-          peelStickFee={settings.peelStickFee}
         />
 
         {/* 6. Why Choose BDigitizing?: 4 Feature Icons + Stats + Stitched "CUSTOM PATCHES" Banner */}
