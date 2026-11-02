@@ -33,8 +33,32 @@ import {
   Truck,
   Sparkles,
   Wand2,
+  HelpCircle,
+  Download,
+  Printer,
+  Globe,
+  MapPin,
+  Calendar,
+  Percent,
+  Layers,
+  Tag,
+  Check,
+  ChevronDown,
 } from 'lucide-react';
-import { SiteSettings, DEFAULT_SETTINGS, PortfolioItem, CustomerReviewItem } from '@/lib/settings';
+import {
+  SiteSettings,
+  DEFAULT_SETTINGS,
+  PortfolioItem,
+  CustomerReviewItem,
+  FaqItem,
+  ServiceSettingItem,
+  BulkTierItem,
+  DEFAULT_PORTFOLIO,
+  DEFAULT_REVIEWS,
+  DEFAULT_FAQS,
+  DEFAULT_SERVICES,
+  DEFAULT_BULK_TIERS,
+} from '@/lib/settings';
 
 // Data Interfaces
 export interface PatchOrderItem {
@@ -56,6 +80,8 @@ export interface PatchOrderItem {
   artwork_thumbnail?: string;
   created_at: string;
   notes?: string;
+  tracking_number?: string;
+  courier?: string;
 }
 
 export interface QuoteItem {
@@ -105,6 +131,8 @@ const INITIAL_ORDERS: PatchOrderItem[] = [
     status: 'mass_production',
     created_at: new Date(Date.now() - 3600000 * 4).toISOString(),
     notes: 'Please match Pantone 1585C orange threads for the mountain peak outline.',
+    tracking_number: 'FDX-9948201',
+    courier: 'FedEx Express',
   },
   {
     order_id: 'BD-72190',
@@ -125,12 +153,78 @@ const INITIAL_ORDERS: PatchOrderItem[] = [
     created_at: new Date(Date.now() - 3600000 * 18).toISOString(),
     notes: 'Caramel brown leatherette with dark scorched deboss.',
   },
+  {
+    order_id: 'BD-61540',
+    title: 'Special Recon Tactical Morale PVC Patches',
+    patch_type: 'PVC',
+    dimensions: '3.25" x 3.0"',
+    quantity: 500,
+    backing: 'Velcro Hook & Loop',
+    border: 'Recessed Stitch Channel',
+    customer_name: 'Captain Jason Hayes',
+    email: 'jason.hayes@bravotactical.mil',
+    phone: '+1 (619) 555-4421',
+    shipping_address: 'Coronado, CA 92118, USA',
+    subtotal: 1275.0,
+    total_amount: 1275.0,
+    paid: true,
+    status: 'shipped',
+    created_at: new Date(Date.now() - 3600000 * 36).toISOString(),
+    notes: 'Mil-spec subdued matte coyote tan & wolf grey casting.',
+    tracking_number: 'DHL-847291039',
+    courier: 'DHL Express',
+  },
+];
+
+const INITIAL_B2B_ACCOUNTS: B2BAccountItem[] = [
+  {
+    id: 'b2b-1',
+    name: 'Apex Tactical Outfitters LLC',
+    contactPerson: 'David Miller',
+    email: 'david@apextactical.com',
+    phone: '+1 (800) 555-9201',
+    tier: 'Platinum Tier (Wholesale)',
+    discountPct: 35,
+    totalOrders: 18,
+    lifetimeSpend: 24850.0,
+  },
+  {
+    id: 'b2b-2',
+    name: 'Iron Horse MC National Chapter',
+    contactPerson: 'Big Mike Henderson',
+    email: 'treasurer@ironhorsemc.org',
+    phone: '+1 (415) 555-8832',
+    tier: 'Gold Tier (Club Master)',
+    discountPct: 25,
+    totalOrders: 12,
+    lifetimeSpend: 16400.0,
+  },
+  {
+    id: 'b2b-3',
+    name: 'Wilderness Explorers Outdoor Brands',
+    contactPerson: 'Sarah Johnson',
+    email: 'sarah@wildernessexplore.ca',
+    phone: '+1 (604) 555-1982',
+    tier: 'Silver Tier (Apparel)',
+    discountPct: 20,
+    totalOrders: 9,
+    lifetimeSpend: 9800.0,
+  },
 ];
 
 export default function AdminDashboardPage() {
   // Navigation Tabs
   const [activeTab, setActiveTab] = useState<
-    'overview' | 'pricing' | 'portfolio' | 'slider' | 'orders' | 'reviews' | 'settings' | 'b2b'
+    | 'overview'
+    | 'orders'
+    | 'pricing'
+    | 'services'
+    | 'portfolio'
+    | 'slider'
+    | 'reviews'
+    | 'faqs'
+    | 'settings'
+    | 'b2b'
   >('overview');
 
   // Live Settings
@@ -143,6 +237,20 @@ export default function AdminDashboardPage() {
   const [quotes, setQuotes] = useState<QuoteItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+
+  // B2B Accounts
+  const [b2bAccounts, setB2bAccounts] = useState<B2BAccountItem[]>(INITIAL_B2B_ACCOUNTS);
+  const [showAddB2B, setShowAddB2B] = useState(false);
+  const [newB2B, setNewB2B] = useState<Partial<B2BAccountItem>>({
+    name: '',
+    contactPerson: '',
+    email: '',
+    phone: '',
+    tier: 'Gold Tier (Wholesale)',
+    discountPct: 20,
+    totalOrders: 1,
+    lifetimeSpend: 1500,
+  });
 
   // Modals & Forms
   const [showAddPortfolio, setShowAddPortfolio] = useState(false);
@@ -168,14 +276,34 @@ export default function AdminDashboardPage() {
     verifiedOrder: 'BD-Custom (100 pcs)',
     comment: '',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
+    featured: true,
+  });
+
+  const [showAddFaq, setShowAddFaq] = useState(false);
+  const [newFaq, setNewFaq] = useState<Partial<FaqItem>>({
+    category: 'turnaround',
+    q: '',
+    a: '',
+    active: true,
   });
 
   // Edit item states
   const [editingPortfolio, setEditingPortfolio] = useState<PortfolioItem | null>(null);
   const [editingReview, setEditingReview] = useState<CustomerReviewItem | null>(null);
+  const [editingService, setEditingService] = useState<ServiceSettingItem | null>(null);
+  const [editingFaq, setEditingFaq] = useState<FaqItem | null>(null);
 
   // Selected Order for Detail Modal
   const [selectedOrder, setSelectedOrder] = useState<PatchOrderItem | null>(null);
+
+  // Live Pricing Simulator State inside Admin
+  const [simWidth, setSimWidth] = useState(3.0);
+  const [simHeight, setSimHeight] = useState(3.0);
+  const [simQty, setSimQty] = useState(100);
+  const [simStyle, setSimStyle] = useState<'embroidered' | 'iron_on' | 'velcro' | 'woven' | 'leather' | 'pvc'>('embroidered');
+  const [simBacking, setSimBacking] = useState<'velcro' | 'iron_on' | 'peel_stick' | 'sew_on'>('velcro');
+  const [simBorder, setSimBorder] = useState<'merrowed' | 'laser_cut'>('merrowed');
+  const [simRush, setSimRush] = useState(false);
 
   // Fetch Settings & Quotes from API
   const refreshData = useCallback(async () => {
@@ -190,6 +318,15 @@ export default function AdminDashboardPage() {
         }
         if (!merged.reviews || merged.reviews.length === 0) {
           merged.reviews = DEFAULT_SETTINGS.reviews;
+        }
+        if (!merged.services || merged.services.length === 0) {
+          merged.services = DEFAULT_SETTINGS.services;
+        }
+        if (!merged.faqs || merged.faqs.length === 0) {
+          merged.faqs = DEFAULT_SETTINGS.faqs;
+        }
+        if (!merged.bulkTiers || merged.bulkTiers.length === 0) {
+          merged.bulkTiers = DEFAULT_SETTINGS.bulkTiers;
         }
         setSettings(merged);
         try {
@@ -295,62 +432,20 @@ export default function AdminDashboardPage() {
     setEditingPortfolio(null);
   };
 
-  // Update existing review
-  const handleUpdateReview = () => {
-    if (!editingReview || !editingReview.author) return;
-    const updated = (settings.reviews || []).map((r) =>
-      String(r.id) === String(editingReview.id) ? editingReview : r
-    );
-    const updatedSettings = { ...settings, reviews: updated };
-    setSettings(updatedSettings);
-    handleSaveSettings(updatedSettings);
-    setEditingReview(null);
-  };
-
-  // Update Status Function
-  const handleUpdateStatus = async (orderId: string, newStatus: PatchOrderItem['status']) => {
-    setOrders((prev) =>
-      prev.map((o) => (o.order_id === orderId ? { ...o, status: newStatus } : o))
-    );
-
-    // Call API patch
-    try {
-      await fetch('/api/admin/orders', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'order',
-          id: orderId,
-          status: newStatus,
-        }),
-      });
-    } catch (e) {
-      console.warn('API status patch note:', e);
-    }
-  };
-
-  // Add Portfolio Item
+  // Add new portfolio item
   const handleAddPortfolio = () => {
     if (!newPortfolio.title) return;
     const item: PortfolioItem = {
-      id: `p-${Date.now()}`,
-      title: newPortfolio.title,
+      id: Date.now(),
+      title: newPortfolio.title || 'Custom Morale Specimen',
       category: (newPortfolio.category as any) || 'tactical',
       styleId: newPortfolio.styleId || 'embroidered',
-      badge: newPortfolio.badge || '100% Tajima High Density',
-      specs: newPortfolio.specs || '3.0" × 3.0" • Madeira Thread • Merrowed Border',
-      batch: newPortfolio.batch || '250 pcs',
-      desc: newPortfolio.desc || 'Full-density polyester thread coverage calibrated for extreme abrasion resistance.',
-      badgeClass:
-        newPortfolio.category === 'tactical'
-          ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-          : newPortfolio.category === 'biker'
-          ? 'bg-slate-100 text-slate-800 border-slate-300'
-          : newPortfolio.category === 'varsity'
-          ? 'bg-yellow-50 text-yellow-800 border-yellow-200'
-          : 'bg-purple-50 text-purple-700 border-purple-200',
+      badge: newPortfolio.badge || 'Tajima High Density',
+      specs: newPortfolio.specs || '3.0" × 3.0" • Madeira Poly',
+      batch: newPortfolio.batch || '100 pcs',
+      desc: newPortfolio.desc || 'Precision manufactured custom patch.',
+      badgeClass: 'bg-orange-50 text-orange-700 border-orange-200',
       image: newPortfolio.image || 'https://images.unsplash.com/photo-1584905066893-7d5c142ba4e1?w=800&auto=format&fit=crop&q=80',
-      altText: newPortfolio.title,
       basePrice: Number(newPortfolio.basePrice) || 1.85,
       active: true,
     };
@@ -366,14 +461,13 @@ export default function AdminDashboardPage() {
       badge: '100% Tajima High Density',
       specs: '3.0" × 3.0" • Madeira Thread • Merrowed Border',
       batch: '250 pcs',
-      desc: '',
+      desc: 'Full-density polyester thread coverage calibrated for extreme abrasion resistance.',
       image: 'https://images.unsplash.com/photo-1584905066893-7d5c142ba4e1?w=800&auto=format&fit=crop&q=80',
       basePrice: 1.85,
       active: true,
     });
   };
 
-  // Delete Portfolio Item
   const handleDeletePortfolio = (id: string | number) => {
     const updated = (settings.portfolio || []).filter((p) => String(p.id) !== String(id));
     const updatedSettings = { ...settings, portfolio: updated };
@@ -381,27 +475,29 @@ export default function AdminDashboardPage() {
     handleSaveSettings(updatedSettings);
   };
 
-  // Toggle Active on Portfolio Item
-  const handleTogglePortfolioActive = (id: string | number) => {
-    const updated = (settings.portfolio || []).map((p) =>
-      String(p.id) === String(id) ? { ...p, active: p.active === false ? true : false } : p
+  // Update existing review
+  const handleUpdateReview = () => {
+    if (!editingReview || !editingReview.author) return;
+    const updated = (settings.reviews || []).map((r) =>
+      String(r.id) === String(editingReview.id) ? editingReview : r
     );
-    const updatedSettings = { ...settings, portfolio: updated };
+    const updatedSettings = { ...settings, reviews: updated };
     setSettings(updatedSettings);
     handleSaveSettings(updatedSettings);
+    setEditingReview(null);
   };
 
-  // Add Review
+  // Add new review
   const handleAddReview = () => {
-    if (!newReview.author || !newReview.comment) return;
+    if (!newReview.author) return;
     const item: CustomerReviewItem = {
       id: `r-${Date.now()}`,
-      author: newReview.author,
-      company: newReview.company || 'Private Client',
+      author: newReview.author || 'Anonymous Client',
+      company: newReview.company || 'Verified Organization',
       country: newReview.country || 'USA',
       rating: Number(newReview.rating) || 5,
       verifiedOrder: newReview.verifiedOrder || 'BD-Custom (100 pcs)',
-      comment: newReview.comment,
+      comment: newReview.comment || 'Outstanding quality and very fast turnaround!',
       date: 'Just now',
       featured: true,
       avatar: newReview.avatar || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
@@ -422,7 +518,6 @@ export default function AdminDashboardPage() {
     });
   };
 
-  // Delete Review
   const handleDeleteReview = (id: string) => {
     const updated = (settings.reviews || []).filter((r) => r.id !== id);
     const updatedSettings = { ...settings, reviews: updated };
@@ -430,94 +525,300 @@ export default function AdminDashboardPage() {
     handleSaveSettings(updatedSettings);
   };
 
-  // Metrics Calculations
-  const metrics = useMemo(() => {
-    const totalOrdersCount = orders.length;
-    const pendingProofs = orders.filter((o) => o.status === 'proof_review').length;
-    const inProduction = orders.filter((o) => o.status === 'mass_production').length;
-    const totalRevenue = orders.reduce((sum, o) => sum + (o.total_amount || 0), 0);
-    return {
-      totalOrdersCount,
-      pendingProofs,
-      inProduction,
-      totalRevenue: totalRevenue.toFixed(2),
+  // Update Service
+  const handleUpdateService = () => {
+    if (!editingService) return;
+    const updated = (settings.services || DEFAULT_SERVICES).map((s) =>
+      s.id === editingService.id ? editingService : s
+    );
+    const updatedSettings = { ...settings, services: updated };
+    setSettings(updatedSettings);
+    handleSaveSettings(updatedSettings);
+    setEditingService(null);
+  };
+
+  // Add FAQ
+  const handleAddFaq = () => {
+    if (!newFaq.q || !newFaq.a) return;
+    const item: FaqItem = {
+      id: `f-${Date.now()}`,
+      category: (newFaq.category as any) || 'general',
+      q: newFaq.q,
+      a: newFaq.a,
+      active: true,
     };
-  }, [orders]);
+    const updated = [...(settings.faqs || DEFAULT_FAQS), item];
+    const updatedSettings = { ...settings, faqs: updated };
+    setSettings(updatedSettings);
+    handleSaveSettings(updatedSettings);
+    setShowAddFaq(false);
+    setNewFaq({ category: 'turnaround', q: '', a: '', active: true });
+  };
+
+  // Update FAQ
+  const handleUpdateFaq = () => {
+    if (!editingFaq || !editingFaq.q) return;
+    const updated = (settings.faqs || DEFAULT_FAQS).map((f) =>
+      f.id === editingFaq.id ? editingFaq : f
+    );
+    const updatedSettings = { ...settings, faqs: updated };
+    setSettings(updatedSettings);
+    handleSaveSettings(updatedSettings);
+    setEditingFaq(null);
+  };
+
+  // Delete FAQ
+  const handleDeleteFaq = (id: string) => {
+    const updated = (settings.faqs || DEFAULT_FAQS).filter((f) => f.id !== id);
+    const updatedSettings = { ...settings, faqs: updated };
+    setSettings(updatedSettings);
+    handleSaveSettings(updatedSettings);
+  };
+
+  // Add B2B Account
+  const handleAddB2B = () => {
+    if (!newB2B.name) return;
+    const item: B2BAccountItem = {
+      id: `b2b-${Date.now()}`,
+      name: newB2B.name || 'New Wholesale Client',
+      contactPerson: newB2B.contactPerson || 'Contact Name',
+      email: newB2B.email || 'wholesale@client.com',
+      phone: newB2B.phone || '+1 (800) 000-0000',
+      tier: newB2B.tier || 'Gold Tier',
+      discountPct: Number(newB2B.discountPct) || 20,
+      totalOrders: Number(newB2B.totalOrders) || 1,
+      lifetimeSpend: Number(newB2B.lifetimeSpend) || 1000,
+    };
+    setB2bAccounts([item, ...b2bAccounts]);
+    setShowAddB2B(false);
+    setNewB2B({
+      name: '',
+      contactPerson: '',
+      email: '',
+      phone: '',
+      tier: 'Gold Tier (Wholesale)',
+      discountPct: 20,
+      totalOrders: 1,
+      lifetimeSpend: 1500,
+    });
+  };
+
+  // Update Status Function
+  const handleUpdateStatus = async (orderId: string, newStatus: PatchOrderItem['status']) => {
+    setOrders((prev) =>
+      prev.map((o) => (o.order_id === orderId ? { ...o, status: newStatus } : o))
+    );
+    if (selectedOrder && selectedOrder.order_id === orderId) {
+      setSelectedOrder({ ...selectedOrder, status: newStatus });
+    }
+  };
+
+  // Update Tracking Number & Courier
+  const handleUpdateTracking = (orderId: string, courier: string, trackingNumber: string) => {
+    setOrders((prev) =>
+      prev.map((o) =>
+        o.order_id === orderId ? { ...o, courier, tracking_number: trackingNumber } : o
+      )
+    );
+    if (selectedOrder && selectedOrder.order_id === orderId) {
+      setSelectedOrder({ ...selectedOrder, courier, tracking_number: trackingNumber });
+    }
+  };
+
+  // Export Orders CSV
+  const handleExportOrdersCSV = () => {
+    const headers = [
+      'Order ID',
+      'Customer Name',
+      'Email',
+      'Phone',
+      'Patch Type',
+      'Quantity',
+      'Dimensions',
+      'Backing',
+      'Status',
+      'Total ($)',
+      'Tracking Number',
+      'Created At',
+    ];
+    const rows = orders.map((o) => [
+      `"${o.order_id}"`,
+      `"${o.customer_name}"`,
+      `"${o.email}"`,
+      `"${o.phone}"`,
+      `"${o.patch_type}"`,
+      o.quantity,
+      `"${o.dimensions}"`,
+      `"${o.backing}"`,
+      `"${o.status}"`,
+      o.total_amount?.toFixed(2) || '0.00',
+      `"${o.tracking_number || ''}"`,
+      `"${o.created_at}"`,
+    ]);
+    const csvContent =
+      'data:text/csv;charset=utf-8,' +
+      [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `BDigitizing_Orders_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // WhatsApp Customer Helper
+  const handleWhatsAppCustomer = (order: PatchOrderItem) => {
+    const cleanPhone = (order.phone || '').replace(/[^0-9]/g, '');
+    const message = `Hello ${order.customer_name}, this is BDigitizing Factory regarding your custom patch order ${order.order_id} (${order.quantity} pcs ${order.patch_type}). Current Production Status: ${order.status.toUpperCase()}${
+      order.tracking_number ? ` | Tracking: ${order.tracking_number}` : ''
+    }. Please let us know if you need any assistance!`;
+    const url = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank');
+  };
+
+  // Email Customer Helper
+  const handleEmailCustomer = (order: PatchOrderItem) => {
+    const subject = `Production Update: BDigitizing Custom Patch Order ${order.order_id}`;
+    const body = `Hi ${order.customer_name},\n\nWe are pleased to inform you that your custom patch order ${order.order_id} (${order.quantity} pcs ${order.patch_type}) is now in: ${order.status.toUpperCase()}.\n\n${
+      order.tracking_number ? `Courier: ${order.courier || 'Express'}\nTracking Number: ${order.tracking_number}\n\n` : ''
+    }Thank you for your business!\n\nBest regards,\nBDigitizing Master Production Team\nsupport@bdigitizing.com`;
+    window.open(`mailto:${order.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
+  };
 
   // Filtered Orders
   const filteredOrders = useMemo(() => {
     return orders.filter((o) => {
       const matchesSearch =
-        o.order_id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        o.customer_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        o.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        o.patch_type.toLowerCase().includes(searchQuery.toLowerCase());
-
+        o.customer_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        o.order_id?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        o.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        o.patch_type?.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesStatus = statusFilter === 'all' || o.status === statusFilter;
       return matchesSearch && matchesStatus;
     });
   }, [orders, searchQuery, statusFilter]);
 
+  // Overall KPIs
+  const metrics = useMemo(() => {
+    const totalOrdersCount = orders.length;
+    const inProduction = orders.filter((o) => o.status === 'mass_production').length;
+    const pendingProofs = orders.filter((o) => o.status === 'proof_review').length;
+    const totalRevenue = orders.reduce((sum, o) => sum + (o.total_amount || 0), 0);
+    return {
+      totalOrdersCount,
+      inProduction,
+      pendingProofs,
+      totalRevenue: totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2 }),
+    };
+  }, [orders]);
+
+  // Live Simulator Calculation
+  const simCalculation = useMemo(() => {
+    const baseRates: Record<string, number> = {
+      embroidered: settings.priceEmbroidered ?? 1.85,
+      iron_on: settings.priceIronOn ?? 1.95,
+      velcro: settings.priceVelcro ?? 2.35,
+      woven: settings.priceWoven ?? 1.65,
+      leather: settings.priceLeather ?? 2.45,
+      pvc: settings.pricePvc ?? 2.55,
+    };
+    const backingFees: Record<string, number> = {
+      velcro: settings.velcroFee ?? 0.45,
+      iron_on: settings.ironOnFee ?? 0.20,
+      peel_stick: settings.peelStickFee ?? 0.35,
+      sew_on: settings.sewOnFee ?? 0.00,
+    };
+    const borderFee = simBorder === 'laser_cut' ? (settings.laserCutFee ?? 0.15) : (settings.merrowedFee ?? 0.0);
+    const base = baseRates[simStyle] || 1.85;
+    const backing = backingFees[simBacking] || 0.0;
+    const sizeFactor = Math.max(1.0, ((simWidth + simHeight) / 2) / 3.0);
+
+    // Bulk discount tier
+    const matchingTier = [...(settings.bulkTiers || DEFAULT_BULK_TIERS)]
+      .reverse()
+      .find((t) => simQty >= t.qty);
+    const discountPct = matchingTier ? matchingTier.discountPct : 0;
+
+    let unit = (base + backing + borderFee) * sizeFactor;
+    unit = unit * (1 - discountPct / 100);
+
+    let total = unit * simQty;
+    if (simRush) total += (settings.rushOrderFee ?? 45.0);
+
+    return {
+      unitPrice: unit.toFixed(2),
+      discountPct,
+      subtotal: (unit * simQty).toFixed(2),
+      total: total.toFixed(2),
+    };
+  }, [simWidth, simHeight, simQty, simStyle, simBacking, simBorder, simRush, settings]);
+
   return (
-    <div className="min-h-screen bg-[#0e1017] text-slate-100 font-sans flex flex-col selection:bg-orange-500 selection:text-white">
+    <div className="min-h-screen bg-[#0d0f15] text-slate-100 flex flex-col font-sans antialiased selection:bg-orange-500 selection:text-white">
       
-      {/* 1. Top Admin Bar */}
-      <header className="bg-[#141722] border-b border-slate-800/80 sticky top-0 z-40 px-4 sm:px-8 py-3.5 flex items-center justify-between">
+      {/* 1. Admin Top Bar */}
+      <header className="sticky top-0 z-40 bg-[#12141c]/95 backdrop-blur-md border-b border-slate-800 px-4 sm:px-8 py-3.5 flex items-center justify-between">
         
-        {/* Brand */}
+        {/* Brand & Badge */}
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-orange-500 text-white flex items-center justify-center font-black text-lg shadow-md">
-            B
-          </div>
-          <div>
-            <div className="text-base font-black tracking-tight text-white flex items-center gap-2">
-              <span>BDigitizing</span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/30 font-bold uppercase">
-                Admin Console
+          <Link href="/" className="inline-flex items-center gap-2 group">
+            <div className="w-8 h-8 rounded-lg bg-orange-500 text-white flex items-center justify-center font-black shadow-md group-hover:scale-105 transition-transform">
+              <svg viewBox="0 0 24 24" className="w-4 h-4 stroke-white fill-none stroke-[2.5]" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M6 4h7a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z" />
+                <path d="M6 12h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z" />
+                <line x1="6" y1="4" x2="6" y2="20" />
+              </svg>
+            </div>
+            <div>
+              <span className="text-base font-black text-white tracking-tight flex items-center gap-1 font-sans">
+                <span className="text-orange-500">B</span>Digitizing
               </span>
             </div>
-            <div className="text-[10px] text-slate-400 font-medium">
-              Factory Control, Pricing &amp; Portfolio Management
-            </div>
-          </div>
+          </Link>
+          <span className="text-slate-600 hidden sm:inline">|</span>
+          <span className="text-xs font-mono font-bold text-orange-400 bg-orange-500/10 border border-orange-500/30 px-2.5 py-0.5 rounded-full flex items-center gap-1.5">
+            <Shield className="w-3 h-3" />
+            <span>Master Factory Command Portal</span>
+          </span>
         </div>
 
-        {/* Top Actions */}
+        {/* Global Action Buttons */}
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={refreshData}
-            title="Refresh Data"
+            title="Refresh database"
             className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer"
           >
             <RefreshCw className="w-4 h-4" />
           </button>
 
-          <Link
-            href="/"
-            target="_blank"
-            className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-xs font-bold text-slate-200 hover:text-white transition-colors"
-          >
-            <span>Live Website</span>
-            <ExternalLink className="w-3.5 h-3.5 text-orange-400" />
-          </Link>
-
           <button
             type="button"
             onClick={() => handleSaveSettings()}
             disabled={isSavingSettings}
-            className="btn-orange px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+            className="btn-orange px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 shadow-lg cursor-pointer"
           >
-            <Save className="w-3.5 h-3.5" />
-            <span>{isSavingSettings ? 'Publishing...' : 'Save & Publish'}</span>
+            <Save className="w-4 h-4" />
+            <span>{isSavingSettings ? 'Saving...' : 'Save & Publish All'}</span>
           </button>
-        </div>
 
+          <Link
+            href="/"
+            target="_blank"
+            className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-white text-xs font-bold transition-all border border-slate-700/60"
+          >
+            <Eye className="w-3.5 h-3.5" />
+            <span>Live Site</span>
+            <ExternalLink className="w-3 h-3 text-slate-500" />
+          </Link>
+        </div>
       </header>
 
       {/* Save Notification Toast */}
       {saveToast && (
-        <div className="bg-emerald-500 text-white text-xs font-bold py-2.5 px-6 text-center animate-in slide-in-from-top-2">
+        <div className="bg-emerald-500 text-white text-xs font-bold py-2.5 px-6 text-center animate-in slide-in-from-top-2 shadow-lg">
           {saveToast}
         </div>
       )}
@@ -529,18 +830,20 @@ export default function AdminDashboardPage() {
         <aside className="w-full md:w-64 bg-[#12141c] border-r border-slate-800/80 p-4 space-y-1 shrink-0">
           
           <div className="text-[10px] font-mono font-bold uppercase text-slate-500 px-3 py-2">
-            Main Management
+            Factory Control Modules
           </div>
 
           {[
             { id: 'overview', label: 'Dashboard Overview', icon: <LayoutDashboard className="w-4 h-4" /> },
             { id: 'orders', label: 'Quote Requests & Orders', icon: <ShoppingBag className="w-4 h-4" />, badge: orders.length },
-            { id: 'pricing', label: 'Pricing & Discounts', icon: <DollarSign className="w-4 h-4" /> },
-            { id: 'portfolio', label: 'Portfolio & Gallery', icon: <ImageIcon className="w-4 h-4" />, badge: (settings.portfolio || []).length },
+            { id: 'pricing', label: 'Pricing & Surcharges', icon: <DollarSign className="w-4 h-4" /> },
+            { id: 'services', label: 'Services & Materials', icon: <Sparkles className="w-4 h-4" />, badge: (settings.services || DEFAULT_SERVICES).length },
+            { id: 'portfolio', label: 'Portfolio Specimens', icon: <ImageIcon className="w-4 h-4" />, badge: (settings.portfolio || []).length },
             { id: 'slider', label: 'Before/After Slider', icon: <Wand2 className="w-4 h-4" /> },
             { id: 'reviews', label: 'Customer Reviews', icon: <Star className="w-4 h-4" />, badge: (settings.reviews || []).length },
-            { id: 'settings', label: 'Website Settings', icon: <Settings className="w-4 h-4" /> },
-            { id: 'b2b', label: 'Wholesale B2B Accounts', icon: <Users className="w-4 h-4" /> },
+            { id: 'faqs', label: 'FAQs & Help Desk', icon: <HelpCircle className="w-4 h-4" />, badge: (settings.faqs || DEFAULT_FAQS).length },
+            { id: 'settings', label: 'Website & Brand Settings', icon: <Settings className="w-4 h-4" /> },
+            { id: 'b2b', label: 'Wholesale B2B Accounts', icon: <Users className="w-4 h-4" />, badge: b2bAccounts.length },
           ].map((tab) => (
             <button
               type="button"
@@ -569,7 +872,7 @@ export default function AdminDashboardPage() {
           ))}
 
           {/* Quick Loom Status Widget */}
-          <div className="pt-8 px-3">
+          <div className="pt-6 px-2">
             <div className="p-3.5 rounded-2xl bg-[#171a25] border border-slate-800 space-y-2">
               <div className="flex items-center gap-2 text-xs font-bold text-slate-300">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -591,27 +894,39 @@ export default function AdminDashboardPage() {
             <div className="space-y-8 animate-in fade-in duration-200">
               
               {/* Heading */}
-              <div>
-                <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                  Factory Control Overview
-                </h1>
-                <p className="text-xs sm:text-sm text-slate-400 mt-1">
-                  Monitor live patch proof requests, production statuses, and customer inquiries.
-                </p>
+              <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                <div>
+                  <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                    Factory Command Dashboard
+                  </h1>
+                  <p className="text-xs sm:text-sm text-slate-400 mt-1">
+                    Live production status, incoming client quote inquiries, and manufacturing pipeline.
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('orders')}
+                    className="btn-orange px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5"
+                  >
+                    <ShoppingBag className="w-3.5 h-3.5" />
+                    <span>View All Orders</span>
+                  </button>
+                </div>
               </div>
 
               {/* 4 Metric Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="bg-[#141722] border border-slate-800 p-5 rounded-2xl">
                   <div className="flex justify-between items-center text-slate-400 text-xs font-bold">
-                    <span>Total Submissions</span>
+                    <span>Total Orders &amp; Quotes</span>
                     <Package className="w-4 h-4 text-orange-500" />
                   </div>
                   <div className="text-2xl font-black text-white font-mono mt-2">
                     {metrics.totalOrdersCount}
                   </div>
                   <div className="text-[10px] text-emerald-400 mt-1 font-mono">
-                    ✓ All processed through /api/orders
+                    ✓ Connected to Supabase DB
                   </div>
                 </div>
 
@@ -655,19 +970,63 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
 
+              {/* Quick Actions Bar */}
+              <div className="bg-[#141722] border border-slate-800 p-5 rounded-2xl">
+                <h3 className="text-xs font-mono font-bold uppercase text-slate-400 mb-3">
+                  Quick Action Shortcuts
+                </h3>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('pricing')}
+                    className="p-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-left text-xs font-bold text-white transition-all cursor-pointer flex items-center gap-2"
+                  >
+                    <DollarSign className="w-4 h-4 text-orange-400" />
+                    <span>Update Pricing Rates</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveTab('portfolio');
+                      setShowAddPortfolio(true);
+                    }}
+                    className="p-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-left text-xs font-bold text-white transition-all cursor-pointer flex items-center gap-2"
+                  >
+                    <Plus className="w-4 h-4 text-emerald-400" />
+                    <span>Add Portfolio Specimen</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleExportOrdersCSV()}
+                    className="p-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-left text-xs font-bold text-white transition-all cursor-pointer flex items-center gap-2"
+                  >
+                    <Download className="w-4 h-4 text-blue-400" />
+                    <span>Export Orders CSV</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('settings')}
+                    className="p-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-left text-xs font-bold text-white transition-all cursor-pointer flex items-center gap-2"
+                  >
+                    <Settings className="w-4 h-4 text-amber-400" />
+                    <span>Website &amp; Promo Settings</span>
+                  </button>
+                </div>
+              </div>
+
               {/* Recent Orders Quick Table */}
               <div className="bg-[#141722] border border-slate-800 rounded-2xl p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-base font-bold text-white flex items-center gap-2">
                     <ShoppingBag className="w-4 h-4 text-orange-500" />
-                    <span>Recent Quote Inquiries</span>
+                    <span>Recent Quote Inquiries &amp; Production Orders</span>
                   </h3>
                   <button
                     type="button"
                     onClick={() => setActiveTab('orders')}
-                    className="text-xs font-bold text-orange-400 hover:text-orange-300 flex items-center gap-1"
+                    className="text-xs font-bold text-orange-400 hover:text-orange-300 flex items-center gap-1 cursor-pointer"
                   >
-                    <span>View All Orders</span>
+                    <span>View All</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -718,9 +1077,7 @@ export default function AdminDashboardPage() {
                           <td className="py-3 text-right">
                             <button
                               type="button"
-                              onClick={() => {
-                                setSelectedOrder(order);
-                              }}
+                              onClick={() => setSelectedOrder(order)}
                               className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-orange-500 hover:text-white text-slate-300 text-[11px] font-bold transition-colors cursor-pointer"
                             >
                               Details
@@ -736,920 +1093,28 @@ export default function AdminDashboardPage() {
             </div>
           )}
 
-          {/* TAB 2: PRICING & MATRIX */}
-          {activeTab === 'pricing' && (
-            <div className="space-y-6 animate-in fade-in duration-200">
-              
-              <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-                <div>
-                  <h1 className="text-2xl font-black text-white tracking-tight">
-                    Live Pricing &amp; Wholesale Discounts
-                  </h1>
-                  <p className="text-xs text-slate-400 mt-1">
-                    Control the base rates for all 5 styles, backings, and wholesale tier percentages.
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleSaveSettings()}
-                  className="btn-orange px-5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer self-start"
-                >
-                  <Save className="w-4 h-4" />
-                  <span>Publish Rates to Website</span>
-                </button>
-              </div>
-
-              {/* Base Prices Grid */}
-              <div className="bg-[#141722] border border-slate-800 rounded-2xl p-6 space-y-4">
-                <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                  <Sliders className="w-4 h-4 text-orange-500" />
-                  <span>Base Unit Rates (Per Patch at 100 pcs benchmark)</span>
-                </h3>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {[
-                    { key: 'priceEmbroidered', label: '1. Embroidered Patches Base', default: 1.85 },
-                    { key: 'priceIronOn', label: '2. Iron-On Patches Base', default: 1.95 },
-                    { key: 'priceVelcro', label: '3. Velcro Patches Base', default: 2.35 },
-                    { key: 'priceWoven', label: '4. Woven Jacquard Patches Base', default: 1.65 },
-                    { key: 'priceLeather', label: '5. Debossed Leather Patches Base', default: 2.45 },
-                    { key: 'pricePvc', label: '6. 3D Soft PVC Rubber Base', default: 2.55 },
-                  ].map((item) => (
-                    <div key={item.key} className="bg-[#181b26] p-4 rounded-xl border border-slate-800/80">
-                      <label className="block text-xs font-bold text-slate-300 mb-2">
-                        {item.label}
-                      </label>
-                      <div className="relative">
-                        <span className="absolute left-3 top-2.5 text-slate-500 font-mono text-xs">$</span>
-                        <input
-                          type="number"
-                          step="0.05"
-                          value={(settings as any)[item.key] ?? item.default}
-                          onChange={(e) =>
-                            setSettings({
-                              ...settings,
-                              [item.key]: parseFloat(e.target.value) || item.default,
-                            })
-                          }
-                          className="w-full pl-7 pr-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white font-mono text-sm font-bold focus:border-orange-500 outline-none"
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Attachment Backing Addons */}
-              <div className="bg-[#141722] border border-slate-800 rounded-2xl p-6 space-y-4">
-                <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-orange-500" />
-                  <span>Backing Attachment Fees</span>
-                </h3>
-
-                <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 mb-1">
-                      Velcro (Hook &amp; Loop)
-                    </label>
-                    <input
-                      type="number"
-                      step="0.05"
-                      value={settings.velcroFee ?? 0.45}
-                      onChange={(e) =>
-                        setSettings({ ...settings, velcroFee: parseFloat(e.target.value) || 0.45 })
-                      }
-                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 font-mono text-sm font-bold text-white"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 mb-1">
-                      Heat-Seal Iron-On Film
-                    </label>
-                    <input
-                      type="number"
-                      step="0.05"
-                      value={settings.ironOnFee ?? 0.20}
-                      onChange={(e) =>
-                        setSettings({ ...settings, ironOnFee: parseFloat(e.target.value) || 0.20 })
-                      }
-                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 font-mono text-sm font-bold text-white"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 mb-1">
-                      3M Peel &amp; Stick
-                    </label>
-                    <input
-                      type="number"
-                      step="0.05"
-                      value={settings.peelStickFee ?? 0.35}
-                      onChange={(e) =>
-                        setSettings({ ...settings, peelStickFee: parseFloat(e.target.value) || 0.35 })
-                      }
-                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 font-mono text-sm font-bold text-white"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 mb-1">
-                      Traditional Plain Sew-On
-                    </label>
-                    <input
-                      type="number"
-                      step="0.05"
-                      value={settings.sewOnFee ?? 0.00}
-                      onChange={(e) =>
-                        setSettings({ ...settings, sewOnFee: parseFloat(e.target.value) || 0.00 })
-                      }
-                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 font-mono text-sm font-bold text-white"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Promo Coupon Configuration */}
-              <div className="bg-[#141722] border border-slate-800 rounded-2xl p-6 space-y-4">
-                <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-orange-500" />
-                  <span>Promo Code &amp; Instant Site Discount</span>
-                </h3>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 mb-1">
-                      Promotional Coupon Code
-                    </label>
-                    <input
-                      type="text"
-                      value={settings.promoCode ?? 'BDIGITIZE15'}
-                      onChange={(e) =>
-                        setSettings({ ...settings, promoCode: e.target.value.toUpperCase() })
-                      }
-                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 font-mono text-sm font-bold text-orange-400"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 mb-1">
-                      Discount Percentage (%)
-                    </label>
-                    <input
-                      type="number"
-                      value={settings.discountRate ?? 15}
-                      onChange={(e) =>
-                        setSettings({ ...settings, discountRate: parseInt(e.target.value) || 15 })
-                      }
-                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 font-mono text-sm font-bold text-white"
-                    />
-                  </div>
-                </div>
-
-                <div className="pt-4 flex justify-end">
-                  <button
-                    type="button"
-                    onClick={() => handleSaveSettings()}
-                    disabled={isSavingSettings}
-                    className="btn-orange px-6 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer shadow-lg"
-                  >
-                    <Save className="w-4 h-4" />
-                    <span>{isSavingSettings ? 'Publishing...' : 'Save & Publish All Pricing Changes'}</span>
-                  </button>
-                </div>
-              </div>
-
-            </div>
-          )}
-
-          {/* TAB 3: PORTFOLIO & GALLERY */}
-          {activeTab === 'portfolio' && (
-            <div className="space-y-6 animate-in fade-in duration-200">
-              
-              <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-                <div>
-                  <h1 className="text-2xl font-black text-white tracking-tight">
-                    Portfolio &amp; Showcase Management
-                  </h1>
-                  <p className="text-xs text-slate-400 mt-1">
-                    Add, edit, or disable patch specimens shown on the public website with live high-res photography.
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setShowAddPortfolio(true)}
-                  className="btn-orange px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer self-start"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Add New Patch Specimen</span>
-                </button>
-              </div>
-
-              {/* Add Modal */}
-              {showAddPortfolio && (
-                <div className="bg-[#141722] border-2 border-orange-500/60 rounded-2xl p-6 space-y-4">
-                  <h3 className="text-sm font-bold text-white">Add New Portfolio Specimen</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div>
-                      <label className="block text-xs font-bold text-slate-400 mb-1">Patch Title</label>
-                      <input
-                        type="text"
-                        placeholder="e.g. Tactical Recon Skull Morale Badge"
-                        value={newPortfolio.title}
-                        onChange={(e) => setNewPortfolio({ ...newPortfolio, title: e.target.value })}
-                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-bold text-slate-400 mb-1">Portfolio Category</label>
-                      <select
-                        value={newPortfolio.category}
-                        onChange={(e) =>
-                          setNewPortfolio({
-                            ...newPortfolio,
-                            category: e.target.value as any,
-                          })
-                        }
-                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
-                      >
-                        <option value="tactical">Tactical Units</option>
-                        <option value="headwear">Caps &amp; Beanies</option>
-                        <option value="biker">Biker MC</option>
-                        <option value="varsity">Varsity Athletics</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-bold text-slate-400 mb-1">Patch Material Style</label>
-                      <select
-                        value={newPortfolio.styleId}
-                        onChange={(e) =>
-                          setNewPortfolio({
-                            ...newPortfolio,
-                            styleId: e.target.value,
-                          })
-                        }
-                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
-                      >
-                        <option value="embroidered">Embroidered</option>
-                        <option value="iron-on">Iron-On</option>
-                        <option value="velcro">Velcro Hook &amp; Loop</option>
-                        <option value="woven">Jacquard Woven</option>
-                        <option value="leather">Debossed Leather</option>
-                        <option value="pvc">3D Soft PVC</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-bold text-slate-400 mb-1">Badge Tag</label>
-                      <input
-                        type="text"
-                        placeholder="e.g. 3D Soft Molded PVC"
-                        value={newPortfolio.badge}
-                        onChange={(e) =>
-                          setNewPortfolio({ ...newPortfolio, badge: e.target.value })
-                        }
-                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-bold text-slate-400 mb-1">Batch Run Size</label>
-                      <input
-                        type="text"
-                        placeholder="e.g. 500 pcs"
-                        value={newPortfolio.batch}
-                        onChange={(e) =>
-                          setNewPortfolio({ ...newPortfolio, batch: e.target.value })
-                        }
-                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-bold text-slate-400 mb-1">Base Price ($)</label>
-                      <input
-                        type="number"
-                        step="0.05"
-                        value={newPortfolio.basePrice}
-                        onChange={(e) =>
-                          setNewPortfolio({
-                            ...newPortfolio,
-                            basePrice: parseFloat(e.target.value) || 1.85,
-                          })
-                        }
-                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
-                      />
-                    </div>
-
-                    <div className="sm:col-span-2">
-                      <label className="block text-xs font-bold text-slate-400 mb-1">Image URL (High-Res Photo)</label>
-                      <input
-                        type="text"
-                        placeholder="https://images.unsplash.com/..."
-                        value={newPortfolio.image}
-                        onChange={(e) => setNewPortfolio({ ...newPortfolio, image: e.target.value })}
-                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
-                      />
-                    </div>
-
-                    <div className="sm:col-span-1">
-                      <label className="block text-xs font-bold text-slate-400 mb-1">Preview</label>
-                      <div className="h-10 rounded-lg overflow-hidden border border-slate-700 bg-slate-900 flex items-center justify-center">
-                        {newPortfolio.image ? (
-                          <img src={newPortfolio.image} alt="Preview" className="w-full h-full object-cover" />
-                        ) : (
-                          <span className="text-[10px] text-slate-500">No Image</span>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="sm:col-span-3">
-                      <label className="block text-xs font-bold text-slate-400 mb-1">Specifications Line</label>
-                      <input
-                        type="text"
-                        placeholder='e.g. 3.25" × 3.0" • Pantone 418C Coyote • Mil-Spec Hook Velcro'
-                        value={newPortfolio.specs}
-                        onChange={(e) => setNewPortfolio({ ...newPortfolio, specs: e.target.value })}
-                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
-                      />
-                    </div>
-
-                    <div className="sm:col-span-3">
-                      <label className="block text-xs font-bold text-slate-400 mb-1">Description</label>
-                      <textarea
-                        rows={2}
-                        placeholder="Describe stitch construction, thread type, and backing durability..."
-                        value={newPortfolio.desc}
-                        onChange={(e) => setNewPortfolio({ ...newPortfolio, desc: e.target.value })}
-                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex justify-end gap-2 pt-2">
-                    <button
-                      type="button"
-                      onClick={() => setShowAddPortfolio(false)}
-                      className="px-4 py-2 rounded-lg bg-slate-800 text-xs font-bold text-slate-300 hover:text-white"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleAddPortfolio}
-                      className="btn-orange px-5 py-2 rounded-lg text-xs font-bold"
-                    >
-                      Save &amp; Publish Specimen
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Edit Portfolio Modal */}
-              {editingPortfolio && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in">
-                  <div className="bg-[#141722] border-2 border-orange-500/80 rounded-3xl max-w-2xl w-full p-6 text-white space-y-4 max-h-[90vh] overflow-y-auto">
-                    <div className="flex justify-between items-center border-b border-slate-800 pb-3">
-                      <h3 className="text-base font-bold text-white flex items-center gap-2">
-                        <Edit3 className="w-4 h-4 text-orange-500" />
-                        <span>Edit Portfolio Specimen</span>
-                      </h3>
-                      <button
-                        type="button"
-                        onClick={() => setEditingPortfolio(null)}
-                        className="text-slate-400 hover:text-white text-sm"
-                      >
-                        ✕
-                      </button>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      <div>
-                        <label className="block text-xs font-bold text-slate-400 mb-1">Patch Title</label>
-                        <input
-                          type="text"
-                          value={editingPortfolio.title}
-                          onChange={(e) => setEditingPortfolio({ ...editingPortfolio, title: e.target.value })}
-                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-bold text-slate-400 mb-1">Category</label>
-                        <select
-                          value={editingPortfolio.category}
-                          onChange={(e) =>
-                            setEditingPortfolio({
-                              ...editingPortfolio,
-                              category: e.target.value as any,
-                            })
-                          }
-                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
-                        >
-                          <option value="tactical">Tactical Units</option>
-                          <option value="headwear">Caps &amp; Beanies</option>
-                          <option value="biker">Biker MC</option>
-                          <option value="varsity">Varsity Athletics</option>
-                        </select>
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-bold text-slate-400 mb-1">Base Price ($)</label>
-                        <input
-                          type="number"
-                          step="0.05"
-                          value={editingPortfolio.basePrice}
-                          onChange={(e) =>
-                            setEditingPortfolio({
-                              ...editingPortfolio,
-                              basePrice: parseFloat(e.target.value) || 1.85,
-                            })
-                          }
-                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-bold text-slate-400 mb-1">Badge Tag</label>
-                        <input
-                          type="text"
-                          value={editingPortfolio.badge}
-                          onChange={(e) => setEditingPortfolio({ ...editingPortfolio, badge: e.target.value })}
-                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-bold text-slate-400 mb-1">Batch Size</label>
-                        <input
-                          type="text"
-                          value={editingPortfolio.batch}
-                          onChange={(e) => setEditingPortfolio({ ...editingPortfolio, batch: e.target.value })}
-                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-bold text-slate-400 mb-1">Style ID</label>
-                        <select
-                          value={editingPortfolio.styleId}
-                          onChange={(e) => setEditingPortfolio({ ...editingPortfolio, styleId: e.target.value })}
-                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
-                        >
-                          <option value="embroidered">Embroidered</option>
-                          <option value="iron-on">Iron-On</option>
-                          <option value="velcro">Velcro</option>
-                          <option value="woven">Woven</option>
-                          <option value="leather">Leather</option>
-                          <option value="pvc">PVC</option>
-                        </select>
-                      </div>
-
-                      <div className="sm:col-span-2">
-                        <label className="block text-xs font-bold text-slate-400 mb-1">Image URL (High-Res Photo)</label>
-                        <input
-                          type="text"
-                          value={editingPortfolio.image}
-                          onChange={(e) => setEditingPortfolio({ ...editingPortfolio, image: e.target.value })}
-                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
-                        />
-                      </div>
-
-                      <div className="sm:col-span-1">
-                        <label className="block text-xs font-bold text-slate-400 mb-1">Preview</label>
-                        <div className="h-10 rounded-lg overflow-hidden border border-slate-700 bg-slate-900 flex items-center justify-center">
-                          {editingPortfolio.image ? (
-                            <img src={editingPortfolio.image} alt="Preview" className="w-full h-full object-cover" />
-                          ) : (
-                            <span className="text-[10px] text-slate-500">No Image</span>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="sm:col-span-3">
-                        <label className="block text-xs font-bold text-slate-400 mb-1">Specifications</label>
-                        <input
-                          type="text"
-                          value={editingPortfolio.specs}
-                          onChange={(e) => setEditingPortfolio({ ...editingPortfolio, specs: e.target.value })}
-                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
-                        />
-                      </div>
-
-                      <div className="sm:col-span-3">
-                        <label className="block text-xs font-bold text-slate-400 mb-1">Description</label>
-                        <textarea
-                          rows={2}
-                          value={editingPortfolio.desc}
-                          onChange={(e) => setEditingPortfolio({ ...editingPortfolio, desc: e.target.value })}
-                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="flex justify-end gap-2 pt-3 border-t border-slate-800">
-                      <button
-                        type="button"
-                        onClick={() => setEditingPortfolio(null)}
-                        className="px-4 py-2 rounded-lg bg-slate-800 text-xs font-bold text-slate-300 hover:text-white cursor-pointer"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        type="button"
-                        onClick={handleUpdatePortfolio}
-                        className="btn-orange px-6 py-2 rounded-lg text-xs font-bold cursor-pointer"
-                      >
-                        Update &amp; Save Specimen
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Portfolio Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {(settings.portfolio || []).map((item) => (
-                  <div
-                    key={item.id}
-                    className="bg-[#141722] border border-slate-800 rounded-2xl overflow-hidden flex flex-col justify-between hover:border-slate-700 transition-colors group"
-                  >
-                    <div>
-                      {/* Image Preview Header */}
-                      <div className="relative h-44 w-full bg-slate-900 overflow-hidden">
-                        <img
-                          src={item.image}
-                          alt={item.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                          onError={(e) => {
-                            (e.currentTarget as HTMLElement).style.display = 'none';
-                          }}
-                        />
-                        <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
-                          <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full shadow-md backdrop-blur-md border ${item.badgeClass || 'bg-orange-50 text-orange-700 border-orange-200'}`}>
-                            {item.badge}
-                          </span>
-                          <span className="text-[10px] font-mono font-bold bg-black/75 backdrop-blur-md text-white px-2 py-0.5 rounded-full border border-white/20">
-                            {item.batch}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="p-4 space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-orange-500/10 text-orange-400 border border-orange-500/20 font-bold">
-                            {item.category}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => handleTogglePortfolioActive(item.id)}
-                            className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-bold transition-colors cursor-pointer ${
-                              item.active !== false
-                                ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                                : 'bg-slate-800 text-slate-500 border border-slate-700'
-                            }`}
-                          >
-                            {item.active !== false ? '● Live on Store' : '○ Hidden'}
-                          </button>
-                        </div>
-                        <h4 className="text-base font-bold text-white leading-tight">{item.title}</h4>
-                        <p className="text-xs text-slate-400 font-mono text-[11px]">{item.specs}</p>
-                        <p className="text-xs text-slate-400 line-clamp-2">{item.desc}</p>
-                      </div>
-                    </div>
-
-                    <div className="p-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-mono">
-                      <div>
-                        <span className="text-slate-500 text-[10px] block">BASE PRICE</span>
-                        <span className="text-white font-bold">${(item.basePrice || 1.85).toFixed(2)}/ea</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <button
-                          type="button"
-                          onClick={() => setEditingPortfolio({ ...item })}
-                          className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-orange-500 hover:text-white text-slate-300 text-[11px] font-bold flex items-center gap-1 transition-colors cursor-pointer"
-                          title="Edit Patch Specimen"
-                        >
-                          <Edit3 className="w-3.5 h-3.5" />
-                          <span>Edit</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleDeletePortfolio(item.id)}
-                          className="text-slate-500 hover:text-red-400 p-1.5 transition-colors cursor-pointer"
-                          title="Delete Patch Specimen"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-            </div>
-          )}
-
-          {/* TAB: BEFORE/AFTER SLIDER MANAGEMENT */}
-          {activeTab === 'slider' && (
-            <div className="space-y-6 animate-in fade-in duration-200">
-              
-              {/* Top Title & Save Button */}
-              <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-                <div>
-                  <h1 className="text-2xl font-black text-white tracking-tight flex items-center gap-2">
-                    <Wand2 className="w-6 h-6 text-orange-500" />
-                    <span>Before &amp; After Digitizing Slider</span>
-                  </h1>
-                  <p className="text-xs text-slate-400 mt-1">
-                    Upload or change the 2D Artwork image and 3D Embroidered Patch image shown in the interactive vector-to-stitch slider.
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleSaveSettings()}
-                  disabled={isSavingSettings}
-                  className="btn-orange px-5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer self-start"
-                >
-                  <Save className="w-4 h-4" />
-                  <span>{isSavingSettings ? 'Publishing...' : 'Publish Slider to Website'}</span>
-                </button>
-              </div>
-
-              {/* Preset Quick Chooser Strip */}
-              <div className="bg-[#141722] border border-slate-800 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div>
-                  <div className="text-xs font-bold text-white flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-orange-500" />
-                    <span>1-Click High-Quality Presets</span>
-                  </div>
-                  <div className="text-[11px] text-slate-400">
-                    Switch between verified photo pairs or enter your custom URLs below.
-                  </div>
-                </div>
-
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const updated = {
-                        ...settings,
-                        sliderBeforeImage: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?w=1000&auto=format&fit=crop&q=80',
-                        sliderAfterImage: 'https://images.unsplash.com/photo-1584905066893-7d5c142ba4e1?w=1000&auto=format&fit=crop&q=80',
-                        sliderBeforeLabel: 'Flat 2D Vector Artwork (Customer File)',
-                        sliderAfterLabel: '3D Physical Embroidery (Madeira Poly)',
-                      };
-                      setSettings(updated);
-                      handleSaveSettings(updated);
-                    }}
-                    className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-orange-500 hover:text-white text-xs font-bold text-slate-300 transition-colors cursor-pointer"
-                  >
-                    Preset 1: Alpine Shield
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const updated = {
-                        ...settings,
-                        sliderBeforeImage: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1000&auto=format&fit=crop&q=80',
-                        sliderAfterImage: 'https://images.unsplash.com/photo-1579208575657-c595a05383b7?w=1000&auto=format&fit=crop&q=80',
-                        sliderBeforeLabel: '2D Digital Emblem Concept',
-                        sliderAfterLabel: '3D High-Density Tactical Stitch',
-                      };
-                      setSettings(updated);
-                      handleSaveSettings(updated);
-                    }}
-                    className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-orange-500 hover:text-white text-xs font-bold text-slate-300 transition-colors cursor-pointer"
-                  >
-                    Preset 2: Tactical Skull Crest
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const updated = {
-                        ...settings,
-                        sliderBeforeImage: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=1000&auto=format&fit=crop&q=80',
-                        sliderAfterImage: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=1000&auto=format&fit=crop&q=80',
-                        sliderBeforeLabel: 'Flat Motorcycle Club Artwork',
-                        sliderAfterLabel: 'Heavy Twill Embroidered Cut',
-                      };
-                      setSettings(updated);
-                      handleSaveSettings(updated);
-                    }}
-                    className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-orange-500 hover:text-white text-xs font-bold text-slate-300 transition-colors cursor-pointer"
-                  >
-                    Preset 3: Biker MC Cut
-                  </button>
-                </div>
-              </div>
-
-              {/* 2 Two Side-by-Side Image Control Cards */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                
-                {/* CARD 1: BEFORE IMAGE (Flat 2D Artwork) */}
-                <div className="bg-[#141722] border border-slate-800 rounded-2xl p-6 space-y-4">
-                  <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                    <div className="flex items-center gap-2">
-                      <span className="w-3 h-3 rounded-full bg-slate-400" />
-                      <h3 className="text-sm font-bold text-white">Left Side: Before (2D Graphic Artwork)</h3>
-                    </div>
-                    <span className="text-[10px] font-mono text-slate-400 bg-slate-800 px-2 py-0.5 rounded">
-                      Customer Vector File
-                    </span>
-                  </div>
-
-                  {/* Image Preview Box */}
-                  <div className="relative h-56 w-full rounded-xl bg-slate-900 border border-slate-800 overflow-hidden flex items-center justify-center p-4">
-                    {settings.sliderBeforeImage ? (
-                      <img
-                        src={settings.sliderBeforeImage}
-                        alt="Before Preview"
-                        className="w-full h-full object-contain filter drop-shadow-md"
-                        onError={(e) => {
-                          (e.currentTarget as HTMLElement).style.display = 'none';
-                        }}
-                      />
-                    ) : (
-                      <span className="text-xs text-slate-500">No Image Specified</span>
-                    )}
-                    <span className="absolute bottom-2 left-2 bg-black/80 backdrop-blur-xs text-white text-[10px] font-mono px-2 py-0.5 rounded">
-                      {settings.sliderBeforeLabel || 'Flat 2D Vector Artwork'}
-                    </span>
-                  </div>
-
-                  {/* URL Input */}
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 mb-1">
-                      Before Image URL (2D Vector/Graphic File)
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="https://..."
-                      value={settings.sliderBeforeImage}
-                      onChange={(e) =>
-                        setSettings({ ...settings, sliderBeforeImage: e.target.value })
-                      }
-                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 font-mono text-xs text-white outline-none focus:border-orange-500"
-                    />
-                  </div>
-
-                  {/* Label Input */}
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 mb-1">
-                      Before Pill Label Text
-                    </label>
-                    <input
-                      type="text"
-                      value={settings.sliderBeforeLabel}
-                      onChange={(e) =>
-                        setSettings({ ...settings, sliderBeforeLabel: e.target.value })
-                      }
-                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white outline-none focus:border-orange-500"
-                    />
-                  </div>
-                </div>
-
-                {/* CARD 2: AFTER IMAGE (3D Embroidered Patch) */}
-                <div className="bg-[#141722] border border-slate-800 rounded-2xl p-6 space-y-4">
-                  <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                    <div className="flex items-center gap-2">
-                      <span className="w-3 h-3 rounded-full bg-orange-500" />
-                      <h3 className="text-sm font-bold text-white">Right Side: After (3D Stitched Patch)</h3>
-                    </div>
-                    <span className="text-[10px] font-mono text-orange-400 bg-orange-500/20 px-2 py-0.5 rounded border border-orange-500/30">
-                      Tajima Stitched Patch
-                    </span>
-                  </div>
-
-                  {/* Image Preview Box */}
-                  <div className="relative h-56 w-full rounded-xl bg-[#12141c] border border-slate-800 overflow-hidden flex items-center justify-center p-4">
-                    <div className="absolute inset-0 bg-fabric-pattern opacity-90" />
-                    {settings.sliderAfterImage ? (
-                      <img
-                        src={settings.sliderAfterImage}
-                        alt="After Preview"
-                        className="relative z-10 w-full h-full object-contain filter drop-shadow-[0_15px_25px_rgba(0,0,0,0.8)]"
-                        onError={(e) => {
-                          (e.currentTarget as HTMLElement).style.display = 'none';
-                        }}
-                      />
-                    ) : (
-                      <span className="text-xs text-slate-500 relative z-10">No Image Specified</span>
-                    )}
-                    <span className="absolute bottom-2 right-2 bg-orange-500/95 backdrop-blur-xs text-white text-[10px] font-mono font-bold px-2 py-0.5 rounded z-20">
-                      {settings.sliderAfterLabel || '3D Physical Embroidery'}
-                    </span>
-                  </div>
-
-                  {/* URL Input */}
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 mb-1">
-                      After Image URL (3D Embroidered Patch Photo)
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="https://..."
-                      value={settings.sliderAfterImage}
-                      onChange={(e) =>
-                        setSettings({ ...settings, sliderAfterImage: e.target.value })
-                      }
-                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 font-mono text-xs text-white outline-none focus:border-orange-500"
-                    />
-                  </div>
-
-                  {/* Label Input */}
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 mb-1">
-                      After Pill Label Text
-                    </label>
-                    <input
-                      type="text"
-                      value={settings.sliderAfterLabel}
-                      onChange={(e) =>
-                        setSettings({ ...settings, sliderAfterLabel: e.target.value })
-                      }
-                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white outline-none focus:border-orange-500"
-                    />
-                  </div>
-                </div>
-
-              </div>
-
-              {/* Section Headings & Explainer Content */}
-              <div className="bg-[#141722] border border-slate-800 rounded-2xl p-6 space-y-4">
-                <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                  <Sliders className="w-4 h-4 text-orange-500" />
-                  <span>Section Titles &amp; Explainer Text</span>
-                </h3>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 mb-1">
-                      Section Badge Text
-                    </label>
-                    <input
-                      type="text"
-                      value={settings.sliderBadge ?? 'Master Tajima Vector-to-Stitch Digitizing'}
-                      onChange={(e) => setSettings({ ...settings, sliderBadge: e.target.value })}
-                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white outline-none focus:border-orange-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 mb-1">
-                      Main Heading Title
-                    </label>
-                    <input
-                      type="text"
-                      value={settings.sliderTitle ?? 'See Your 2D Artwork Turned into 3D Physical Stitches'}
-                      onChange={(e) => setSettings({ ...settings, sliderTitle: e.target.value })}
-                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white outline-none focus:border-orange-500"
-                    />
-                  </div>
-
-                  <div className="sm:col-span-2">
-                    <label className="block text-xs font-bold text-slate-400 mb-1">
-                      Subtitle Description
-                    </label>
-                    <textarea
-                      rows={2}
-                      value={settings.sliderSubtitle ?? 'Drag the slider to see how our digitizers convert flat graphic files into high-density embroidered thread textures.'}
-                      onChange={(e) => setSettings({ ...settings, sliderSubtitle: e.target.value })}
-                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white outline-none focus:border-orange-500"
-                    />
-                  </div>
-                </div>
-
-                <div className="pt-2 flex justify-end">
-                  <button
-                    type="button"
-                    onClick={() => handleSaveSettings()}
-                    disabled={isSavingSettings}
-                    className="btn-orange px-6 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer"
-                  >
-                    <Save className="w-4 h-4" />
-                    <span>Save &amp; Publish Slider Changes</span>
-                  </button>
-                </div>
-              </div>
-
-            </div>
-          )}
+          {/* TAB 2: ORDERS & QUOTES */}
           {activeTab === 'orders' && (
             <div className="space-y-6 animate-in fade-in duration-200">
               
               <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
                 <div>
                   <h1 className="text-2xl font-black text-white tracking-tight">
-                    Customer Quote Requests &amp; Orders
+                    Customer Quote Requests &amp; Production Orders
                   </h1>
                   <p className="text-xs text-slate-400 mt-1">
-                    Manage requests submitted via the quote modal and storefront forms.
+                    Manage requests submitted via the quote modal, storefront forms, and factory desk.
                   </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleExportOrdersCSV}
+                    className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold flex items-center gap-1.5 cursor-pointer border border-slate-700"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Export CSV</span>
+                  </button>
                 </div>
               </div>
 
@@ -1661,7 +1126,7 @@ export default function AdminDashboardPage() {
                   <Search className="w-4 h-4 absolute left-3 top-3 text-slate-500" />
                   <input
                     type="text"
-                    placeholder="Search by client name, email, order ID..."
+                    placeholder="Search by client name, email, phone, order ID..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white placeholder-slate-500 outline-none focus:border-orange-500"
@@ -1670,7 +1135,7 @@ export default function AdminDashboardPage() {
 
                 {/* Status Chips */}
                 <div className="flex gap-1.5 overflow-x-auto">
-                  {['all', 'proof_review', 'mass_production', 'shipped'].map((st) => (
+                  {['all', 'proof_review', 'mold_sampling', 'mass_production', 'backing_qc', 'shipped'].map((st) => (
                     <button
                       type="button"
                       key={st}
@@ -1700,7 +1165,7 @@ export default function AdminDashboardPage() {
                         <th className="p-4 font-bold">Quantity</th>
                         <th className="p-4 font-bold">Total</th>
                         <th className="p-4 font-bold">Status</th>
-                        <th className="p-4 font-bold">WhatsApp</th>
+                        <th className="p-4 font-bold">Quick WhatsApp</th>
                         <th className="p-4 font-bold text-right">Actions</th>
                       </tr>
                     </thead>
@@ -1731,7 +1196,7 @@ export default function AdminDashboardPage() {
                               onChange={(e) =>
                                 handleUpdateStatus(order.order_id, e.target.value as any)
                               }
-                              className="p-1.5 rounded-lg bg-slate-900 border border-slate-700 text-[11px] font-bold text-orange-400 outline-none"
+                              className="p-1.5 rounded-lg bg-slate-900 border border-slate-700 text-[11px] font-bold text-orange-400 outline-none cursor-pointer"
                             >
                               <option value="proof_review">Proof Review</option>
                               <option value="mold_sampling">Mold Sampling</option>
@@ -1741,23 +1206,22 @@ export default function AdminDashboardPage() {
                             </select>
                           </td>
                           <td className="p-4">
-                            <a
-                              href={`https://wa.me/${order.phone.replace(/[^0-9]/g, '')}?text=Hi%20${encodeURIComponent(order.customer_name)}!%20BDigitizing%20is%20processing%20your%20custom%20patch%20request%20%23${order.order_id}.`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500 hover:text-white transition-colors text-[10px] font-bold"
+                            <button
+                              type="button"
+                              onClick={() => handleWhatsAppCustomer(order)}
+                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500 hover:text-white transition-colors text-[10px] font-bold cursor-pointer"
                             >
                               <MessageSquare className="w-3 h-3" />
                               <span>Chat</span>
-                            </a>
+                            </button>
                           </td>
                           <td className="p-4 text-right">
                             <button
                               type="button"
                               onClick={() => setSelectedOrder(order)}
-                              className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-orange-500 hover:text-white text-slate-300 font-bold text-[11px] transition-colors"
+                              className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-orange-500 hover:text-white text-slate-300 font-bold text-[11px] transition-colors cursor-pointer"
                             >
-                              View
+                              View Full
                             </button>
                           </td>
                         </tr>
@@ -1770,7 +1234,993 @@ export default function AdminDashboardPage() {
             </div>
           )}
 
-          {/* TAB 5: REVIEWS */}
+          {/* TAB 3: PRICING & SURCHARGES */}
+          {activeTab === 'pricing' && (
+            <div className="space-y-6 animate-in fade-in duration-200">
+              
+              <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                <div>
+                  <h1 className="text-2xl font-black text-white tracking-tight">
+                    Live Pricing Rates, Surcharges &amp; Calculator
+                  </h1>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Control baseline unit rates, backing fees, border options, bulk discount tiers, and verify with live calculator.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleSaveSettings()}
+                  disabled={isSavingSettings}
+                  className="btn-orange px-5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer self-start shadow-lg"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>{isSavingSettings ? 'Publishing...' : 'Publish Pricing to Website'}</span>
+                </button>
+              </div>
+
+              {/* Base Prices Grid */}
+              <div className="bg-[#141722] border border-slate-800 rounded-2xl p-6 space-y-4">
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <Sliders className="w-4 h-4 text-orange-500" />
+                  <span>1. Base Unit Rates (Benchmark 100 pcs, 3.0" x 3.0")</span>
+                </h3>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {[
+                    { key: 'priceEmbroidered', label: 'Embroidered Patches (Madeira Poly)', default: 1.85 },
+                    { key: 'priceIronOn', label: 'Iron-On Patches (Heat-Seal Film)', default: 1.95 },
+                    { key: 'priceVelcro', label: 'Velcro Patches (Mil-Spec Hook & Loop)', default: 2.35 },
+                    { key: 'priceWoven', label: 'Woven Jacquard (50-Denier Micro)', default: 1.65 },
+                    { key: 'priceLeather', label: 'Debossed Leatherette (Laser Etched)', default: 2.45 },
+                    { key: 'pricePvc', label: '3D Soft Molded PVC Rubber', default: 2.55 },
+                  ].map((item) => (
+                    <div key={item.key} className="bg-[#181b26] p-4 rounded-xl border border-slate-800/80">
+                      <label className="block text-xs font-bold text-slate-300 mb-2">
+                        {item.label}
+                      </label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-2.5 text-slate-500 font-mono text-xs">$</span>
+                        <input
+                          type="number"
+                          step="0.05"
+                          value={(settings as any)[item.key] ?? item.default}
+                          onChange={(e) =>
+                            setSettings({
+                              ...settings,
+                              [item.key]: parseFloat(e.target.value) || item.default,
+                            })
+                          }
+                          className="w-full pl-7 pr-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white font-mono text-sm font-bold focus:border-orange-500 outline-none"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Attachment Backing Addons */}
+              <div className="bg-[#141722] border border-slate-800 rounded-2xl p-6 space-y-4">
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <Shield className="w-4 h-4 text-orange-500" />
+                  <span>2. Backing &amp; Fastener Surcharges (Per Patch)</span>
+                </h3>
+
+                <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 mb-1">
+                      Velcro Hook &amp; Loop (+$/ea)
+                    </label>
+                    <input
+                      type="number"
+                      step="0.05"
+                      value={settings.velcroFee ?? 0.45}
+                      onChange={(e) =>
+                        setSettings({ ...settings, velcroFee: parseFloat(e.target.value) || 0.45 })
+                      }
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 font-mono text-sm font-bold text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 mb-1">
+                      Heat-Seal Iron-On Glue (+$/ea)
+                    </label>
+                    <input
+                      type="number"
+                      step="0.05"
+                      value={settings.ironOnFee ?? 0.20}
+                      onChange={(e) =>
+                        setSettings({ ...settings, ironOnFee: parseFloat(e.target.value) || 0.20 })
+                      }
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 font-mono text-sm font-bold text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 mb-1">
+                      3M Peel &amp; Stick (+$/ea)
+                    </label>
+                    <input
+                      type="number"
+                      step="0.05"
+                      value={settings.peelStickFee ?? 0.35}
+                      onChange={(e) =>
+                        setSettings({ ...settings, peelStickFee: parseFloat(e.target.value) || 0.35 })
+                      }
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 font-mono text-sm font-bold text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 mb-1">
+                      Plain Sew-On (Standard)
+                    </label>
+                    <input
+                      type="number"
+                      step="0.05"
+                      value={settings.sewOnFee ?? 0.00}
+                      onChange={(e) =>
+                        setSettings({ ...settings, sewOnFee: parseFloat(e.target.value) || 0.00 })
+                      }
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 font-mono text-sm font-bold text-white"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Edge Finishes & Specialty Surcharges */}
+              <div className="bg-[#141722] border border-slate-800 rounded-2xl p-6 space-y-4">
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <Layers className="w-4 h-4 text-orange-500" />
+                  <span>3. Edge Finishes &amp; Specialty Surcharges</span>
+                </h3>
+
+                <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 mb-1">
+                      Classic Merrowed Border (Free)
+                    </label>
+                    <input
+                      type="number"
+                      step="0.05"
+                      value={settings.merrowedFee ?? 0.00}
+                      onChange={(e) =>
+                        setSettings({ ...settings, merrowedFee: parseFloat(e.target.value) || 0.00 })
+                      }
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 font-mono text-sm font-bold text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 mb-1">
+                      Precision Laser-Cut Border (+$/ea)
+                    </label>
+                    <input
+                      type="number"
+                      step="0.05"
+                      value={settings.laserCutFee ?? 0.15}
+                      onChange={(e) =>
+                        setSettings({ ...settings, laserCutFee: parseFloat(e.target.value) || 0.15 })
+                      }
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 font-mono text-sm font-bold text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 mb-1">
+                      Rush 5-7 Days Expedite Fee ($)
+                    </label>
+                    <input
+                      type="number"
+                      step="5"
+                      value={settings.rushOrderFee ?? 45.00}
+                      onChange={(e) =>
+                        setSettings({ ...settings, rushOrderFee: parseFloat(e.target.value) || 45.00 })
+                      }
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 font-mono text-sm font-bold text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 mb-1">
+                      Free Shipping Threshold ($)
+                    </label>
+                    <input
+                      type="number"
+                      step="5"
+                      value={settings.freeShippingThreshold ?? 99.00}
+                      onChange={(e) =>
+                        setSettings({ ...settings, freeShippingThreshold: parseFloat(e.target.value) || 99.00 })
+                      }
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 font-mono text-sm font-bold text-white"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Bulk Quantity Discount Tiers */}
+              <div className="bg-[#141722] border border-slate-800 rounded-2xl p-6 space-y-4">
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <Percent className="w-4 h-4 text-orange-500" />
+                  <span>4. Wholesale Bulk Quantity Discount Tiers</span>
+                </h3>
+
+                <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
+                  {(settings.bulkTiers || DEFAULT_BULK_TIERS).map((tier, idx) => (
+                    <div key={tier.qty} className="bg-slate-900/80 p-3.5 rounded-xl border border-slate-700">
+                      <div className="text-xs font-bold text-orange-400 mb-1">
+                        {tier.qty}+ Pieces
+                      </div>
+                      <div className="text-[11px] text-slate-400 mb-2 truncate">
+                        {tier.label}
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <input
+                          type="number"
+                          value={tier.discountPct}
+                          onChange={(e) => {
+                            const val = parseFloat(e.target.value) || 0;
+                            const updated = (settings.bulkTiers || DEFAULT_BULK_TIERS).map((t, i) =>
+                              i === idx ? { ...t, discountPct: val } : t
+                            );
+                            setSettings({ ...settings, bulkTiers: updated });
+                          }}
+                          className="w-full p-2 rounded-lg bg-slate-950 border border-slate-700 font-mono text-sm font-bold text-white"
+                        />
+                        <span className="text-slate-400 font-bold">%</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Interactive Live Price Simulator */}
+              <div className="bg-gradient-to-br from-slate-900 via-[#141722] to-slate-900 border-2 border-orange-500/40 rounded-2xl p-6 space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                    <Sliders className="w-4 h-4 text-orange-400" />
+                    <span>5. Live Customer Pricing Test Simulator</span>
+                  </h3>
+                  <span className="text-[11px] font-mono text-orange-400 bg-orange-500/10 px-2 py-0.5 rounded-md">
+                    Real-time calculation check
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-6 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-400 mb-1">Style</label>
+                    <select
+                      value={simStyle}
+                      onChange={(e) => setSimStyle(e.target.value as any)}
+                      className="w-full p-2 rounded-lg bg-slate-950 border border-slate-700 text-xs text-white outline-none"
+                    >
+                      <option value="embroidered">Embroidered</option>
+                      <option value="iron_on">Iron-On</option>
+                      <option value="velcro">Velcro</option>
+                      <option value="woven">Woven</option>
+                      <option value="leather">Leather</option>
+                      <option value="pvc">PVC</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-400 mb-1">Backing</label>
+                    <select
+                      value={simBacking}
+                      onChange={(e) => setSimBacking(e.target.value as any)}
+                      className="w-full p-2 rounded-lg bg-slate-950 border border-slate-700 text-xs text-white outline-none"
+                    >
+                      <option value="velcro">Velcro</option>
+                      <option value="iron_on">Iron-On</option>
+                      <option value="peel_stick">3M Stick</option>
+                      <option value="sew_on">Sew-On</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-400 mb-1">Border</label>
+                    <select
+                      value={simBorder}
+                      onChange={(e) => setSimBorder(e.target.value as any)}
+                      className="w-full p-2 rounded-lg bg-slate-950 border border-slate-700 text-xs text-white outline-none"
+                    >
+                      <option value="merrowed">Merrowed (Free)</option>
+                      <option value="laser_cut">Laser-Cut</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-400 mb-1">Quantity</label>
+                    <input
+                      type="number"
+                      step="25"
+                      value={simQty}
+                      onChange={(e) => setSimQty(parseInt(e.target.value) || 100)}
+                      className="w-full p-2 rounded-lg bg-slate-950 border border-slate-700 text-xs font-mono font-bold text-white outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-400 mb-1">Rush Turnaround</label>
+                    <button
+                      type="button"
+                      onClick={() => setSimRush(!simRush)}
+                      className={`w-full p-2 rounded-lg text-xs font-bold transition-colors cursor-pointer border ${
+                        simRush
+                          ? 'bg-orange-500 text-white border-orange-400'
+                          : 'bg-slate-950 text-slate-400 border-slate-700'
+                      }`}
+                    >
+                      {simRush ? 'Rush (5-7 Days)' : 'Standard (10-14)'}
+                    </button>
+                  </div>
+
+                  <div className="bg-slate-950 p-2.5 rounded-lg border border-slate-800 text-center">
+                    <span className="text-[10px] text-slate-400 block font-mono">Calculated Total</span>
+                    <span className="text-base font-black text-emerald-400 font-mono">
+                      ${simCalculation.total}
+                    </span>
+                    <span className="text-[9px] text-slate-500 block font-mono">
+                      ${simCalculation.unitPrice} / ea ({simCalculation.discountPct}% off)
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom Save Bar */}
+              <div className="pt-4 flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => handleSaveSettings()}
+                  disabled={isSavingSettings}
+                  className="btn-orange px-6 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer shadow-lg"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>{isSavingSettings ? 'Publishing...' : 'Save & Publish All Pricing Changes'}</span>
+                </button>
+              </div>
+
+            </div>
+          )}
+
+          {/* TAB 4: SERVICES & MATERIALS */}
+          {activeTab === 'services' && (
+            <div className="space-y-6 animate-in fade-in duration-200">
+              
+              <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                <div>
+                  <h1 className="text-2xl font-black text-white tracking-tight">
+                    Patch Services &amp; Material Specifications
+                  </h1>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Manage service cards displayed on the storefront: titles, stitch metrics, MOQ, and starting rates.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleSaveSettings()}
+                  disabled={isSavingSettings}
+                  className="btn-orange px-5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer self-start shadow-lg"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>{isSavingSettings ? 'Publishing...' : 'Publish Services'}</span>
+                </button>
+              </div>
+
+              {/* Services Cards List */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {(settings.services || DEFAULT_SERVICES).map((srv) => (
+                  <div
+                    key={srv.id}
+                    className="bg-[#141722] border border-slate-800 rounded-2xl p-5 space-y-3 relative group"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <span className="inline-block text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-orange-500/10 text-orange-400 border border-orange-500/20 mb-1.5">
+                          {srv.tag || 'Most Popular'}
+                        </span>
+                        <h3 className="text-base font-bold text-white">{srv.title}</h3>
+                        <p className="text-xs text-slate-400">{srv.subtitle}</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setEditingService({ ...srv })}
+                        className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-orange-500 hover:text-white text-slate-300 text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer"
+                      >
+                        <Edit3 className="w-3.5 h-3.5" />
+                        <span>Edit</span>
+                      </button>
+                    </div>
+
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      {srv.desc}
+                    </p>
+
+                    <div className="grid grid-cols-3 gap-2 pt-2 border-t border-slate-800 text-center font-mono">
+                      <div className="bg-slate-900/80 p-2 rounded-lg">
+                        <span className="text-[10px] text-slate-500 block">Stitch Metric</span>
+                        <span className="text-xs font-bold text-slate-300">{srv.stitchMetric}</span>
+                      </div>
+                      <div className="bg-slate-900/80 p-2 rounded-lg">
+                        <span className="text-[10px] text-slate-500 block">Starting Rate</span>
+                        <span className="text-xs font-bold text-emerald-400">${srv.startingPrice?.toFixed(2)}</span>
+                      </div>
+                      <div className="bg-slate-900/80 p-2 rounded-lg">
+                        <span className="text-[10px] text-slate-500 block">Turnaround</span>
+                        <span className="text-xs font-bold text-slate-300">{srv.turnaroundDays}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Edit Service Modal */}
+              {editingService && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in">
+                  <div className="bg-[#141722] border border-slate-700 rounded-3xl max-w-xl w-full p-6 text-white space-y-4">
+                    <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+                      <h3 className="text-base font-bold text-white flex items-center gap-2">
+                        <Edit3 className="w-4 h-4 text-orange-400" />
+                        <span>Edit Material Service: {editingService.title}</span>
+                      </h3>
+                      <button
+                        type="button"
+                        onClick={() => setEditingService(null)}
+                        className="text-slate-400 hover:text-white"
+                      >
+                        ✕
+                      </button>
+                    </div>
+
+                    <div className="space-y-3 text-xs">
+                      <div>
+                        <label className="block text-slate-400 mb-1 font-bold">Service Title</label>
+                        <input
+                          type="text"
+                          value={editingService.title}
+                          onChange={(e) => setEditingService({ ...editingService, title: e.target.value })}
+                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-slate-400 mb-1 font-bold">Subtitle</label>
+                          <input
+                            type="text"
+                            value={editingService.subtitle}
+                            onChange={(e) => setEditingService({ ...editingService, subtitle: e.target.value })}
+                            className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-slate-400 mb-1 font-bold">Badge Tag</label>
+                          <input
+                            type="text"
+                            value={editingService.tag}
+                            onChange={(e) => setEditingService({ ...editingService, tag: e.target.value })}
+                            className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-3 gap-3">
+                        <div>
+                          <label className="block text-slate-400 mb-1 font-bold">Stitch Metric</label>
+                          <input
+                            type="text"
+                            value={editingService.stitchMetric}
+                            onChange={(e) => setEditingService({ ...editingService, stitchMetric: e.target.value })}
+                            className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-slate-400 mb-1 font-bold">Starting Price ($)</label>
+                          <input
+                            type="number"
+                            step="0.05"
+                            value={editingService.startingPrice}
+                            onChange={(e) => setEditingService({ ...editingService, startingPrice: parseFloat(e.target.value) || 1.85 })}
+                            className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-slate-400 mb-1 font-bold">Turnaround</label>
+                          <input
+                            type="text"
+                            value={editingService.turnaroundDays}
+                            onChange={(e) => setEditingService({ ...editingService, turnaroundDays: e.target.value })}
+                            className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-slate-400 mb-1 font-bold">Technical Description</label>
+                        <textarea
+                          rows={3}
+                          value={editingService.desc}
+                          onChange={(e) => setEditingService({ ...editingService, desc: e.target.value })}
+                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end gap-2 pt-3 border-t border-slate-800">
+                      <button
+                        type="button"
+                        onClick={() => setEditingService(null)}
+                        className="px-4 py-2 rounded-lg bg-slate-800 text-xs font-bold text-slate-300 hover:text-white"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleUpdateService}
+                        className="btn-orange px-6 py-2 rounded-lg text-xs font-bold"
+                      >
+                        Update &amp; Save Service
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+            </div>
+          )}
+
+          {/* TAB 5: PORTFOLIO SPECIMENS */}
+          {activeTab === 'portfolio' && (
+            <div className="space-y-6 animate-in fade-in duration-200">
+              
+              <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                <div>
+                  <h1 className="text-2xl font-black text-white tracking-tight">
+                    Client Production Portfolio Specimens
+                  </h1>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Manage high-definition client production specimens, material badges, and batch counts.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowAddPortfolio(true)}
+                  className="btn-orange px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer self-start shadow-lg"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add New Specimen</span>
+                </button>
+              </div>
+
+              {/* Add Portfolio Form Modal */}
+              {showAddPortfolio && (
+                <div className="bg-[#141722] border-2 border-orange-500/60 rounded-2xl p-6 space-y-4">
+                  <h3 className="text-sm font-bold text-white">Add New Production Specimen</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-400 mb-1">Specimen Title</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Tactical Recon Morale Badge"
+                        value={newPortfolio.title}
+                        onChange={(e) => setNewPortfolio({ ...newPortfolio, title: e.target.value })}
+                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-400 mb-1">Category</label>
+                      <select
+                        value={newPortfolio.category}
+                        onChange={(e) => setNewPortfolio({ ...newPortfolio, category: e.target.value as any })}
+                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                      >
+                        <option value="tactical">Tactical Units</option>
+                        <option value="headwear">Caps &amp; Beanies</option>
+                        <option value="biker">Biker MC</option>
+                        <option value="varsity">Varsity Athletics</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-400 mb-1">Material Badge Label</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. 100% Tajima High Density"
+                        value={newPortfolio.badge}
+                        onChange={(e) => setNewPortfolio({ ...newPortfolio, badge: e.target.value })}
+                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                      />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs font-bold text-slate-400 mb-1">High-Res Image URL</label>
+                      <input
+                        type="text"
+                        placeholder="https://images.unsplash.com/..."
+                        value={newPortfolio.image}
+                        onChange={(e) => setNewPortfolio({ ...newPortfolio, image: e.target.value })}
+                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-400 mb-1">Batch Size</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. 500 pcs"
+                        value={newPortfolio.batch}
+                        onChange={(e) => setNewPortfolio({ ...newPortfolio, batch: e.target.value })}
+                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                      />
+                    </div>
+                    <div className="sm:col-span-3">
+                      <label className="block text-xs font-bold text-slate-400 mb-1">Technical Specs</label>
+                      <input
+                        type="text"
+                        placeholder='3.25" × 3.0" • Madeira Thread • Mil-Spec Velcro'
+                        value={newPortfolio.specs}
+                        onChange={(e) => setNewPortfolio({ ...newPortfolio, specs: e.target.value })}
+                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                      />
+                    </div>
+                    <div className="sm:col-span-3">
+                      <label className="block text-xs font-bold text-slate-400 mb-1">Description</label>
+                      <textarea
+                        rows={2}
+                        placeholder="Manufacturing details..."
+                        value={newPortfolio.desc}
+                        onChange={(e) => setNewPortfolio({ ...newPortfolio, desc: e.target.value })}
+                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex justify-end gap-2 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowAddPortfolio(false)}
+                      className="px-4 py-2 rounded-lg bg-slate-800 text-xs font-bold text-slate-300 hover:text-white"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleAddPortfolio}
+                      className="btn-orange px-6 py-2 rounded-lg text-xs font-bold"
+                    >
+                      Save Specimen
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Edit Portfolio Modal */}
+              {editingPortfolio && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in">
+                  <div className="bg-[#141722] border border-slate-700 rounded-3xl max-w-2xl w-full p-6 text-white space-y-4">
+                    <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+                      <h3 className="text-base font-bold text-white flex items-center gap-2">
+                        <Edit3 className="w-4 h-4 text-orange-400" />
+                        <span>Edit Portfolio Specimen</span>
+                      </h3>
+                      <button
+                        type="button"
+                        onClick={() => setEditingPortfolio(null)}
+                        className="text-slate-400 hover:text-white"
+                      >
+                        ✕
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                      <div className="sm:col-span-2">
+                        <label className="block font-bold text-slate-400 mb-1">Specimen Title</label>
+                        <input
+                          type="text"
+                          value={editingPortfolio.title}
+                          onChange={(e) => setEditingPortfolio({ ...editingPortfolio, title: e.target.value })}
+                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block font-bold text-slate-400 mb-1">Category</label>
+                        <select
+                          value={editingPortfolio.category}
+                          onChange={(e) => setEditingPortfolio({ ...editingPortfolio, category: e.target.value as any })}
+                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                        >
+                          <option value="tactical">Tactical Units</option>
+                          <option value="headwear">Caps &amp; Beanies</option>
+                          <option value="biker">Biker MC</option>
+                          <option value="varsity">Varsity Athletics</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block font-bold text-slate-400 mb-1">Batch Run</label>
+                        <input
+                          type="text"
+                          value={editingPortfolio.batch}
+                          onChange={(e) => setEditingPortfolio({ ...editingPortfolio, batch: e.target.value })}
+                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                        />
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <label className="block font-bold text-slate-400 mb-1">Badge Tag</label>
+                        <input
+                          type="text"
+                          value={editingPortfolio.badge}
+                          onChange={(e) => setEditingPortfolio({ ...editingPortfolio, badge: e.target.value })}
+                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                        />
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <label className="block font-bold text-slate-400 mb-1">High-Res Image URL</label>
+                        <input
+                          type="text"
+                          value={editingPortfolio.image}
+                          onChange={(e) => setEditingPortfolio({ ...editingPortfolio, image: e.target.value })}
+                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                        />
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <label className="block font-bold text-slate-400 mb-1">Technical Specs</label>
+                        <input
+                          type="text"
+                          value={editingPortfolio.specs}
+                          onChange={(e) => setEditingPortfolio({ ...editingPortfolio, specs: e.target.value })}
+                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                        />
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <label className="block font-bold text-slate-400 mb-1">Manufacturing Description</label>
+                        <textarea
+                          rows={3}
+                          value={editingPortfolio.desc}
+                          onChange={(e) => setEditingPortfolio({ ...editingPortfolio, desc: e.target.value })}
+                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end gap-2 pt-3 border-t border-slate-800">
+                      <button
+                        type="button"
+                        onClick={() => setEditingPortfolio(null)}
+                        className="px-4 py-2 rounded-lg bg-slate-800 text-xs font-bold text-slate-300 hover:text-white"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleUpdatePortfolio}
+                        className="btn-orange px-6 py-2 rounded-lg text-xs font-bold"
+                      >
+                        Update &amp; Save Specimen
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Specimens Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {(settings.portfolio || []).map((p) => (
+                  <div
+                    key={p.id}
+                    className="bg-[#141722] border border-slate-800 rounded-2xl overflow-hidden flex flex-col group"
+                  >
+                    <div className="h-44 bg-slate-900 relative overflow-hidden">
+                      <img
+                        src={p.image}
+                        alt={p.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <span className="absolute top-3 right-3 text-[10px] font-mono font-bold bg-slate-950/80 backdrop-blur-md text-orange-400 px-2 py-0.5 rounded-full border border-orange-500/20">
+                        {p.batch}
+                      </span>
+                    </div>
+
+                    <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
+                      <div>
+                        <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-orange-400 block mb-1">
+                          {p.badge}
+                        </span>
+                        <h3 className="font-bold text-sm text-white">{p.title}</h3>
+                        <p className="text-[11px] font-mono text-slate-400 mt-1">{p.specs}</p>
+                        <p className="text-xs text-slate-300 mt-2 line-clamp-2 leading-relaxed">
+                          {p.desc}
+                        </p>
+                      </div>
+
+                      <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between">
+                        <span className="text-[11px] font-mono text-slate-500 capitalize">
+                          Cat: {p.category}
+                        </span>
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => setEditingPortfolio({ ...p })}
+                            className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-orange-500 hover:text-white text-slate-300 text-[11px] font-bold flex items-center gap-1 transition-colors cursor-pointer"
+                          >
+                            <Edit3 className="w-3.5 h-3.5" />
+                            <span>Edit</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeletePortfolio(p.id)}
+                            className="text-slate-500 hover:text-red-400 p-1.5 transition-colors cursor-pointer"
+                            title="Delete Specimen"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+            </div>
+          )}
+
+          {/* TAB 6: BEFORE / AFTER SLIDER */}
+          {activeTab === 'slider' && (
+            <div className="space-y-6 animate-in fade-in duration-200">
+              
+              <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                <div>
+                  <h1 className="text-2xl font-black text-white tracking-tight">
+                    Before / After Digitizing Comparison Slider
+                  </h1>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Control 2D vector graphic file vs. 3D physical embroidery stitch photo and labels.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleSaveSettings()}
+                  disabled={isSavingSettings}
+                  className="btn-orange px-5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer self-start shadow-lg"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>{isSavingSettings ? 'Publishing...' : 'Publish Slider'}</span>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                {/* Inputs */}
+                <div className="bg-[#141722] border border-slate-800 rounded-2xl p-6 space-y-4">
+                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                    <Wand2 className="w-4 h-4 text-orange-400" />
+                    <span>Slider Media &amp; Headlines</span>
+                  </h3>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 mb-1">Section Badge</label>
+                    <input
+                      type="text"
+                      value={settings.sliderBadge}
+                      onChange={(e) => setSettings({ ...settings, sliderBadge: e.target.value })}
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 mb-1">Section Title</label>
+                    <input
+                      type="text"
+                      value={settings.sliderTitle}
+                      onChange={(e) => setSettings({ ...settings, sliderTitle: e.target.value })}
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 mb-1">Section Subtitle</label>
+                    <textarea
+                      rows={2}
+                      value={settings.sliderSubtitle}
+                      onChange={(e) => setSettings({ ...settings, sliderSubtitle: e.target.value })}
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                    />
+                  </div>
+
+                  <div className="border-t border-slate-800 pt-3 space-y-3">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-400 mb-1">
+                        Left: Before (2D Vector File) Image URL
+                      </label>
+                      <input
+                        type="text"
+                        value={settings.sliderBeforeImage}
+                        onChange={(e) => setSettings({ ...settings, sliderBeforeImage: e.target.value })}
+                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-400 mb-1">
+                        Left: Before Label Text
+                      </label>
+                      <input
+                        type="text"
+                        value={settings.sliderBeforeLabel}
+                        onChange={(e) => setSettings({ ...settings, sliderBeforeLabel: e.target.value })}
+                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="border-t border-slate-800 pt-3 space-y-3">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-400 mb-1">
+                        Right: After (3D Tajima Stitches) Image URL
+                      </label>
+                      <input
+                        type="text"
+                        value={settings.sliderAfterImage}
+                        onChange={(e) => setSettings({ ...settings, sliderAfterImage: e.target.value })}
+                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-400 mb-1">
+                        Right: After Label Text
+                      </label>
+                      <input
+                        type="text"
+                        value={settings.sliderAfterLabel}
+                        onChange={(e) => setSettings({ ...settings, sliderAfterLabel: e.target.value })}
+                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Live Preview */}
+                <div className="bg-[#141722] border border-slate-800 rounded-2xl p-6 flex flex-col justify-between space-y-4">
+                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                    <Eye className="w-4 h-4 text-orange-400" />
+                    <span>Slider Comparison Preview</span>
+                  </h3>
+
+                  <div className="grid grid-cols-2 gap-3 h-64">
+                    <div className="relative rounded-xl overflow-hidden border border-slate-700 bg-white">
+                      <img
+                        src={settings.sliderBeforeImage}
+                        alt="Before Preview"
+                        className="w-full h-full object-contain p-2"
+                      />
+                      <span className="absolute bottom-2 left-2 bg-slate-900/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-md">
+                        {settings.sliderBeforeLabel}
+                      </span>
+                    </div>
+
+                    <div className="relative rounded-xl overflow-hidden border border-slate-700 bg-slate-950">
+                      <img
+                        src={settings.sliderAfterImage}
+                        alt="After Preview"
+                        className="w-full h-full object-cover"
+                      />
+                      <span className="absolute bottom-2 right-2 bg-orange-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-md">
+                        {settings.sliderAfterLabel}
+                      </span>
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-slate-400 text-center">
+                    Drag-handle is rendered interactively on the live storefront using this imagery.
+                  </p>
+                </div>
+
+              </div>
+
+            </div>
+          )}
+
+          {/* TAB 7: REVIEWS */}
           {activeTab === 'reviews' && (
             <div className="space-y-6 animate-in fade-in duration-200">
               
@@ -1786,7 +2236,7 @@ export default function AdminDashboardPage() {
                 <button
                   type="button"
                   onClick={() => setShowAddReview(true)}
-                  className="btn-orange px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer self-start"
+                  className="btn-orange px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer self-start shadow-lg"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Add Customer Review</span>
@@ -1819,30 +2269,16 @@ export default function AdminDashboardPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-400 mb-1">Country</label>
-                      <input
-                        type="text"
-                        placeholder="e.g. USA"
-                        value={newReview.country}
-                        onChange={(e) => setNewReview({ ...newReview, country: e.target.value })}
-                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
-                      />
-                    </div>
-
-                    <div>
                       <label className="block text-xs font-bold text-slate-400 mb-1">Rating</label>
                       <select
                         value={newReview.rating}
-                        onChange={(e) =>
-                          setNewReview({ ...newReview, rating: parseInt(e.target.value) || 5 })
-                        }
+                        onChange={(e) => setNewReview({ ...newReview, rating: Number(e.target.value) })}
                         className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
                       >
-                        <option value="5">★★★★★ (5 Stars - Exceptional)</option>
-                        <option value="4">★★★★☆ (4 Stars - Great)</option>
+                        <option value={5}>5 Stars (★★★★★)</option>
+                        <option value={4}>4 Stars (★★★★☆)</option>
                       </select>
                     </div>
-
                     <div>
                       <label className="block text-xs font-bold text-slate-400 mb-1">Verified Order Tag</label>
                       <input
@@ -1853,8 +2289,7 @@ export default function AdminDashboardPage() {
                         className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
                       />
                     </div>
-
-                    <div>
+                    <div className="sm:col-span-2">
                       <label className="block text-xs font-bold text-slate-400 mb-1">Avatar Photo URL</label>
                       <input
                         type="text"
@@ -1864,33 +2299,31 @@ export default function AdminDashboardPage() {
                         className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
                       />
                     </div>
-
                     <div className="sm:col-span-3">
                       <label className="block text-xs font-bold text-slate-400 mb-1">Testimonial Quote</label>
                       <textarea
-                        rows={3}
-                        placeholder="e.g. Turnaround was under 10 days and stitch density is unmatched!"
+                        rows={2}
+                        placeholder="Client testimonial..."
                         value={newReview.comment}
                         onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
                         className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
                       />
                     </div>
                   </div>
-
                   <div className="flex justify-end gap-2 pt-2">
                     <button
                       type="button"
                       onClick={() => setShowAddReview(false)}
-                      className="px-4 py-2 rounded-lg bg-slate-800 text-xs font-bold text-slate-300 cursor-pointer"
+                      className="px-4 py-2 rounded-lg bg-slate-800 text-xs font-bold text-slate-300 hover:text-white"
                     >
                       Cancel
                     </button>
                     <button
                       type="button"
                       onClick={handleAddReview}
-                      className="btn-orange px-5 py-2 rounded-lg text-xs font-bold cursor-pointer"
+                      className="btn-orange px-6 py-2 rounded-lg text-xs font-bold"
                     >
-                      Save &amp; Publish Review
+                      Save Review
                     </button>
                   </div>
                 </div>
@@ -1899,22 +2332,22 @@ export default function AdminDashboardPage() {
               {/* Edit Review Modal */}
               {editingReview && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in">
-                  <div className="bg-[#141722] border-2 border-orange-500/80 rounded-3xl max-w-xl w-full p-6 text-white space-y-4 max-h-[90vh] overflow-y-auto">
+                  <div className="bg-[#141722] border border-slate-700 rounded-3xl max-w-xl w-full p-6 text-white space-y-4">
                     <div className="flex justify-between items-center border-b border-slate-800 pb-3">
                       <h3 className="text-base font-bold text-white flex items-center gap-2">
-                        <Edit3 className="w-4 h-4 text-orange-500" />
+                        <Edit3 className="w-4 h-4 text-orange-400" />
                         <span>Edit Customer Review</span>
                       </h3>
                       <button
                         type="button"
                         onClick={() => setEditingReview(null)}
-                        className="text-slate-400 hover:text-white text-sm"
+                        className="text-slate-400 hover:text-white"
                       >
                         ✕
                       </button>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                       <div>
                         <label className="block text-xs font-bold text-slate-400 mb-1">Author Name</label>
                         <input
@@ -1926,7 +2359,7 @@ export default function AdminDashboardPage() {
                       </div>
 
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 mb-1">Company / Organization</label>
+                        <label className="block text-xs font-bold text-slate-400 mb-1">Company / Squadron</label>
                         <input
                           type="text"
                           value={editingReview.company}
@@ -1939,27 +2372,13 @@ export default function AdminDashboardPage() {
                         <label className="block text-xs font-bold text-slate-400 mb-1">Country</label>
                         <input
                           type="text"
-                          value={editingReview.country}
+                          value={editingReview.country || 'USA'}
                           onChange={(e) => setEditingReview({ ...editingReview, country: e.target.value })}
                           className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 mb-1">Rating</label>
-                        <select
-                          value={editingReview.rating}
-                          onChange={(e) =>
-                            setEditingReview({ ...editingReview, rating: parseInt(e.target.value) || 5 })
-                          }
-                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
-                        >
-                          <option value="5">★★★★★ (5 Stars - Exceptional)</option>
-                          <option value="4">★★★★☆ (4 Stars - Great)</option>
-                        </select>
-                      </div>
-
-                      <div className="sm:col-span-2">
                         <label className="block text-xs font-bold text-slate-400 mb-1">Verified Order Tag</label>
                         <input
                           type="text"
@@ -1994,14 +2413,14 @@ export default function AdminDashboardPage() {
                       <button
                         type="button"
                         onClick={() => setEditingReview(null)}
-                        className="px-4 py-2 rounded-lg bg-slate-800 text-xs font-bold text-slate-300 hover:text-white cursor-pointer"
+                        className="px-4 py-2 rounded-lg bg-slate-800 text-xs font-bold text-slate-300 hover:text-white"
                       >
                         Cancel
                       </button>
                       <button
                         type="button"
                         onClick={handleUpdateReview}
-                        className="btn-orange px-6 py-2 rounded-lg text-xs font-bold cursor-pointer"
+                        className="btn-orange px-6 py-2 rounded-lg text-xs font-bold"
                       >
                         Update &amp; Save Review
                       </button>
@@ -2015,40 +2434,28 @@ export default function AdminDashboardPage() {
                 {(settings.reviews || []).map((rev) => (
                   <div
                     key={rev.id}
-                    className="bg-[#141722] border border-slate-800 p-5 rounded-2xl flex flex-col justify-between hover:border-slate-700 transition-colors"
+                    className="bg-[#141722] border border-slate-800 rounded-2xl p-6 flex flex-col justify-between space-y-4"
                   >
                     <div>
-                      <div className="flex items-center justify-between mb-3 border-b border-slate-800/80 pb-2">
-                        <div className="flex text-orange-400">
-                          {[...Array(rev.rating || 5)].map((_, i) => (
-                            <Star key={i} className="w-3.5 h-3.5 fill-current" />
-                          ))}
-                        </div>
-                        <span className="text-[10px] font-mono text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-                          ✓ Verified
-                        </span>
+                      <div className="flex items-center gap-1 text-orange-400 mb-2">
+                        {[...Array(rev.rating || 5)].map((_, i) => (
+                          <Star key={i} className="w-4 h-4 fill-current" />
+                        ))}
                       </div>
-
-                      <div className="text-[10px] text-slate-500 font-mono mb-2">
-                        {rev.verifiedOrder || 'Custom Run'}
-                      </div>
-
-                      <p className="text-xs text-slate-300 italic mb-4 leading-relaxed">
-                        &ldquo;{rev.comment}&rdquo;
+                      <p className="text-xs text-slate-300 italic leading-relaxed">
+                        &quot;{rev.comment}&quot;
                       </p>
                     </div>
 
                     <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-full overflow-hidden bg-orange-600 flex items-center justify-center text-xs font-bold text-white shrink-0">
-                          {rev.avatar ? (
-                            <img src={rev.avatar} alt={rev.author} className="w-full h-full object-cover" />
-                          ) : (
-                            <span>{rev.author?.slice(0, 2) || 'BD'}</span>
-                          )}
-                        </div>
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={rev.avatar || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80'}
+                          alt={rev.author}
+                          className="w-9 h-9 rounded-full object-cover border border-slate-700"
+                        />
                         <div>
-                          <div className="text-xs font-bold text-white leading-tight">{rev.author}</div>
+                          <div className="text-xs font-bold text-white">{rev.author}</div>
                           <div className="text-[10px] text-slate-400">
                             {rev.company} • {rev.country || 'USA'}
                           </div>
@@ -2059,7 +2466,6 @@ export default function AdminDashboardPage() {
                           type="button"
                           onClick={() => setEditingReview({ ...rev })}
                           className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-orange-500 hover:text-white text-slate-300 text-[11px] font-bold flex items-center gap-1 transition-colors cursor-pointer"
-                          title="Edit Review"
                         >
                           <Edit3 className="w-3.5 h-3.5" />
                           <span>Edit</span>
@@ -2081,186 +2487,741 @@ export default function AdminDashboardPage() {
             </div>
           )}
 
-          {/* TAB 6: WEBSITE SETTINGS */}
+          {/* TAB 8: FAQS & KNOWLEDGEBASE */}
+          {activeTab === 'faqs' && (
+            <div className="space-y-6 animate-in fade-in duration-200">
+              
+              <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                <div>
+                  <h1 className="text-2xl font-black text-white tracking-tight">
+                    Frequently Asked Questions (FAQs)
+                  </h1>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Manage customer support questions, answers, and categories on the homepage.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowAddFaq(true)}
+                  className="btn-orange px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer self-start shadow-lg"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add New FAQ</span>
+                </button>
+              </div>
+
+              {/* Add FAQ Form */}
+              {showAddFaq && (
+                <div className="bg-[#141722] border-2 border-orange-500/60 rounded-2xl p-6 space-y-4">
+                  <h3 className="text-sm font-bold text-white">Add New FAQ Item</h3>
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div className="sm:col-span-2">
+                        <label className="block text-xs font-bold text-slate-400 mb-1">Question</label>
+                        <input
+                          type="text"
+                          placeholder="e.g. Can I request a physical sew-out sample?"
+                          value={newFaq.q}
+                          onChange={(e) => setNewFaq({ ...newFaq, q: e.target.value })}
+                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 mb-1">Category</label>
+                        <select
+                          value={newFaq.category}
+                          onChange={(e) => setNewFaq({ ...newFaq, category: e.target.value as any })}
+                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                        >
+                          <option value="turnaround">Turnaround &amp; Speed</option>
+                          <option value="shipping">Worldwide Shipping</option>
+                          <option value="ordering">Ordering &amp; Samples</option>
+                          <option value="artwork">Artwork &amp; Thread Colors</option>
+                          <option value="general">General Support</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-400 mb-1">Answer</label>
+                      <textarea
+                        rows={3}
+                        placeholder="Comprehensive factory answer..."
+                        value={newFaq.a}
+                        onChange={(e) => setNewFaq({ ...newFaq, a: e.target.value })}
+                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex justify-end gap-2 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowAddFaq(false)}
+                      className="px-4 py-2 rounded-lg bg-slate-800 text-xs font-bold text-slate-300 hover:text-white"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleAddFaq}
+                      className="btn-orange px-6 py-2 rounded-lg text-xs font-bold"
+                    >
+                      Save FAQ
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Edit FAQ Modal */}
+              {editingFaq && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in">
+                  <div className="bg-[#141722] border border-slate-700 rounded-3xl max-w-xl w-full p-6 text-white space-y-4">
+                    <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+                      <h3 className="text-base font-bold text-white flex items-center gap-2">
+                        <Edit3 className="w-4 h-4 text-orange-400" />
+                        <span>Edit FAQ</span>
+                      </h3>
+                      <button
+                        type="button"
+                        onClick={() => setEditingFaq(null)}
+                        className="text-slate-400 hover:text-white"
+                      >
+                        ✕
+                      </button>
+                    </div>
+
+                    <div className="space-y-3 text-xs">
+                      <div>
+                        <label className="block font-bold text-slate-400 mb-1">Question</label>
+                        <input
+                          type="text"
+                          value={editingFaq.q}
+                          onChange={(e) => setEditingFaq({ ...editingFaq, q: e.target.value })}
+                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-bold text-slate-400 mb-1">Category</label>
+                        <select
+                          value={editingFaq.category}
+                          onChange={(e) => setEditingFaq({ ...editingFaq, category: e.target.value as any })}
+                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                        >
+                          <option value="turnaround">Turnaround &amp; Speed</option>
+                          <option value="shipping">Worldwide Shipping</option>
+                          <option value="ordering">Ordering &amp; Samples</option>
+                          <option value="artwork">Artwork &amp; Thread Colors</option>
+                          <option value="general">General Support</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block font-bold text-slate-400 mb-1">Answer</label>
+                        <textarea
+                          rows={4}
+                          value={editingFaq.a}
+                          onChange={(e) => setEditingFaq({ ...editingFaq, a: e.target.value })}
+                          className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end gap-2 pt-3 border-t border-slate-800">
+                      <button
+                        type="button"
+                        onClick={() => setEditingFaq(null)}
+                        className="px-4 py-2 rounded-lg bg-slate-800 text-xs font-bold text-slate-300 hover:text-white"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleUpdateFaq}
+                        className="btn-orange px-6 py-2 rounded-lg text-xs font-bold"
+                      >
+                        Update &amp; Save FAQ
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* FAQs List */}
+              <div className="space-y-3">
+                {(settings.faqs || DEFAULT_FAQS).map((f) => (
+                  <div
+                    key={f.id}
+                    className="bg-[#141722] border border-slate-800 p-5 rounded-2xl flex flex-col sm:flex-row justify-between sm:items-center gap-4 group"
+                  >
+                    <div className="flex-1 space-y-1">
+                      <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-orange-400 bg-orange-500/10 px-2 py-0.5 rounded-md">
+                        {f.category}
+                      </span>
+                      <h4 className="text-sm font-bold text-white pt-1">{f.q}</h4>
+                      <p className="text-xs text-slate-300 leading-relaxed pt-1">{f.a}</p>
+                    </div>
+
+                    <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-center">
+                      <button
+                        type="button"
+                        onClick={() => setEditingFaq({ ...f })}
+                        className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-orange-500 hover:text-white text-slate-300 text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer"
+                      >
+                        <Edit3 className="w-3.5 h-3.5" />
+                        <span>Edit</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteFaq(f.id)}
+                        className="text-slate-500 hover:text-red-400 p-2 transition-colors cursor-pointer"
+                        title="Delete FAQ"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+            </div>
+          )}
+
+          {/* TAB 9: WEBSITE & BRAND SETTINGS */}
           {activeTab === 'settings' && (
             <div className="space-y-6 animate-in fade-in duration-200">
               
               <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
                 <div>
                   <h1 className="text-2xl font-black text-white tracking-tight">
-                    Website Announcement &amp; Contact Settings
+                    Comprehensive Website &amp; Brand Settings
                   </h1>
                   <p className="text-xs text-slate-400 mt-1">
-                    Manage the top bar ticker, WhatsApp desk number, support email, and hero titles.
+                    Manage header announcements, hero messaging, factory contact info, social links, stats, and SEO.
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={() => handleSaveSettings()}
-                  className="btn-orange px-5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer self-start"
+                  disabled={isSavingSettings}
+                  className="btn-orange px-5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer self-start shadow-lg"
                 >
                   <Save className="w-4 h-4" />
-                  <span>Publish to Live Site</span>
+                  <span>{isSavingSettings ? 'Publishing...' : 'Publish Website Settings'}</span>
                 </button>
               </div>
 
-              {/* Form Settings */}
-              <div className="bg-[#141722] border border-slate-800 rounded-2xl p-6 space-y-6">
-                
-                {/* Announcement Bar */}
+              {/* 1. Header & Top Announcement Bar */}
+              <div className="bg-[#141722] border border-slate-800 rounded-2xl p-6 space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-orange-500" />
+                    <span>1. Top Promo Announcement Strip</span>
+                  </h3>
+                  <label className="flex items-center gap-2 text-xs font-bold text-slate-300 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={settings.announcementEnabled}
+                      onChange={(e) => setSettings({ ...settings, announcementEnabled: e.target.checked })}
+                      className="w-4 h-4 rounded text-orange-500"
+                    />
+                    <span>Announcement Enabled</span>
+                  </label>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-bold text-slate-400 mb-1">
+                      Banner Text Message
+                    </label>
+                    <input
+                      type="text"
+                      value={settings.announcementText}
+                      onChange={(e) => setSettings({ ...settings, announcementText: e.target.value })}
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 mb-1">
+                      Promo Discount Code
+                    </label>
+                    <input
+                      type="text"
+                      value={settings.promoCode}
+                      onChange={(e) => setSettings({ ...settings, promoCode: e.target.value })}
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-mono font-bold text-orange-400"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* 2. Hero Section Content */}
+              <div className="bg-[#141722] border border-slate-800 rounded-2xl p-6 space-y-4">
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <Tag className="w-4 h-4 text-orange-500" />
+                  <span>2. Hero Section Messaging</span>
+                </h3>
+
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <label className="text-xs font-bold text-white">
-                      Top Announcement Bar Message
-                    </label>
-                    <label className="flex items-center gap-2 text-xs text-slate-400 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={settings.announcementEnabled}
-                        onChange={(e) =>
-                          setSettings({ ...settings, announcementEnabled: e.target.checked })
-                        }
-                        className="accent-orange-500 rounded"
-                      />
-                      <span>Banner Visible</span>
-                    </label>
-                  </div>
-                  <input
-                    type="text"
-                    value={settings.announcementText}
-                    onChange={(e) => setSettings({ ...settings, announcementText: e.target.value })}
-                    className="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs font-medium text-white"
-                  />
-                </div>
-
-                {/* Contact Coordinates */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-slate-800">
                   <div>
                     <label className="block text-xs font-bold text-slate-400 mb-1">
-                      Support Email
-                    </label>
-                    <input
-                      type="email"
-                      value={settings.supportEmail}
-                      onChange={(e) => setSettings({ ...settings, supportEmail: e.target.value })}
-                      className="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs font-medium text-white"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 mb-1">
-                      WhatsApp Desk Hotline
-                    </label>
-                    <input
-                      type="text"
-                      value={settings.whatsappNumber}
-                      onChange={(e) => setSettings({ ...settings, whatsappNumber: e.target.value })}
-                      className="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs font-medium text-white"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 mb-1">
-                      Turnaround Display Text
-                    </label>
-                    <input
-                      type="text"
-                      value={settings.turnaroundTime ?? '10-14 Days Turnaround'}
-                      onChange={(e) =>
-                        setSettings({ ...settings, turnaroundTime: e.target.value })
-                      }
-                      className="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs font-medium text-white"
-                    />
-                  </div>
-                </div>
-
-                {/* Hero Headlines */}
-                <div className="space-y-4 pt-4 border-t border-slate-800">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 mb-1">
-                      Hero Badge Text
+                      Hero Eyebrow Badge
                     </label>
                     <input
                       type="text"
                       value={settings.heroBadge}
                       onChange={(e) => setSettings({ ...settings, heroBadge: e.target.value })}
-                      className="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs font-medium text-white"
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
                     />
                   </div>
 
                   <div>
                     <label className="block text-xs font-bold text-slate-400 mb-1">
-                      Hero Main Headline
+                      Main Headline
                     </label>
                     <input
                       type="text"
                       value={settings.heroHeadline}
                       onChange={(e) => setSettings({ ...settings, heroHeadline: e.target.value })}
-                      className="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs font-medium text-white"
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
                     />
                   </div>
 
                   <div>
                     <label className="block text-xs font-bold text-slate-400 mb-1">
-                      Hero Subheadline
+                      Sub-Headline
                     </label>
                     <textarea
                       rows={2}
                       value={settings.heroSubheadline}
                       onChange={(e) => setSettings({ ...settings, heroSubheadline: e.target.value })}
-                      className="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs font-medium text-white"
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
                     />
                   </div>
                 </div>
+              </div>
 
-                <div className="pt-4 flex justify-end">
-                  <button
-                    type="button"
-                    onClick={() => handleSaveSettings()}
-                    disabled={isSavingSettings}
-                    className="btn-orange px-6 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer shadow-lg"
-                  >
-                    <Save className="w-4 h-4" />
-                    <span>{isSavingSettings ? 'Publishing...' : 'Save & Publish Website Settings'}</span>
-                  </button>
+              {/* 3. Factory Contact Channels */}
+              <div className="bg-[#141722] border border-slate-800 rounded-2xl p-6 space-y-4">
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <Phone className="w-4 h-4 text-orange-500" />
+                  <span>3. Factory Contact &amp; Support Channels</span>
+                </h3>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 mb-1">
+                      WhatsApp Clean Number (e.g. 18005557282)
+                    </label>
+                    <input
+                      type="text"
+                      value={settings.whatsappNumber}
+                      onChange={(e) => setSettings({ ...settings, whatsappNumber: e.target.value })}
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 font-mono text-xs font-bold text-emerald-400"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 mb-1">
+                      WhatsApp Display Format
+                    </label>
+                    <input
+                      type="text"
+                      value={settings.whatsappDisplay}
+                      onChange={(e) => setSettings({ ...settings, whatsappDisplay: e.target.value })}
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 font-mono text-xs font-bold text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 mb-1">
+                      Support Email Address
+                    </label>
+                    <input
+                      type="email"
+                      value={settings.supportEmail}
+                      onChange={(e) => setSettings({ ...settings, supportEmail: e.target.value })}
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 font-mono text-xs font-bold text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 mb-1">
+                      Hotline Phone Number
+                    </label>
+                    <input
+                      type="text"
+                      value={settings.supportPhone}
+                      onChange={(e) => setSettings({ ...settings, supportPhone: e.target.value })}
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 font-mono text-xs font-bold text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 mb-1">
+                      Standard Turnaround Display
+                    </label>
+                    <input
+                      type="text"
+                      value={settings.turnaroundTime}
+                      onChange={(e) => setSettings({ ...settings, turnaroundTime: e.target.value })}
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 mb-1">
+                      Factory Business Working Hours
+                    </label>
+                    <input
+                      type="text"
+                      value={settings.workingHours}
+                      onChange={(e) => setSettings({ ...settings, workingHours: e.target.value })}
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                    />
+                  </div>
+
+                  <div className="sm:col-span-3">
+                    <label className="block text-xs font-bold text-slate-400 mb-1">
+                      Physical Factory / Studio Address
+                    </label>
+                    <input
+                      type="text"
+                      value={settings.companyAddress}
+                      onChange={(e) => setSettings({ ...settings, companyAddress: e.target.value })}
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                    />
+                  </div>
                 </div>
+              </div>
 
+              {/* 4. Social Media Links */}
+              <div className="bg-[#141722] border border-slate-800 rounded-2xl p-6 space-y-4">
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <Globe className="w-4 h-4 text-orange-500" />
+                  <span>4. Social Profiles (Footer &amp; Channels)</span>
+                </h3>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 mb-1">Facebook URL</label>
+                    <input
+                      type="text"
+                      value={settings.socialFacebook}
+                      onChange={(e) => setSettings({ ...settings, socialFacebook: e.target.value })}
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 mb-1">Instagram URL</label>
+                    <input
+                      type="text"
+                      value={settings.socialInstagram}
+                      onChange={(e) => setSettings({ ...settings, socialInstagram: e.target.value })}
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 mb-1">YouTube URL</label>
+                    <input
+                      type="text"
+                      value={settings.socialYoutube}
+                      onChange={(e) => setSettings({ ...settings, socialYoutube: e.target.value })}
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 mb-1">LinkedIn URL</label>
+                    <input
+                      type="text"
+                      value={settings.socialLinkedin}
+                      onChange={(e) => setSettings({ ...settings, socialLinkedin: e.target.value })}
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* 5. Production Trust Stats */}
+              <div className="bg-[#141722] border border-slate-800 rounded-2xl p-6 space-y-4">
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <TrendingUp className="w-4 h-4 text-orange-500" />
+                  <span>5. Production Proof &amp; Trust Counters</span>
+                </h3>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 mb-1">Patches Sewn</label>
+                    <input
+                      type="text"
+                      value={settings.statPatchesSewn}
+                      onChange={(e) => setSettings({ ...settings, statPatchesSewn: e.target.value })}
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-mono font-bold text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 mb-1">On-Time Delivery %</label>
+                    <input
+                      type="text"
+                      value={settings.statOnTimeDelivery}
+                      onChange={(e) => setSettings({ ...settings, statOnTimeDelivery: e.target.value })}
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-mono font-bold text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 mb-1">Proof Scan Speed</label>
+                    <input
+                      type="text"
+                      value={settings.statProofSpeed}
+                      onChange={(e) => setSettings({ ...settings, statProofSpeed: e.target.value })}
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-mono font-bold text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 mb-1">Countries Shipped</label>
+                    <input
+                      type="text"
+                      value={settings.statCountriesShipped}
+                      onChange={(e) => setSettings({ ...settings, statCountriesShipped: e.target.value })}
+                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-mono font-bold text-white"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* 6. Social Proof Floating Notifications & SEO */}
+              <div className="bg-[#141722] border border-slate-800 rounded-2xl p-6 space-y-4">
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <MessageSquare className="w-4 h-4 text-orange-500" />
+                  <span>6. Social Proof Toast &amp; SEO Metadata</span>
+                </h3>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-3 bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+                    <label className="flex items-center gap-2 text-xs font-bold text-slate-300 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={settings.socialProofEnabled}
+                        onChange={(e) => setSettings({ ...settings, socialProofEnabled: e.target.checked })}
+                        className="w-4 h-4 rounded text-orange-500"
+                      />
+                      <span>Enable Live Purchase Social Proof Toasts</span>
+                    </label>
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-400 mb-1">
+                        Popup Interval (Seconds)
+                      </label>
+                      <input
+                        type="number"
+                        value={settings.socialProofIntervalSeconds}
+                        onChange={(e) => setSettings({ ...settings, socialProofIntervalSeconds: parseInt(e.target.value) || 12 })}
+                        className="w-full p-2 rounded-lg bg-slate-950 border border-slate-700 text-xs font-mono text-white"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-3 bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-400 mb-1">
+                        Site SEO Title
+                      </label>
+                      <input
+                        type="text"
+                        value={settings.siteTitle}
+                        onChange={(e) => setSettings({ ...settings, siteTitle: e.target.value })}
+                        className="w-full p-2 rounded-lg bg-slate-950 border border-slate-700 text-xs text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-400 mb-1">
+                        Site Meta Description
+                      </label>
+                      <input
+                        type="text"
+                        value={settings.metaDescription}
+                        onChange={(e) => setSettings({ ...settings, metaDescription: e.target.value })}
+                        className="w-full p-2 rounded-lg bg-slate-950 border border-slate-700 text-xs text-white"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom Save Bar */}
+              <div className="pt-4 flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => handleSaveSettings()}
+                  disabled={isSavingSettings}
+                  className="btn-orange px-6 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer shadow-lg"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>{isSavingSettings ? 'Publishing...' : 'Save & Publish Website Settings'}</span>
+                </button>
               </div>
 
             </div>
           )}
 
-          {/* TAB 7: B2B WHOLESALE */}
+          {/* TAB 10: B2B ACCOUNTS */}
           {activeTab === 'b2b' && (
             <div className="space-y-6 animate-in fade-in duration-200">
               
-              <div>
-                <h1 className="text-2xl font-black text-white tracking-tight">
-                  Wholesale B2B Client Accounts
-                </h1>
-                <p className="text-xs text-slate-400 mt-1">
-                  Manage dedicated wholesale tier pricing and accounts for tactical, sports, and corporate volume buyers.
-                </p>
+              <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                <div>
+                  <h1 className="text-2xl font-black text-white tracking-tight">
+                    Wholesale Contract &amp; Corporate B2B Accounts
+                  </h1>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Manage volume accounts for tactical gear outfitters, apparel lines, and motorcycle club chapters.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowAddB2B(true)}
+                  className="btn-orange px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer self-start shadow-lg"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add B2B Account</span>
+                </button>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {[
-                  { name: 'Apex Tactical Outfitters', tier: 'Tactical Govt Tier (35% OFF)', rep: 'Capt. Miller', spend: '$12,400', orders: 18 },
-                  { name: 'Metro Police Dept K9 Unit', tier: 'Municipal First Responder (40% OFF)', rep: 'Lt. Reynolds', spend: '$24,800', orders: 26 },
-                  { name: 'Wilderness Explorers Club', tier: 'Outdoor Volume (25% OFF)', rep: 'Sarah Johnson', spend: '$6,200', orders: 9 },
-                ].map((acc, i) => (
-                  <div key={i} className="bg-[#141722] border border-slate-800 p-5 rounded-2xl space-y-3">
-                    <div className="text-[10px] font-mono font-bold text-orange-400 uppercase">
-                      {acc.tier}
+              {/* Add B2B Form */}
+              {showAddB2B && (
+                <div className="bg-[#141722] border-2 border-orange-500/60 rounded-2xl p-6 space-y-4">
+                  <h3 className="text-sm font-bold text-white">Add Wholesale B2B Client</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-400 mb-1">Company / Organization</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Apex Tactical Gear"
+                        value={newB2B.name}
+                        onChange={(e) => setNewB2B({ ...newB2B, name: e.target.value })}
+                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                      />
                     </div>
-                    <h4 className="text-base font-bold text-white">{acc.name}</h4>
-                    <div className="text-xs text-slate-400">Primary Contact: {acc.rep}</div>
-                    <div className="pt-3 border-t border-slate-800 flex justify-between text-xs font-mono">
-                      <span>Lifetime Spend: <strong className="text-emerald-400">{acc.spend}</strong></span>
-                      <span>{acc.orders} Runs</span>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-400 mb-1">Contact Person</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. David Miller"
+                        value={newB2B.contactPerson}
+                        onChange={(e) => setNewB2B({ ...newB2B, contactPerson: e.target.value })}
+                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-400 mb-1">Email</label>
+                      <input
+                        type="email"
+                        placeholder="buyer@company.com"
+                        value={newB2B.email}
+                        onChange={(e) => setNewB2B({ ...newB2B, email: e.target.value })}
+                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-400 mb-1">Phone</label>
+                      <input
+                        type="text"
+                        placeholder="+1 (800) 555-0199"
+                        value={newB2B.phone}
+                        onChange={(e) => setNewB2B({ ...newB2B, phone: e.target.value })}
+                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-400 mb-1">Contract Tier</label>
+                      <input
+                        type="text"
+                        placeholder="Platinum Tier (Wholesale)"
+                        value={newB2B.tier}
+                        onChange={(e) => setNewB2B({ ...newB2B, tier: e.target.value })}
+                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-400 mb-1">Wholesale Discount (%)</label>
+                      <input
+                        type="number"
+                        value={newB2B.discountPct}
+                        onChange={(e) => setNewB2B({ ...newB2B, discountPct: parseFloat(e.target.value) || 20 })}
+                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
+                      />
                     </div>
                   </div>
-                ))}
+                  <div className="flex justify-end gap-2 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowAddB2B(false)}
+                      className="px-4 py-2 rounded-lg bg-slate-800 text-xs font-bold text-slate-300 hover:text-white"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleAddB2B}
+                      className="btn-orange px-6 py-2 rounded-lg text-xs font-bold"
+                    >
+                      Save B2B Account
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* B2B Table */}
+              <div className="bg-[#141722] border border-slate-800 rounded-2xl overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead>
+                      <tr className="border-b border-slate-800 bg-slate-900/60 text-slate-400 font-mono text-[11px]">
+                        <th className="p-4 font-bold">Company</th>
+                        <th className="p-4 font-bold">Contact</th>
+                        <th className="p-4 font-bold">Contract Tier</th>
+                        <th className="p-4 font-bold">Discount</th>
+                        <th className="p-4 font-bold">Total Orders</th>
+                        <th className="p-4 font-bold">Lifetime Spend</th>
+                        <th className="p-4 font-bold text-right">Quick Contact</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-800/80">
+                      {b2bAccounts.map((acc) => (
+                        <tr key={acc.id} className="hover:bg-slate-800/40 transition-colors">
+                          <td className="p-4 font-bold text-white">
+                            {acc.name}
+                          </td>
+                          <td className="p-4">
+                            <div className="text-slate-200 font-medium">{acc.contactPerson}</div>
+                            <div className="text-[10px] text-slate-400 font-mono">{acc.email}</div>
+                          </td>
+                          <td className="p-4">
+                            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-orange-500/10 text-orange-400 border border-orange-500/20 font-bold">
+                              {acc.tier}
+                            </span>
+                          </td>
+                          <td className="p-4 font-mono font-bold text-emerald-400">
+                            {acc.discountPct}% OFF
+                          </td>
+                          <td className="p-4 font-mono text-slate-300">
+                            {acc.totalOrders} runs
+                          </td>
+                          <td className="p-4 font-mono font-bold text-white">
+                            ${acc.lifetimeSpend.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                          </td>
+                          <td className="p-4 text-right">
+                            <a
+                              href={`mailto:${acc.email}?subject=Wholesale%20Production%20Inquiry%20-%20BDigitizing`}
+                              className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-orange-500 hover:text-white text-slate-300 font-bold text-[11px] transition-colors inline-block"
+                            >
+                              Email
+                            </a>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
 
             </div>
@@ -2270,82 +3231,222 @@ export default function AdminDashboardPage() {
 
       </div>
 
-      {/* Detail Modal for Selected Order */}
+      {/* Comprehensive Detail Modal for Selected Order */}
       {selectedOrder && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-[#141722] border border-slate-700 rounded-3xl max-w-xl w-full p-6 text-white space-y-4">
-            <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-in fade-in">
+          <div className="bg-[#141722] border border-slate-700 rounded-3xl max-w-2xl w-full p-6 text-white space-y-5 max-h-[90vh] overflow-y-auto">
+            
+            {/* Header */}
+            <div className="flex justify-between items-start border-b border-slate-800 pb-4">
               <div>
-                <span className="text-xs font-mono font-bold text-orange-400">
-                  {selectedOrder.order_id}
-                </span>
-                <h3 className="text-base font-bold text-white">{selectedOrder.title}</h3>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-mono font-bold text-orange-400 bg-orange-500/10 px-2.5 py-0.5 rounded-full border border-orange-500/20">
+                    {selectedOrder.order_id}
+                  </span>
+                  <span
+                    className={`text-[10px] font-mono px-2.5 py-0.5 rounded-full font-bold uppercase ${
+                      selectedOrder.status === 'proof_review'
+                        ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                        : selectedOrder.status === 'mass_production'
+                        ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
+                        : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                    }`}
+                  >
+                    {selectedOrder.status.replace('_', ' ')}
+                  </span>
+                </div>
+                <h3 className="text-lg font-black text-white mt-1.5">{selectedOrder.title}</h3>
               </div>
               <button
                 type="button"
                 onClick={() => setSelectedOrder(null)}
-                className="text-slate-400 hover:text-white"
+                className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800"
               >
                 ✕
               </button>
             </div>
 
-            <div className="space-y-3 text-xs">
-              <div className="grid grid-cols-2 gap-2 bg-slate-900/60 p-3 rounded-xl">
-                <div>
-                  <span className="text-slate-400 block">Customer</span>
-                  <span className="font-bold">{selectedOrder.customer_name}</span>
+            {/* Customer & Order Information Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div className="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800 space-y-1.5">
+                <span className="text-[10px] font-mono uppercase text-slate-500 font-bold block">Customer Info</span>
+                <div className="font-bold text-white text-sm">{selectedOrder.customer_name}</div>
+                <div className="text-slate-400 font-mono">{selectedOrder.email}</div>
+                <div className="text-orange-400 font-mono font-bold">{selectedOrder.phone}</div>
+                <div className="text-slate-400 text-[11px] pt-1">
+                  📍 {selectedOrder.shipping_address || 'Free Worldwide Tracked Delivery'}
                 </div>
-                <div>
-                  <span className="text-slate-400 block">Contact</span>
-                  <span className="font-mono">{selectedOrder.email}</span>
+              </div>
+
+              <div className="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800 space-y-1.5 font-mono">
+                <span className="text-[10px] uppercase text-slate-500 font-bold block">Manufacturing Specs</span>
+                <div className="flex justify-between text-slate-300">
+                  <span>Patch Style:</span>
+                  <span className="font-bold text-white">{selectedOrder.patch_type}</span>
                 </div>
-                <div>
-                  <span className="text-slate-400 block">Quantity</span>
-                  <span className="font-mono font-bold">{selectedOrder.quantity} pieces</span>
+                <div className="flex justify-between text-slate-300">
+                  <span>Dimensions:</span>
+                  <span className="font-bold text-white">{selectedOrder.dimensions}</span>
                 </div>
-                <div>
-                  <span className="text-slate-400 block">Total Rate</span>
-                  <span className="font-mono font-bold text-emerald-400">
+                <div className="flex justify-between text-slate-300">
+                  <span>Quantity:</span>
+                  <span className="font-bold text-white">{selectedOrder.quantity} pieces</span>
+                </div>
+                <div className="flex justify-between text-slate-300 pt-1 border-t border-slate-800">
+                  <span>Total Amount:</span>
+                  <span className="font-bold text-emerald-400 text-sm">
                     ${selectedOrder.total_amount?.toFixed(2)}
                   </span>
                 </div>
               </div>
-
-              {selectedOrder.artwork_thumbnail && (
-                <div>
-                  <span className="text-slate-400 block mb-1">Attached Artwork</span>
-                  <a
-                    href={selectedOrder.artwork_thumbnail}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-orange-400 hover:underline"
-                  >
-                    <span>View Full-Resolution Artwork File</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
-                </div>
-              )}
-
-              {selectedOrder.notes && (
-                <div>
-                  <span className="text-slate-400 block mb-1">Customer Notes</span>
-                  <p className="bg-slate-900/50 p-3 rounded-xl text-slate-300 font-mono text-[11px]">
-                    {selectedOrder.notes}
-                  </p>
-                </div>
-              )}
             </div>
 
-            <div className="pt-2 flex justify-end">
+            {/* Production Stage Selector */}
+            <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-800 space-y-2">
+              <label className="block text-xs font-bold text-slate-300">Update Production Workflow Status</label>
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                {[
+                  { id: 'proof_review', label: '1. Proof Review' },
+                  { id: 'mold_sampling', label: '2. Mold Sampling' },
+                  { id: 'mass_production', label: '3. Production' },
+                  { id: 'backing_qc', label: '4. Backing QC' },
+                  { id: 'shipped', label: '5. Shipped' },
+                ].map((st) => (
+                  <button
+                    type="button"
+                    key={st.id}
+                    onClick={() => handleUpdateStatus(selectedOrder.order_id, st.id as any)}
+                    className={`py-2 px-2.5 rounded-lg text-[11px] font-bold transition-all text-center cursor-pointer border ${
+                      selectedOrder.status === st.id
+                        ? 'bg-orange-500 text-white border-orange-400 shadow-md'
+                        : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-white'
+                    }`}
+                  >
+                    {st.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Courier & Tracking Number */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+              <div>
+                <label className="block font-bold text-slate-400 mb-1">Carrier Courier</label>
+                <select
+                  value={selectedOrder.courier || 'FedEx Express'}
+                  onChange={(e) =>
+                    handleUpdateTracking(
+                      selectedOrder.order_id,
+                      e.target.value,
+                      selectedOrder.tracking_number || ''
+                    )
+                  }
+                  className="w-full p-2.5 rounded-lg bg-slate-950 border border-slate-700 text-xs font-semibold text-white outline-none"
+                >
+                  <option value="FedEx Express">FedEx Express Tracked</option>
+                  <option value="DHL Express">DHL Express Priority</option>
+                  <option value="UPS Worldwide">UPS Worldwide Saver</option>
+                  <option value="USPS Priority">USPS Priority Mail</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-400 mb-1">Tracking Waybill #</label>
+                <input
+                  type="text"
+                  placeholder="e.g. 784920194821"
+                  value={selectedOrder.tracking_number || ''}
+                  onChange={(e) =>
+                    handleUpdateTracking(
+                      selectedOrder.order_id,
+                      selectedOrder.courier || 'FedEx Express',
+                      e.target.value
+                    )
+                  }
+                  className="w-full p-2.5 rounded-lg bg-slate-950 border border-slate-700 font-mono text-xs font-bold text-white outline-none"
+                />
+              </div>
+            </div>
+
+            {/* Attached Artwork Preview */}
+            {selectedOrder.artwork_thumbnail && (
+              <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-800 space-y-2">
+                <span className="text-xs font-bold text-slate-300 block">Customer Attached Artwork</span>
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 rounded-xl bg-slate-950 border border-slate-700 overflow-hidden shrink-0">
+                    <img
+                      src={selectedOrder.artwork_thumbnail}
+                      alt="Artwork Thumbnail"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div>
+                    <a
+                      href={selectedOrder.artwork_thumbnail}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-xs font-bold text-orange-400 hover:text-orange-300"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      <span>Download / Inspect High-Res Artwork Vector</span>
+                      <ExternalLink className="w-3 h-3 text-slate-500" />
+                    </a>
+                    <p className="text-[11px] text-slate-500 mt-0.5">
+                      Customer uploaded design for Tajima embroidery digitizing.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Customer Notes */}
+            {selectedOrder.notes && (
+              <div className="space-y-1">
+                <span className="text-xs font-bold text-slate-400 block">Customer Special Instructions</span>
+                <p className="bg-slate-900/90 p-3.5 rounded-xl text-slate-300 font-mono text-[11px] border border-slate-800">
+                  {selectedOrder.notes}
+                </p>
+              </div>
+            )}
+
+            {/* Action Buttons: WhatsApp, Email, Print, Close */}
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-800">
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleWhatsAppCustomer(selectedOrder)}
+                  className="px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                >
+                  <MessageSquare className="w-3.5 h-3.5" />
+                  <span>WhatsApp Client</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleEmailCustomer(selectedOrder)}
+                  className="px-3 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                >
+                  <Mail className="w-3.5 h-3.5" />
+                  <span>Email Client</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => window.print()}
+                  className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer border border-slate-700"
+                >
+                  <Printer className="w-3.5 h-3.5" />
+                  <span>Print Job Sheet</span>
+                </button>
+              </div>
+
               <button
                 type="button"
                 onClick={() => setSelectedOrder(null)}
-                className="btn-orange px-6 py-2 rounded-xl text-xs font-bold"
+                className="btn-orange px-6 py-2 rounded-xl text-xs font-bold cursor-pointer"
               >
-                Close
+                Done
               </button>
             </div>
+
           </div>
         </div>
       )}

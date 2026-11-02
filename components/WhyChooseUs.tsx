@@ -3,7 +3,16 @@
 import React, { useState } from 'react';
 import { Gem, Zap, Globe, Headphones, CheckCircle2, ShieldCheck, Award } from 'lucide-react';
 
-export default function WhyChooseUs() {
+interface WhyChooseUsProps {
+  statsData?: {
+    patchesSewn?: string;
+    onTimeDelivery?: string;
+    proofSpeed?: string;
+    countriesShipped?: string;
+  };
+}
+
+export default function WhyChooseUs({ statsData }: WhyChooseUsProps) {
   const [macroTab, setMacroTab] = useState<'threads' | 'backing' | 'border'>('threads');
 
   const features = [
@@ -34,10 +43,10 @@ export default function WhyChooseUs() {
   ];
 
   const stats = [
-    { value: '1.8M+', label: 'Patches Sewn' },
-    { value: '99.8%', label: 'On-Time Delivery' },
-    { value: '6 Hours', label: 'Digital Proof Speed' },
-    { value: '50+', label: 'Countries Shipped Free' },
+    { value: statsData?.patchesSewn || '1.8M+', label: 'Patches Sewn' },
+    { value: statsData?.onTimeDelivery || '99.8%', label: 'On-Time Delivery' },
+    { value: statsData?.proofSpeed || '6 Hours', label: 'Digital Proof Speed' },
+    { value: statsData?.countriesShipped || '50+', label: 'Countries Shipped Free' },
   ];
 
   return (

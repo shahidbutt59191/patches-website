@@ -3,53 +3,25 @@
 import React, { useState } from 'react';
 import { Plus, Minus, ArrowRight, HelpCircle, Sparkles, Tag, ShieldCheck } from 'lucide-react';
 import { GoldenCrownPatch } from './PatchVisuals';
+import { FaqItem, DEFAULT_FAQS } from '@/lib/settings';
 
 interface FaqAndCtaProps {
   onOpenQuote?: () => void;
   promoCode?: string;
   discountRate?: number;
+  items?: FaqItem[];
 }
 
 export default function FaqAndCta({
   onOpenQuote,
   promoCode = 'BDIGITIZE15',
   discountRate = 15,
+  items,
 }: FaqAndCtaProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   const [filterCategory, setFilterCategory] = useState<string>('all');
 
-  const faqs = [
-    {
-      category: 'turnaround',
-      q: 'What is the turnaround time?',
-      a: 'Our standard production turnaround is 10 to 14 business days from digital proof approval. We also offer rush 5-7 business day service for urgent team or corporate event deadlines.',
-    },
-    {
-      category: 'shipping',
-      q: 'Do you offer free shipping?',
-      a: 'Yes! We provide 100% free tracked courier delivery worldwide on all custom patch orders. You never pay unexpected customs or freight surcharges.',
-    },
-    {
-      category: 'ordering',
-      q: 'Can I get a sample before bulk order?',
-      a: 'Absolutely. We send high-resolution digital embroidery scan proofs for every order with unlimited revisions. Pre-production physical sewn samples can also be manufactured and mailed for master verification.',
-    },
-    {
-      category: 'ordering',
-      q: 'What is your minimum order quantity (MOQ)?',
-      a: 'Our minimum order is just 10 patches. For maximum value, our wholesale discount tiers unlock at 50, 100, 250, 500, and 1,000+ units.',
-    },
-    {
-      category: 'artwork',
-      q: 'What artwork formats do you accept?',
-      a: 'We accept AI, EPS, PDF, SVG, PSD, PNG, and JPG. Even if you only have a rough sketch or smartphone photo, our in-house digitizers will vectorize and optimize it free of charge.',
-    },
-    {
-      category: 'artwork',
-      q: 'Will my colors match my brand guidelines?',
-      a: 'Yes! We match Pantone (PMS) color codes using Madeira Polyneon threads with over 400 vivid standard thread colors available.',
-    },
-  ];
+  const faqs = (items && items.length > 0 ? items : DEFAULT_FAQS).filter((f) => f.active !== false);
 
   const filteredFaqs = filterCategory === 'all'
     ? faqs

@@ -6,11 +6,13 @@ import { MessageSquare, X, CheckCircle, ShieldCheck } from 'lucide-react';
 interface FloatingAssistantsProps {
   whatsappNumber?: string;
   onOpenQuote?: () => void;
+  socialProofEnabled?: boolean;
 }
 
 export default function FloatingAssistants({
   whatsappNumber = '18005557282',
   onOpenQuote,
+  socialProofEnabled = true,
 }: FloatingAssistantsProps) {
   const [showOrderToast, setShowOrderToast] = useState(false);
   const [toastData, setToastData] = useState({
@@ -28,6 +30,11 @@ export default function FloatingAssistants({
   ];
 
   useEffect(() => {
+    if (!socialProofEnabled) {
+      setShowOrderToast(false);
+      return;
+    }
+
     // Show toast after 4s
     const timer = setTimeout(() => {
       setShowOrderToast(true);

@@ -18,9 +18,133 @@
   "priceLeather": 2.45,
   "pricePvc": 2.55,
   "velcroFee": 0.45,
-  "ironOnFee": 0.20,
+  "ironOnFee": 0.2,
   "peelStickFee": 0.35,
   "sewOnFee": 0.0,
+  "merrowedFee": 0.0,
+  "laserCutFee": 0.15,
+  "metallicThreadFee": 0.15,
+  "glowThreadFee": 0.25,
+  "rushOrderFee": 45.0,
+  "freeShippingThreshold": 99.0,
+  "bulkTiers": [
+    { "qty": 50, "discountPct": 0, "label": "Standard Run" },
+    { "qty": 100, "discountPct": 10, "label": "Batch Discount (10% Off)" },
+    { "qty": 250, "discountPct": 20, "label": "Squadron Tier (20% Off)" },
+    { "qty": 500, "discountPct": 30, "label": "Regimental Tier (30% Off)" },
+    { "qty": 1000, "discountPct": 40, "label": "Wholesale Master (40% Off)" }
+  ],
+  "services": [
+    {
+      "id": "embroidered",
+      "title": "Embroidered Patches",
+      "subtitle": "Classic & Durable",
+      "tag": "Most Popular",
+      "tagColor": "bg-orange-50 text-orange-600 border-orange-200",
+      "category": ["all", "tactical", "apparel"],
+      "stitchMetric": "22,000+ Stitches",
+      "desc": "Dense Madeira polyester thread construction woven into heavy duck twill base. Rolled merrowed overlock borders.",
+      "startingPrice": 1.85,
+      "turnaroundDays": "10-14 Days",
+      "minOrder": 10
+    },
+    {
+      "id": "iron-on",
+      "title": "Iron-On Patches",
+      "subtitle": "Easy to Apply",
+      "tag": "Fast Heat Seal",
+      "tagColor": "bg-blue-50 text-blue-600 border-blue-200",
+      "category": ["all", "apparel"],
+      "stitchMetric": "30-Sec Press",
+      "desc": "Pre-coated with industrial heat-seal backing. Bonds permanently to denim, canvas, cotton, and polyester.",
+      "startingPrice": 1.95,
+      "turnaroundDays": "10-14 Days",
+      "minOrder": 10
+    },
+    {
+      "id": "velcro",
+      "title": "Velcro Patches",
+      "subtitle": "Strong & Reusable",
+      "tag": "Combat Grade",
+      "tagColor": "bg-emerald-50 text-emerald-700 border-emerald-200",
+      "category": ["all", "tactical"],
+      "stitchMetric": "5,000+ Peels",
+      "desc": "Mil-spec hook & loop fasteners pre-attached with double perimeter lock-stitching. Ideal for tactical gear & vests.",
+      "startingPrice": 2.35,
+      "turnaroundDays": "10-14 Days",
+      "minOrder": 10
+    },
+    {
+      "id": "woven",
+      "title": "Woven Patches",
+      "subtitle": "Smooth & Detailed",
+      "tag": "Micro Precision",
+      "tagColor": "bg-purple-50 text-purple-600 border-purple-200",
+      "category": ["all", "apparel"],
+      "stitchMetric": "50-Denier Thread",
+      "desc": "Thin micro-threads loomed from scratch for razor-sharp typography, gradients, and intricate line artwork down to 1.5mm.",
+      "startingPrice": 1.65,
+      "turnaroundDays": "10-14 Days",
+      "minOrder": 25
+    },
+    {
+      "id": "leather",
+      "title": "Leather Patches",
+      "subtitle": "Stylish & Elegant",
+      "tag": "Luxury Debossed",
+      "tagColor": "bg-amber-50 text-amber-700 border-amber-200",
+      "category": ["all", "lifestyle", "apparel"],
+      "stitchMetric": "Laser Vaporized",
+      "desc": "Rich caramel and dark roast synthetic leather debossed with precision fiber lasers. The benchmark for trucker snapbacks.",
+      "startingPrice": 2.45,
+      "turnaroundDays": "10-14 Days",
+      "minOrder": 25
+    }
+  ],
+  "faqs": [
+    {
+      "id": "f1",
+      "category": "turnaround",
+      "q": "What is the turnaround time?",
+      "a": "Our standard production turnaround is 10 to 14 business days from digital proof approval. We also offer rush 5-7 business day service for urgent team or corporate event deadlines.",
+      "active": true
+    },
+    {
+      "id": "f2",
+      "category": "shipping",
+      "q": "Do you offer free shipping?",
+      "a": "Yes! We provide 100% free tracked courier delivery worldwide on all custom patch orders. You never pay unexpected customs or freight surcharges.",
+      "active": true
+    },
+    {
+      "id": "f3",
+      "category": "ordering",
+      "q": "Can I get a sample before bulk order?",
+      "a": "Absolutely. We send high-resolution digital embroidery scan proofs for every order with unlimited revisions. Pre-production physical sewn samples can also be manufactured and mailed for master verification.",
+      "active": true
+    },
+    {
+      "id": "f4",
+      "category": "ordering",
+      "q": "What is your minimum order quantity (MOQ)?",
+      "a": "Our minimum order is just 10 patches. For maximum value, our wholesale discount tiers unlock at 50, 100, 250, 500, and 1,000+ units.",
+      "active": true
+    },
+    {
+      "id": "f5",
+      "category": "artwork",
+      "q": "What artwork formats do you accept?",
+      "a": "We accept AI, EPS, PDF, SVG, PSD, PNG, and JPG. Even if you only have a rough sketch or smartphone photo, our in-house digitizers will vectorize and optimize it free of charge.",
+      "active": true
+    },
+    {
+      "id": "f6",
+      "category": "artwork",
+      "q": "Will my colors match my brand guidelines?",
+      "a": "Yes! We match Pantone (PMS) color codes using Madeira Polyneon threads with over 400 vivid standard thread colors available.",
+      "active": true
+    }
+  ],
   "portfolio": [
     {
       "id": 1,
@@ -169,5 +293,20 @@
   "sliderAfterLabel": "3D Physical Embroidery (Madeira Poly)",
   "sliderTitle": "See Your 2D Artwork Turned into 3D Physical Stitches",
   "sliderSubtitle": "Drag the slider to see how our digitizers convert flat graphic files into high-density embroidered thread textures.",
-  "sliderBadge": "Master Tajima Vector-to-Stitch Digitizing"
+  "sliderBadge": "Master Tajima Vector-to-Stitch Digitizing",
+  "statPatchesSewn": "1.8M+",
+  "statOnTimeDelivery": "99.8%",
+  "statProofSpeed": "6 Hours",
+  "statCountriesShipped": "50+",
+  "companyAddress": "Suite 400, Industrial Arts District, Dallas, TX 75201, USA",
+  "workingHours": "Mon - Sat: 8:00 AM - 8:00 PM EST",
+  "socialInstagram": "https://instagram.com/bdigitizing",
+  "socialFacebook": "https://facebook.com/bdigitizing",
+  "socialYoutube": "https://youtube.com/@bdigitizing",
+  "socialLinkedin": "https://linkedin.com/company/bdigitizing",
+  "socialTwitter": "https://twitter.com/bdigitizing",
+  "socialProofEnabled": true,
+  "socialProofIntervalSeconds": 12,
+  "siteTitle": "BDigitizing | Custom Patches Manufacturer & Digitizing",
+  "metaDescription": "Order custom embroidered, velcro, leather, and woven patches directly from the factory. Free digital proof in 6 hours, fast worldwide shipping."
 }

@@ -5,9 +5,25 @@ import Link from 'next/link';
 
 interface FooterProps {
   onOpenQuote?: () => void;
+  socialInstagram?: string;
+  socialFacebook?: string;
+  socialYoutube?: string;
+  socialLinkedin?: string;
+  supportEmail?: string;
+  supportPhone?: string;
+  companyAddress?: string;
 }
 
-export default function Footer({ onOpenQuote }: FooterProps) {
+export default function Footer({
+  onOpenQuote,
+  socialInstagram = 'https://instagram.com/bdigitizing',
+  socialFacebook = 'https://facebook.com/bdigitizing',
+  socialYoutube = 'https://youtube.com/@bdigitizing',
+  socialLinkedin = 'https://linkedin.com/company/bdigitizing',
+  supportEmail = 'support@bdigitizing.com',
+  supportPhone = '+1 (800) 555-7282',
+  companyAddress = 'Suite 400, Industrial Arts District, Dallas, TX 75201, USA',
+}: FooterProps) {
   return (
     <footer id="footer" className="bg-[#0e1015] text-slate-400 text-xs border-t border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -63,7 +79,7 @@ export default function Footer({ onOpenQuote }: FooterProps) {
           {/* Social Icons */}
           <div className="flex items-center gap-4 text-slate-400">
             <a
-              href="https://facebook.com"
+              href={socialFacebook}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Facebook"
@@ -74,7 +90,7 @@ export default function Footer({ onOpenQuote }: FooterProps) {
               </svg>
             </a>
             <a
-              href="https://instagram.com"
+              href={socialInstagram}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Instagram"
@@ -85,7 +101,7 @@ export default function Footer({ onOpenQuote }: FooterProps) {
               </svg>
             </a>
             <a
-              href="https://youtube.com"
+              href={socialYoutube}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="YouTube"
@@ -96,7 +112,7 @@ export default function Footer({ onOpenQuote }: FooterProps) {
               </svg>
             </a>
             <a
-              href="https://linkedin.com"
+              href={socialLinkedin}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="LinkedIn"

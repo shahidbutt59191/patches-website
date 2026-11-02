@@ -144,7 +144,14 @@ export default function HomePage() {
         />
 
         {/* 6. Why Choose BDigitizing?: 4 Feature Icons + Stats + Stitched "CUSTOM PATCHES" Banner */}
-        <WhyChooseUs />
+        <WhyChooseUs
+          statsData={{
+            patchesSewn: settings.statPatchesSewn,
+            onTimeDelivery: settings.statOnTimeDelivery,
+            proofSpeed: settings.statProofSpeed,
+            countriesShipped: settings.statCountriesShipped,
+          }}
+        />
 
         {/* 9. Simple Ordering Process: 4 Connected Numbered Steps with Timing Badges */}
         <Process onOpenQuote={() => handleOpenQuote()} />
@@ -163,16 +170,27 @@ export default function HomePage() {
           onOpenQuote={() => handleOpenQuote()}
           promoCode={settings.promoCode}
           discountRate={settings.discountRate}
+          items={settings.faqs}
         />
       </main>
 
       {/* 13. Dark Footer */}
-      <Footer onOpenQuote={() => handleOpenQuote()} />
+      <Footer
+        onOpenQuote={() => handleOpenQuote()}
+        socialInstagram={settings.socialInstagram}
+        socialFacebook={settings.socialFacebook}
+        socialYoutube={settings.socialYoutube}
+        socialLinkedin={settings.socialLinkedin}
+        supportEmail={settings.supportEmail}
+        supportPhone={settings.supportPhone}
+        companyAddress={settings.companyAddress}
+      />
 
       {/* Floating Assistants: Live Order Social Proof Toast & 24/7 WhatsApp Desk */}
       <FloatingAssistants
         whatsappNumber={settings.whatsappNumber}
         onOpenQuote={() => handleOpenQuote()}
+        socialProofEnabled={settings.socialProofEnabled}
       />
 
       {/* Global Interactive Modals */}
