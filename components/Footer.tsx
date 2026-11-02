@@ -58,6 +58,9 @@ export default function Footer({
             <a href="#services" className="hover:text-orange-400 transition-colors">
               Custom Patches
             </a>
+            <a href="#pricing" className="hover:text-orange-400 transition-colors">
+              Pricing
+            </a>
             <a href="#portfolio" className="hover:text-orange-400 transition-colors">
               Portfolio
             </a>

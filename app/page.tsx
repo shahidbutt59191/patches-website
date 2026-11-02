@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import Services from '@/components/Services';
+import PricingCards from '@/components/PricingCards';
 import BeforeAfterSlider from '@/components/BeforeAfterSlider';
 import LivePatchStudio from '@/components/LivePatchStudio';
 import WhyChooseUs from '@/components/WhyChooseUs';
@@ -122,7 +123,14 @@ export default function HomePage() {
         {/* 3. Our Patch Services: 5 Cards (Embroidered, Iron-On, Velcro, Woven, Leather) */}
         <Services onOpenQuote={handleOpenQuote} />
 
-        {/* 4. Interactive Vector-to-Stitch Digitizing Before & After Slider */}
+        {/* 4. Transparent Batch Volume & Material Pricing Cards */}
+        <PricingCards
+          onOpenQuote={handleOpenQuote}
+          onOpenQuoteWithSpecs={handleOpenQuoteWithSpecs}
+          settings={settings}
+        />
+
+        {/* 5. Interactive Vector-to-Stitch Digitizing Before & After Slider */}
         <BeforeAfterSlider
           onOpenQuote={() => handleOpenQuote()}
           beforeImage={settings.sliderBeforeImage}

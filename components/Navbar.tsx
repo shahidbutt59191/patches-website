@@ -147,6 +147,9 @@ export default function Navbar({
             <a href="#services" className="hover:text-orange-500 transition-colors">
               Custom Patches
             </a>
+            <a href="#pricing" className="hover:text-orange-500 transition-colors font-bold text-orange-600">
+              Pricing Cards
+            </a>
             <a href="#portfolio" className="hover:text-orange-500 transition-colors">
               Portfolio
             </a>
@@ -208,6 +211,13 @@ export default function Navbar({
                 className="hover:text-orange-500"
               >
                 Custom Patches
+              </a>
+              <a
+                href="#pricing"
+                onClick={() => setMobileMenuOpen(false)}
+                className="hover:text-orange-500 font-bold text-orange-600"
+              >
+                Pricing Cards
               </a>
               <a
                 href="#portfolio"
