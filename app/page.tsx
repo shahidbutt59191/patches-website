@@ -194,6 +194,7 @@ export default function HomePage() {
         whatsappNumber={settings.whatsappNumber}
         onOpenQuote={() => handleOpenQuote()}
         socialProofEnabled={settings.socialProofEnabled}
+        intervalSeconds={settings.socialProofIntervalSeconds}
       />
 
       {/* Global Interactive Modals */}
