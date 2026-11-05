@@ -223,7 +223,6 @@ export default function AdminDashboardPage() {
     | 'pricing_cards'
     | 'pricing'
     | 'portfolio'
-    | 'slider'
     | 'reviews'
     | 'faqs'
     | 'settings'
@@ -1064,7 +1063,6 @@ export default function AdminDashboardPage() {
             { id: 'pricing_cards', label: 'Patch Pricing Cards', icon: <Tag className="w-4 h-4" />, badge: (settings.patchPricingCards || DEFAULT_PATCH_PRICING_CARDS).length },
             { id: 'pricing', label: 'Pricing & Surcharges', icon: <DollarSign className="w-4 h-4" /> },
             { id: 'portfolio', label: 'Portfolio Specimens', icon: <ImageIcon className="w-4 h-4" />, badge: (settings.portfolio || []).length },
-            { id: 'slider', label: 'Before/After Slider', icon: <Wand2 className="w-4 h-4" /> },
             { id: 'reviews', label: 'Customer Reviews', icon: <Star className="w-4 h-4" />, badge: (settings.reviews || []).length },
             { id: 'faqs', label: 'FAQs & Help Desk', icon: <HelpCircle className="w-4 h-4" />, badge: (settings.faqs || DEFAULT_FAQS).length },
             { id: 'settings', label: 'Website & Brand Settings', icon: <Settings className="w-4 h-4" /> },
@@ -2545,162 +2543,7 @@ export default function AdminDashboardPage() {
             </div>
           )}
 
-          {/* TAB 6: BEFORE / AFTER SLIDER */}
-          {activeTab === 'slider' && (
-            <div className="space-y-6 animate-in fade-in duration-200">
-              
-              <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-                <div>
-                  <h1 className="text-2xl font-black text-white tracking-tight">
-                    Before / After Digitizing Comparison Slider
-                  </h1>
-                  <p className="text-xs text-slate-400 mt-1">
-                    Control 2D vector graphic file vs. 3D physical embroidery stitch photo and labels.
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleSaveSettings()}
-                  disabled={isSavingSettings}
-                  className="btn-orange px-5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer self-start shadow-lg"
-                >
-                  <Save className="w-4 h-4" />
-                  <span>{isSavingSettings ? 'Publishing...' : 'Publish Slider'}</span>
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                
-                {/* Inputs */}
-                <div className="bg-[#141722] border border-slate-800 rounded-2xl p-6 space-y-4">
-                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                    <Wand2 className="w-4 h-4 text-orange-400" />
-                    <span>Slider Media &amp; Headlines</span>
-                  </h3>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 mb-1">Section Badge</label>
-                    <input
-                      type="text"
-                      value={settings.sliderBadge}
-                      onChange={(e) => setSettings({ ...settings, sliderBadge: e.target.value })}
-                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 mb-1">Section Title</label>
-                    <input
-                      type="text"
-                      value={settings.sliderTitle}
-                      onChange={(e) => setSettings({ ...settings, sliderTitle: e.target.value })}
-                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 mb-1">Section Subtitle</label>
-                    <textarea
-                      rows={2}
-                      value={settings.sliderSubtitle}
-                      onChange={(e) => setSettings({ ...settings, sliderSubtitle: e.target.value })}
-                      className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
-                    />
-                  </div>
-
-                  <div className="border-t border-slate-800 pt-3 space-y-3">
-                    <div>
-                      <label className="block text-xs font-bold text-slate-400 mb-1">
-                        Left: Before (2D Vector File) Image URL
-                      </label>
-                      <input
-                        type="text"
-                        value={settings.sliderBeforeImage}
-                        onChange={(e) => setSettings({ ...settings, sliderBeforeImage: e.target.value })}
-                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold text-slate-400 mb-1">
-                        Left: Before Label Text
-                      </label>
-                      <input
-                        type="text"
-                        value={settings.sliderBeforeLabel}
-                        onChange={(e) => setSettings({ ...settings, sliderBeforeLabel: e.target.value })}
-                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="border-t border-slate-800 pt-3 space-y-3">
-                    <div>
-                      <label className="block text-xs font-bold text-slate-400 mb-1">
-                        Right: After (3D Tajima Stitches) Image URL
-                      </label>
-                      <input
-                        type="text"
-                        value={settings.sliderAfterImage}
-                        onChange={(e) => setSettings({ ...settings, sliderAfterImage: e.target.value })}
-                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold text-slate-400 mb-1">
-                        Right: After Label Text
-                      </label>
-                      <input
-                        type="text"
-                        value={settings.sliderAfterLabel}
-                        onChange={(e) => setSettings({ ...settings, sliderAfterLabel: e.target.value })}
-                        className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Live Preview */}
-                <div className="bg-[#141722] border border-slate-800 rounded-2xl p-6 flex flex-col justify-between space-y-4">
-                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                    <Eye className="w-4 h-4 text-orange-400" />
-                    <span>Slider Comparison Preview</span>
-                  </h3>
-
-                  <div className="grid grid-cols-2 gap-3 h-64">
-                    <div className="relative rounded-xl overflow-hidden border border-slate-700 bg-white">
-                      <img
-                        src={settings.sliderBeforeImage}
-                        alt="Before Preview"
-                        className="w-full h-full object-contain p-2"
-                      />
-                      <span className="absolute bottom-2 left-2 bg-slate-900/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-md">
-                        {settings.sliderBeforeLabel}
-                      </span>
-                    </div>
-
-                    <div className="relative rounded-xl overflow-hidden border border-slate-700 bg-slate-950">
-                      <img
-                        src={settings.sliderAfterImage}
-                        alt="After Preview"
-                        className="w-full h-full object-cover"
-                      />
-                      <span className="absolute bottom-2 right-2 bg-orange-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-md">
-                        {settings.sliderAfterLabel}
-                      </span>
-                    </div>
-                  </div>
-
-                  <p className="text-xs text-slate-400 text-center">
-                    Drag-handle is rendered interactively on the live storefront using this imagery.
-                  </p>
-                </div>
-
-              </div>
-
-            </div>
-          )}
-
-          {/* TAB 7: REVIEWS */}
+          {/* TAB 6: REVIEWS */}
           {activeTab === 'reviews' && (
             <div className="space-y-6 animate-in fade-in duration-200">
               
