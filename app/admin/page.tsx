@@ -236,7 +236,7 @@ export default function AdminDashboardPage() {
   const [saveToast, setSaveToast] = useState('');
 
   // Orders, Quotes & Portfolio Data
-  const [orders, setOrders] = useState<PatchOrderItem[]>(INITIAL_ORDERS);
+  const [orders, setOrders] = useState<PatchOrderItem[]>([]);
   const [quotes, setQuotes] = useState<QuoteItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -309,11 +309,103 @@ export default function AdminDashboardPage() {
   const [simBorder, setSimBorder] = useState<'merrowed' | 'laser_cut'>('merrowed');
   const [simRush, setSimRush] = useState(false);
 
+  // Helper to extract real quote pricing, backing, dimensions and specifications
+  const parseQuoteDetails = (q: QuoteItem, priceSettings?: SiteSettings) => {
+    const notesStr = q.notes || '';
+
+    // 1. Extract Real Total Amount from notes string (e.g. "Total: $1662.50")
+    let totalAmount = 0;
+    const totalMatch = notesStr.match(/Total:\s*\$?([0-9,]+(?:\.[0-9]{1,2})?)/i);
+    if (totalMatch && totalMatch[1]) {
+      totalAmount = parseFloat(totalMatch[1].replace(/,/g, ''));
+    }
+
+    // 2. Extract Attachment Backing
+    let backing = 'Standard Backing';
+    const backingMatch = notesStr.match(/Backing:\s*([^,\)]+)/i);
+    if (backingMatch && backingMatch[1]) {
+      const rawB = backingMatch[1].trim();
+      if (rawB.includes('velcro')) backing = 'Velcro Hook & Loop';
+      else if (rawB.includes('iron')) backing = 'Heat-Seal Iron-On';
+      else if (rawB.includes('peel') || rawB.includes('adhesive')) backing = '3M Peel & Stick Adhesive';
+      else if (rawB.includes('sew')) backing = 'Plain Sew-On';
+      else backing = rawB;
+    }
+
+    // 3. Extract Border Type
+    let border = 'Merrowed Overlock';
+    const borderMatch = notesStr.match(/Border:\s*([^,\)]+)/i);
+    if (borderMatch && borderMatch[1]) {
+      const rawBorder = borderMatch[1].trim();
+      if (rawBorder.includes('laser')) border = 'Laser Cut Smooth';
+      else if (rawBorder.includes('merrow')) border = 'Merrowed Overlock';
+      else border = rawBorder;
+    }
+
+    // 4. Extract Shipping Address
+    let address = 'Free Tracked Courier Delivery';
+    const addressMatch = notesStr.match(/Address:\s*([^.]+)\./i);
+    if (addressMatch && addressMatch[1] && addressMatch[1].trim().length > 1) {
+      address = addressMatch[1].trim();
+    }
+
+    // 5. Extract Clean Customer Notes (without technical string dump)
+    let cleanNotes = notesStr;
+    const userNotesMatch = notesStr.match(/Notes:\s*(.*?)(?:\.\s*Total:|$)/i);
+    if (userNotesMatch && userNotesMatch[1] && userNotesMatch[1].trim().length > 0) {
+      cleanNotes = userNotesMatch[1].trim();
+    }
+
+    // 6. Dynamic Pricing Fallback calculation if not stored in notes
+    const qty = Number(q.quantity) || 100;
+    if (!totalAmount || isNaN(totalAmount) || totalAmount <= 0) {
+      let width = 3.0;
+      let height = 3.0;
+      const dimMatch = (q.dimensions || '').match(/([0-9.]+)"?\s*[xX*]\s*([0-9.]+)/);
+      if (dimMatch) {
+        width = parseFloat(dimMatch[1]) || 3.0;
+        height = parseFloat(dimMatch[2]) || 3.0;
+      }
+      const size = Math.max(1.5, (width + height) / 2);
+      const style = (q.patch_type || 'embroidered').toLowerCase();
+      let base = (priceSettings?.priceEmbroidered ?? 1.85) + (size - 1.5) * 0.45;
+      if (style.includes('pvc')) base = (priceSettings?.pricePvc ?? 2.55) + (size - 1.5) * 0.50;
+      else if (style.includes('leather')) base = (priceSettings?.priceLeather ?? 2.45) + (size - 1.5) * 0.45;
+      else if (style.includes('woven')) base = (priceSettings?.priceWoven ?? 1.65) + (size - 1.5) * 0.40;
+      else if (style.includes('velcro')) base = (priceSettings?.priceVelcro ?? 2.35) + (size - 1.5) * 0.45;
+      else if (style.includes('iron')) base = (priceSettings?.priceIronOn ?? 1.95) + (size - 1.5) * 0.45;
+
+      if (backing.toLowerCase().includes('velcro')) base += (priceSettings?.velcroFee ?? 0.45);
+      else if (backing.toLowerCase().includes('iron')) base += (priceSettings?.ironOnFee ?? 0.20);
+      else if (backing.toLowerCase().includes('peel') || backing.toLowerCase().includes('adhesive')) base += (priceSettings?.peelStickFee ?? 0.35);
+
+      let discount = 0;
+      if (qty >= 1000) discount = 0.50;
+      else if (qty >= 500) discount = 0.40;
+      else if (qty >= 250) discount = 0.30;
+      else if (qty >= 100) discount = 0.22;
+      else if (qty >= 50) discount = 0.12;
+
+      const unitPrice = Math.max(0.75, base * (1 - discount));
+      totalAmount = Number((unitPrice * qty).toFixed(2));
+    }
+
+    return {
+      totalAmount,
+      subtotal: totalAmount,
+      backing,
+      border,
+      address,
+      cleanNotes,
+    };
+  };
+
   // Fetch Settings & Quotes from API
   const refreshData = useCallback(async () => {
     try {
       // 1. Fetch Settings with cache-busting
       const setRes = await fetch(`/api/settings?t=${Date.now()}`, { cache: 'no-store' });
+      let currentSettings = { ...DEFAULT_SETTINGS };
       if (setRes.ok) {
         const setData = await setRes.json();
         const merged = { ...DEFAULT_SETTINGS, ...setData };
@@ -335,6 +427,7 @@ export default function AdminDashboardPage() {
         if (!merged.bulkTiers || merged.bulkTiers.length === 0) {
           merged.bulkTiers = DEFAULT_SETTINGS.bulkTiers;
         }
+        currentSettings = merged;
         setSettings(merged);
         try {
           localStorage.setItem('apex_live_settings', JSON.stringify(merged));
@@ -345,36 +438,81 @@ export default function AdminDashboardPage() {
       const ordRes = await fetch(`/api/admin/orders?t=${Date.now()}`, { cache: 'no-store' });
       if (ordRes.ok) {
         const ordData = await ordRes.json();
-        if (ordData.quotes && ordData.quotes.length > 0) {
-          setQuotes(ordData.quotes);
+        
+        // Map quotes into orders view with REAL dynamic pricing and specs
+        const mappedFromQuotes: PatchOrderItem[] = (ordData.quotes || []).map((q: QuoteItem) => {
+          const parsed = parseQuoteDetails(q, currentSettings);
+          const styleRaw = q.patch_type || 'Embroidered';
+          const patchStyleFormatted = styleRaw.charAt(0).toUpperCase() + styleRaw.slice(1);
 
-          // Map quotes into orders view
-          const mappedFromQuotes: PatchOrderItem[] = ordData.quotes.map((q: QuoteItem) => ({
+          // Map database status to UI status
+          let uiStatus: PatchOrderItem['status'] = 'proof_review';
+          if (q.status === 'in_production' || q.status === 'mass_production' || q.status === 'production') {
+            uiStatus = 'mass_production';
+          } else if (q.status === 'mold_sampling') {
+            uiStatus = 'mold_sampling';
+          } else if (q.status === 'backing_qc') {
+            uiStatus = 'backing_qc';
+          } else if (q.status === 'shipped') {
+            uiStatus = 'shipped';
+          } else {
+            uiStatus = 'proof_review';
+          }
+
+          return {
             order_id: q.ref_code || `BD-${q.id.slice(0, 5)}`,
-            title: `Custom ${q.patch_type || 'Embroidered'} Patch Run`,
-            patch_type: q.patch_type || 'Embroidered',
+            title: `Custom ${patchStyleFormatted} Patch Run`,
+            patch_type: patchStyleFormatted,
             dimensions: q.dimensions || '3.0" x 3.0"',
             quantity: Number(q.quantity) || 100,
-            backing: 'Customer Selected',
+            backing: parsed.backing,
+            border: parsed.border,
             customer_name: q.full_name || 'Direct Client',
             email: q.email || '',
             phone: q.phone || '',
-            shipping_address: 'Free Tracked Courier Delivery',
-            subtotal: 185.0,
-            total_amount: 185.0,
+            shipping_address: parsed.address,
+            subtotal: parsed.subtotal,
+            total_amount: parsed.totalAmount,
             paid: false,
-            status: (q.status as any) || 'proof_review',
+            status: uiStatus,
             artwork_thumbnail: q.artwork_url,
             created_at: q.created_at || new Date().toISOString(),
-            notes: q.notes,
-          }));
+            notes: parsed.cleanNotes || q.notes,
+            courier: (q as any).courier || 'FedEx Express',
+            tracking_number: (q as any).tracking_number || '',
+          };
+        });
 
-          // Merge without duplicates
-          setOrders((prev) => {
-            const existingIds = new Set(prev.map((o) => o.order_id));
-            const newOnes = mappedFromQuotes.filter((m) => !existingIds.has(m.order_id));
-            return [...newOnes, ...prev];
-          });
+        const mappedFromOrders: PatchOrderItem[] = (ordData.orders || []).map((o: any) => ({
+          order_id: o.order_id || `ORD-${o.id}`,
+          title: `Custom ${o.patch_type || 'Embroidered'} Patch Order`,
+          patch_type: o.patch_type || 'Embroidered',
+          dimensions: o.dimensions || '3.0" x 3.0"',
+          quantity: Number(o.quantity) || 100,
+          backing: o.backing || 'Standard Backing',
+          border: o.border || 'Merrowed Overlock',
+          customer_name: o.customer_name || 'Direct Client',
+          email: o.email || '',
+          phone: o.phone || '',
+          shipping_address: o.shipping_address || 'Free Worldwide Tracked Delivery',
+          subtotal: parseFloat(o.subtotal) || parseFloat(o.total_amount) || 185.0,
+          total_amount: parseFloat(o.total_amount) || parseFloat(o.subtotal) || 185.0,
+          paid: o.paid ?? false,
+          status: o.status || 'proof_review',
+          artwork_thumbnail: o.artwork_thumbnail,
+          created_at: o.created_at || new Date().toISOString(),
+          notes: o.notes,
+          courier: o.courier || 'FedEx Express',
+          tracking_number: o.tracking_number || '',
+        }));
+
+        if (ordData.quotes) {
+          setQuotes(ordData.quotes);
+        }
+
+        const allRealOrders = [...mappedFromQuotes, ...mappedFromOrders];
+        if (allRealOrders.length > 0) {
+          setOrders(allRealOrders);
         }
       }
     } catch (err) {
@@ -672,7 +810,7 @@ export default function AdminDashboardPage() {
     });
   };
 
-  // Update Status Function
+  // Update Status Function with Backend Persistence
   const handleUpdateStatus = async (orderId: string, newStatus: PatchOrderItem['status']) => {
     setOrders((prev) =>
       prev.map((o) => (o.order_id === orderId ? { ...o, status: newStatus } : o))
@@ -680,10 +818,19 @@ export default function AdminDashboardPage() {
     if (selectedOrder && selectedOrder.order_id === orderId) {
       setSelectedOrder({ ...selectedOrder, status: newStatus });
     }
+    try {
+      await fetch('/api/admin/orders', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: orderId, status: newStatus }),
+      });
+    } catch (err) {
+      console.warn('Status update sync error:', err);
+    }
   };
 
-  // Update Tracking Number & Courier
-  const handleUpdateTracking = (orderId: string, courier: string, trackingNumber: string) => {
+  // Update Tracking Number & Courier with Backend Persistence
+  const handleUpdateTracking = async (orderId: string, courier: string, trackingNumber: string) => {
     setOrders((prev) =>
       prev.map((o) =>
         o.order_id === orderId ? { ...o, courier, tracking_number: trackingNumber } : o
@@ -691,6 +838,15 @@ export default function AdminDashboardPage() {
     );
     if (selectedOrder && selectedOrder.order_id === orderId) {
       setSelectedOrder({ ...selectedOrder, courier, tracking_number: trackingNumber });
+    }
+    try {
+      await fetch('/api/admin/orders', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: orderId, courier, tracking_number: trackingNumber }),
+      });
+    } catch (err) {
+      console.warn('Tracking update sync error:', err);
     }
   };
 
@@ -1128,7 +1284,7 @@ export default function AdminDashboardPage() {
                           </td>
                           <td className="py-3 font-mono text-slate-300">{order.quantity} pcs</td>
                           <td className="py-3 font-mono font-bold text-white">
-                            ${order.total_amount?.toFixed(2) || '185.00'}
+                            ${(order.total_amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                           </td>
                           <td className="py-3">
                             <span
@@ -1257,7 +1413,7 @@ export default function AdminDashboardPage() {
                             {order.quantity} pcs
                           </td>
                           <td className="p-4 font-mono font-bold text-emerald-400">
-                            ${order.total_amount?.toFixed(2) || '185.00'}
+                            ${(order.total_amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                           </td>
                           <td className="p-4">
                             <select
@@ -3679,10 +3835,20 @@ export default function AdminDashboardPage() {
                   <span>Quantity:</span>
                   <span className="font-bold text-white">{selectedOrder.quantity} pieces</span>
                 </div>
+                <div className="flex justify-between text-slate-300">
+                  <span>Backing:</span>
+                  <span className="font-bold text-white">{selectedOrder.backing}</span>
+                </div>
+                {selectedOrder.border && (
+                  <div className="flex justify-between text-slate-300">
+                    <span>Border:</span>
+                    <span className="font-bold text-white">{selectedOrder.border}</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-slate-300 pt-1 border-t border-slate-800">
                   <span>Total Amount:</span>
                   <span className="font-bold text-emerald-400 text-sm">
-                    ${selectedOrder.total_amount?.toFixed(2)}
+                    ${(selectedOrder.total_amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </span>
                 </div>
               </div>
