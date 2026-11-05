@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
-import { ArrowRight, Sparkles, ChevronLeft, ChevronRight, Layers, Eye } from 'lucide-react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { ArrowRight, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface ServicesProps {
   onOpenQuote?: (styleId?: string) => void;
@@ -124,62 +124,104 @@ export default function Services({ onOpenQuote }: ServicesProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   const filteredServices = activeCategory === 'all'
     ? SERVICES_LIST
     : SERVICES_LIST.filter((s) => s.category.includes(activeCategory));
 
-  // Check scroll boundary to update button states
-  const checkScrollBounds = () => {
+  // Measure card step (width + gap) dynamically for precise scroll calculations
+  const getCardMetrics = useCallback(() => {
+    if (!scrollRef.current) return { cardWidth: 295, gap: 16 };
+    const firstCard = scrollRef.current.children[0] as HTMLElement | undefined;
+    if (!firstCard) return { cardWidth: 295, gap: 16 };
+    const computed = window.getComputedStyle(scrollRef.current);
+    const gap = parseFloat(computed.columnGap || computed.gap) || 16;
+    return { cardWidth: firstCard.offsetWidth, gap };
+  }, []);
+
+  // Update bounds & active slide index
+  const checkScrollBounds = useCallback(() => {
     if (!scrollRef.current) return;
     const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
-    setCanScrollLeft(scrollLeft > 10);
-    setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
-  };
+    setCanScrollLeft(scrollLeft > 15);
+    setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 15);
+
+    const { cardWidth, gap } = getCardMetrics();
+    const step = cardWidth + gap;
+    if (step > 0) {
+      const idx = Math.round(scrollLeft / step);
+      setActiveIndex(Math.max(0, Math.min(filteredServices.length - 1, idx)));
+    }
+  }, [filteredServices.length, getCardMetrics]);
 
   useEffect(() => {
     const el = scrollRef.current;
     if (el) {
       checkScrollBounds();
-      el.addEventListener('scroll', checkScrollBounds);
-      return () => el.removeEventListener('scroll', checkScrollBounds);
+      el.addEventListener('scroll', checkScrollBounds, { passive: true });
+      window.addEventListener('resize', checkScrollBounds);
+      return () => {
+        el.removeEventListener('scroll', checkScrollBounds);
+        window.removeEventListener('resize', checkScrollBounds);
+      };
     }
-  }, [filteredServices]);
+  }, [checkScrollBounds]);
 
-  const handleScroll = (direction: 'left' | 'right') => {
+  // Direct scroll to card index
+  const scrollToIndex = (index: number) => {
     if (!scrollRef.current) return;
-    const scrollAmount = 340;
-    scrollRef.current.scrollBy({
-      left: direction === 'left' ? -scrollAmount : scrollAmount,
+    const { cardWidth, gap } = getCardMetrics();
+    const step = cardWidth + gap;
+    scrollRef.current.scrollTo({
+      left: index * step,
       behavior: 'smooth',
     });
+    setActiveIndex(index);
+  };
+
+  const handleScroll = (direction: 'left' | 'right') => {
+    const target = direction === 'left' ? activeIndex - 1 : activeIndex + 1;
+    const clamped = Math.max(0, Math.min(filteredServices.length - 1, target));
+    scrollToIndex(clamped);
+  };
+
+  const handleCategorySelect = (catId: string) => {
+    setActiveCategory(catId);
+    setActiveIndex(0);
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+    }
   };
 
   return (
-    <section id="services" className="py-16 sm:py-22 bg-slate-50/70 border-t border-b border-slate-100 overflow-hidden">
+    <section id="services" className="py-12 sm:py-20 bg-slate-50/70 border-t border-b border-slate-100 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header Row: Title & Navigation Controls */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 sm:gap-6 mb-6 sm:mb-8">
           <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-100/70 text-orange-600 text-xs font-bold mb-3">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-100/70 text-orange-600 text-xs font-bold mb-2.5 sm:mb-3">
               <Sparkles className="w-3.5 h-3.5" />
               <span>Industrial Tajima Multi-Head Embroidery</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
+            <h2 className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight">
               Our Patch Services
             </h2>
-            <p className="mt-2 text-sm sm:text-base text-slate-600 max-w-xl">
-              Choose from a variety of custom patch styles. Side-scroll to explore each high-density material specification.
+            <p className="mt-1.5 sm:mt-2 text-xs sm:text-base text-slate-600 max-w-xl">
+              Choose from a variety of custom patch styles. Swipe or scroll to explore each high-density material specification.
             </p>
           </div>
 
-          {/* Navigation Controls: Filter Tabs + Side-Scroll Arrows */}
-          <div className="flex flex-wrap items-center gap-3">
-            {/* Category Pills */}
-            <div className="inline-flex flex-wrap items-center gap-1.5 bg-white p-1 rounded-full border border-slate-200/90 shadow-2xs">
+          {/* Navigation Controls: Horizontal Category Pills + Desktop Arrows */}
+          <div className="flex items-center justify-between sm:justify-end gap-2.5 sm:gap-3 w-full md:w-auto">
+            {/* Category Pills - Scrollable horizontally on small mobile screens without wrapping awkwardly */}
+            <div
+              className="flex items-center gap-1 sm:gap-1.5 bg-white p-1 rounded-full border border-slate-200/90 shadow-2xs overflow-x-auto scrollbar-none max-w-full touch-pan-x"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
               {[
-                { id: 'all', label: `All Styles (${SERVICES_LIST.length})` },
+                { id: 'all', label: `All (${SERVICES_LIST.length})` },
                 { id: 'tactical', label: 'Tactical' },
                 { id: 'apparel', label: 'Apparel' },
                 { id: 'lifestyle', label: 'Lifestyle' },
@@ -187,11 +229,8 @@ export default function Services({ onOpenQuote }: ServicesProps) {
                 <button
                   type="button"
                   key={cat.id}
-                  onClick={() => {
-                    setActiveCategory(cat.id);
-                    if (scrollRef.current) scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
-                  }}
-                  className={`px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                  onClick={() => handleCategorySelect(cat.id)}
+                  className={`whitespace-nowrap px-3 py-1 sm:py-1 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer ${
                     activeCategory === cat.id
                       ? 'bg-orange-500 text-white shadow-xs'
                       : 'text-slate-600 hover:text-orange-600'
@@ -202,8 +241,8 @@ export default function Services({ onOpenQuote }: ServicesProps) {
               ))}
             </div>
 
-            {/* Left / Right Carousel Arrow Buttons */}
-            <div className="flex items-center gap-1.5">
+            {/* Desktop Carousel Arrow Buttons */}
+            <div className="hidden sm:flex items-center gap-1.5 shrink-0">
               <button
                 type="button"
                 onClick={() => handleScroll('left')}
@@ -226,19 +265,25 @@ export default function Services({ onOpenQuote }: ServicesProps) {
           </div>
         </div>
 
-        {/* Horizontal Side-Scrolling Carousel Track */}
+        {/* Horizontal Side-Scrolling Carousel Track - Edge-to-Edge on Mobile */}
         <div
           ref={scrollRef}
-          className="flex gap-6 overflow-x-auto scroll-smooth py-3 px-1 snap-x snap-mandatory"
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          className="flex gap-4 sm:gap-6 overflow-x-auto scroll-smooth py-3 px-4 sm:px-1 -mx-4 sm:mx-0 snap-x snap-mandatory touch-pan-x"
+          style={{
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
+            WebkitOverflowScrolling: 'touch',
+          }}
         >
-          {filteredServices.map((service) => (
+          {filteredServices.map((service, index) => (
             <div
               key={service.id}
-              className="w-[285px] sm:w-[325px] shrink-0 snap-start bg-white rounded-3xl border border-slate-200/90 p-5 flex flex-col shadow-xs hover:shadow-xl hover:border-orange-400 hover:-translate-y-1.5 transition-all duration-300 group relative overflow-hidden"
+              className={`w-[80vw] max-w-[295px] sm:w-[325px] shrink-0 snap-center sm:snap-start bg-white rounded-2xl sm:rounded-3xl border ${
+                activeIndex === index ? 'border-orange-300 ring-2 ring-orange-400/20 shadow-md' : 'border-slate-200/90 shadow-xs'
+              } p-4 sm:p-5 flex flex-col hover:shadow-xl hover:border-orange-400 hover:-translate-y-1.5 transition-all duration-300 group relative overflow-hidden select-none`}
             >
               {/* Badges Bar */}
-              <div className="w-full flex justify-between items-center mb-3">
+              <div className="w-full flex justify-between items-center mb-2.5 sm:mb-3">
                 <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${service.tagColor}`}>
                   {service.tag}
                 </span>
@@ -248,21 +293,21 @@ export default function Services({ onOpenQuote }: ServicesProps) {
               </div>
 
               {/* Realistic Patch Image Frame */}
-              <div className="w-full h-44 rounded-2xl overflow-hidden relative mb-4 bg-slate-900 border border-slate-100/80 shadow-inner group">
+              <div className="w-full h-38 sm:h-44 rounded-xl sm:rounded-2xl overflow-hidden relative mb-3 sm:mb-4 bg-slate-900 border border-slate-100/80 shadow-inner group">
                 <img
                   src={service.image}
                   alt={service.title}
-                  className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   loading="lazy"
                 />
                 
                 {/* Visual Depth Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent pointer-events-none" />
 
-                {/* Floating Tag */}
+                {/* Floating Spec Tag */}
                 {service.badgeLabel && (
-                  <div className="absolute bottom-2.5 left-2.5 z-10">
-                    <span className="bg-slate-950/85 backdrop-blur-md text-white text-[10px] font-mono font-bold px-2.5 py-1 rounded-lg border border-white/20 shadow-xs flex items-center gap-1">
+                  <div className="absolute bottom-2 left-2 z-10">
+                    <span className="bg-slate-950/85 backdrop-blur-md text-white text-[9px] sm:text-[10px] font-mono font-bold px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md sm:rounded-lg border border-white/20 shadow-xs flex items-center gap-1">
                       <span className="w-1.5 h-1.5 rounded-full bg-orange-400" />
                       <span>{service.badgeLabel}</span>
                     </span>
@@ -271,35 +316,82 @@ export default function Services({ onOpenQuote }: ServicesProps) {
               </div>
 
               {/* Title & Subtitle */}
-              <h3 className="text-base font-bold text-slate-900 mb-1 group-hover:text-orange-600 transition-colors">
+              <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-0.5 group-hover:text-orange-600 transition-colors">
                 {service.title}
               </h3>
-              <p className="text-xs text-slate-500 mb-2 font-medium">
+              <p className="text-xs text-slate-500 mb-1.5 font-medium">
                 {service.subtitle}
               </p>
 
               {/* Description */}
-              <p className="text-[11px] text-slate-500 leading-relaxed line-clamp-2 mb-5">
+              <p className="text-xs text-slate-500 leading-relaxed line-clamp-2 mb-4">
                 {service.desc}
               </p>
 
-              {/* Action Button: Get a Quote */}
+              {/* Action Button: Get a Quote - Touch Optimized 44px min height */}
               <button
                 type="button"
                 onClick={() => onOpenQuote && onOpenQuote(service.id)}
-                className="mt-auto w-full py-2.5 px-4 rounded-xl border border-orange-500 text-orange-600 font-bold text-xs hover:bg-orange-500 hover:text-white transition-all flex items-center justify-center gap-1.5 shadow-2xs group-hover:shadow-md cursor-pointer"
+                className="mt-auto w-full min-h-[44px] py-2.5 px-4 rounded-xl border-2 border-orange-500 bg-orange-50/40 text-orange-600 font-bold text-xs sm:text-sm hover:bg-orange-500 hover:text-white active:bg-orange-600 active:text-white active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 shadow-2xs group-hover:shadow-md cursor-pointer touch-manipulation"
               >
                 <span>Get a Quote</span>
-                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:translate-x-1 transition-transform" />
               </button>
             </div>
           ))}
         </div>
 
-        {/* Mobile Swipe Hint */}
-        <div className="flex sm:hidden items-center justify-center gap-1 text-[11px] text-slate-400 mt-4 font-medium">
-          <span>← Swipe horizontally to see all patch styles →</span>
+        {/* Mobile & Tablet Interactive Navigation Bar (Dots + Thumb Controls + Counter) */}
+        <div className="flex items-center justify-between sm:justify-center gap-3 mt-4 sm:mt-6 pt-2">
+          {/* Mobile Prev Arrow */}
+          <button
+            type="button"
+            onClick={() => handleScroll('left')}
+            disabled={!canScrollLeft}
+            aria-label="Previous patch style"
+            className="sm:hidden w-10 h-10 rounded-full bg-white border border-slate-200 text-slate-700 active:bg-orange-50 active:border-orange-500 active:text-orange-600 disabled:opacity-25 disabled:cursor-not-allowed flex items-center justify-center shadow-xs cursor-pointer touch-manipulation"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+
+          {/* Pagination Dots (Interactive - Click to slide) */}
+          <div className="flex items-center gap-1.5">
+            {filteredServices.map((_, idx) => (
+              <button
+                type="button"
+                key={idx}
+                onClick={() => scrollToIndex(idx)}
+                aria-label={`Go to slide ${idx + 1}`}
+                className={`transition-all duration-300 rounded-full cursor-pointer touch-manipulation ${
+                  activeIndex === idx
+                    ? 'w-6 h-2 bg-orange-500'
+                    : 'w-2 h-2 bg-slate-300 hover:bg-slate-400'
+                }`}
+              />
+            ))}
+          </div>
+
+          {/* Current Slide Counter on Mobile */}
+          <div className="hidden xs:flex sm:hidden items-center text-[11px] font-bold text-slate-500 bg-white px-2.5 py-1 rounded-full border border-slate-200/80 shadow-2xs">
+            <span>{activeIndex + 1} / {filteredServices.length}</span>
+          </div>
+
+          {/* Mobile Next Arrow */}
+          <button
+            type="button"
+            onClick={() => handleScroll('right')}
+            disabled={!canScrollRight}
+            aria-label="Next patch style"
+            className="sm:hidden w-10 h-10 rounded-full bg-white border border-slate-200 text-slate-700 active:bg-orange-50 active:border-orange-500 active:text-orange-600 disabled:opacity-25 disabled:cursor-not-allowed flex items-center justify-center shadow-xs cursor-pointer touch-manipulation"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
         </div>
+
+        {/* Mobile Swipe Guidance Note */}
+        <p className="sm:hidden text-center text-[11px] text-slate-400 mt-2 font-medium">
+          Swipe sideways or tap arrows to view all patch types
+        </p>
 
       </div>
     </section>
