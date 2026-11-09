@@ -222,16 +222,6 @@ export default function Footer({
             </h4>
             <ul className="space-y-2 text-xs">
               <li>
-                <a href="#backings" className="hover:text-orange-400 transition-colors">
-                  Backings &amp; Fasteners
-                </a>
-              </li>
-              <li>
-                <a href="#comparison" className="hover:text-orange-400 transition-colors">
-                  Material Comparison
-                </a>
-              </li>
-              <li>
                 <a href="#pricing" className="hover:text-orange-400 transition-colors">
                   Bulk Pricing Tiers
                 </a>

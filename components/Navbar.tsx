@@ -115,12 +115,6 @@ export default function Navbar({
             <a href="#pricing" className="hover:text-orange-600 transition-colors">
               Pricing Cards
             </a>
-            <a href="#backings" className="hover:text-orange-600 transition-colors">
-              Backings
-            </a>
-            <a href="#comparison" className="hover:text-orange-600 transition-colors">
-              Compare
-            </a>
             <a href="#portfolio" className="hover:text-orange-600 transition-colors">
               Portfolio
             </a>
@@ -193,20 +187,6 @@ export default function Navbar({
                 className="hover:text-orange-600 py-1"
               >
                 Pricing Cards
-              </a>
-              <a
-                href="#backings"
-                onClick={() => setMobileMenuOpen(false)}
-                className="hover:text-orange-600 py-1"
-              >
-                Backings &amp; Finishes
-              </a>
-              <a
-                href="#comparison"
-                onClick={() => setMobileMenuOpen(false)}
-                className="hover:text-orange-600 py-1"
-              >
-                Patch Material Comparison
               </a>
               <a
                 href="#portfolio"

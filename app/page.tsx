@@ -5,8 +5,6 @@ import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import Services from '@/components/Services';
 import PricingCards from '@/components/PricingCards';
-import Backings from '@/components/Backings';
-import ComparisonTable from '@/components/ComparisonTable';
 import WhyChooseUs from '@/components/WhyChooseUs';
 import Process from '@/components/Process';
 import Portfolio from '@/components/Portfolio';
@@ -135,13 +133,7 @@ export default function HomePage() {
           settings={settings}
         />
 
-        {/* 5. Attachment Backing Guide: Velcro, Iron-On, Sew-On & 3M Adhesive */}
-        <Backings onOpenQuote={() => handleOpenQuote()} />
-
-        {/* 6. Side-by-Side Patch Material Comparison Matrix */}
-        <ComparisonTable onOpenQuote={handleOpenQuote} />
-
-        {/* 7. Why Choose BDigitizing?: Direct Factory Advantage & Live Looms */}
+        {/* 5. Why Choose BDigitizing?: Direct Factory Advantage & Live Looms */}
         <WhyChooseUs
           statsData={{
             patchesSewn: settings.statPatchesSewn,
