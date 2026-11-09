@@ -125,11 +125,11 @@ export default function FloatingAssistants({
 
   return (
     <>
-      {/* 1. Floating Recent Order Social Proof Toast (Bottom Left) */}
+      {/* 1. Floating Recent Order Social Proof Toast (Bottom Left on Desktop, hidden on mobile to avoid covering buttons) */}
       {socialProofEnabled && showOrderToast && !isDismissedByUser && (
         <div
           onClick={() => onOpenQuote?.()}
-          className="fixed bottom-6 left-6 z-40 max-w-sm bg-white/95 backdrop-blur-md rounded-2xl p-3.5 shadow-2xl border border-slate-200/90 flex items-start gap-3 animate-in slide-in-from-bottom-5 fade-in duration-300 cursor-pointer hover:border-orange-500/50 hover:shadow-orange-500/10 transition-all select-none"
+          className="fixed bottom-6 left-6 z-40 hidden sm:flex max-w-sm bg-white/95 backdrop-blur-md rounded-2xl p-3.5 shadow-2xl border border-slate-200/90 items-start gap-3 animate-in slide-in-from-bottom-5 fade-in duration-300 cursor-pointer hover:border-orange-500/50 hover:shadow-orange-500/10 transition-all select-none"
         >
           <div className="w-10 h-10 rounded-xl bg-orange-500/10 text-orange-600 flex items-center justify-center shrink-0 mt-0.5 border border-orange-500/20">
             <span className="text-lg">🧵</span>

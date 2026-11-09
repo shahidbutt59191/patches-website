@@ -2,10 +2,23 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Mail, Truck, Clock, Search, ArrowRight, Menu, X, Sparkles, Phone, ShieldCheck, Star } from 'lucide-react';
+import {
+  Mail,
+  Truck,
+  Clock,
+  Search,
+  ArrowRight,
+  Menu,
+  X,
+  Sparkles,
+  Phone,
+  ShieldCheck,
+  Star,
+  ChevronDown,
+} from 'lucide-react';
 
 interface NavbarProps {
-  onOpenQuote?: () => void;
+  onOpenQuote?: (styleId?: string) => void;
   onOpenSearch?: () => void;
   announcementText?: string;
   announcementEnabled?: boolean;
@@ -109,9 +122,69 @@ export default function Navbar({
             <Link href="/" className="text-orange-600 transition-colors">
               Home
             </Link>
-            <a href="#services" className="hover:text-orange-600 transition-colors">
-              Custom Patches
-            </a>
+
+            {/* Custom Patches Dropdown Menu */}
+            <div className="relative group py-2">
+              <a
+                href="#services"
+                className="inline-flex items-center gap-1 hover:text-orange-600 transition-colors cursor-pointer"
+              >
+                <span>Custom Patches</span>
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:text-orange-600 group-hover:rotate-180 transition-transform" />
+              </a>
+
+              {/* Mega-Dropdown Panel */}
+              <div className="absolute top-full -left-12 w-[540px] bg-white rounded-2xl shadow-2xl border border-slate-100 p-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 transform translate-y-2 group-hover:translate-y-0">
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  {[
+                    { id: 'embroidered', name: 'Embroidered Patches', tag: 'Most Popular', icon: '🧵', desc: 'Classic 100% thread coverage' },
+                    { id: 'pvc', name: '3D Molded PVC Rubber', tag: '100% Waterproof', icon: '🛡️', desc: 'Tactical sculpted relief depth' },
+                    { id: 'leather', name: 'Debossed Leather', tag: 'Rustic Luxury', icon: '🪵', desc: 'Laser-etched & debossed finish' },
+                    { id: 'woven', name: 'Micro Woven Patches', tag: '0.5mm Precision', icon: '🪡', desc: 'Ultra-fine typography & lines' },
+                    { id: 'chenille', name: 'Vintage Chenille', tag: 'Varsity Loop', icon: '🏈', desc: 'Textured collegiate letterman' },
+                    { id: 'iron-on', name: 'Heat-Seal Iron-On', tag: 'Fast Press', icon: '🔥', desc: 'Permanent thermal polymer' },
+                    { id: 'velcro', name: 'Tactical Velcro Patches', tag: 'Combat Grade', icon: '🎖️', desc: 'Pre-sewn hook & loop fasteners' },
+                    { id: 'sublimated', name: 'Photo Sublimated', tag: '1200 DPI HD', icon: '🎨', desc: 'Full gradient color spectrum' },
+                  ].map((item) => (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => {
+                        if (onOpenQuote) onOpenQuote(item.id);
+                        else {
+                          const el = document.getElementById('services');
+                          if (el) el.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }}
+                      className="p-2.5 rounded-xl text-left hover:bg-orange-50/70 border border-transparent hover:border-orange-100 transition-all flex items-start gap-2.5 group/item cursor-pointer"
+                    >
+                      <span className="text-xl shrink-0 mt-0.5">{item.icon}</span>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5 font-bold text-slate-900 group-hover/item:text-orange-600 transition-colors">
+                          <span className="truncate">{item.name}</span>
+                        </div>
+                        <p className="text-[11px] text-slate-500 truncate">{item.desc}</p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+
+                <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-xs bg-slate-50 -mx-4 -mb-4 p-3 rounded-b-2xl">
+                  <span className="text-slate-600 font-medium">
+                    ⚡ Free 6-hour Tajima digital stitch proof with every quote!
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => onOpenQuote && onOpenQuote()}
+                    className="font-bold text-orange-600 hover:text-orange-700 flex items-center gap-1 cursor-pointer"
+                  >
+                    <span>Instant Quote</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
             <a href="#pricing" className="hover:text-orange-600 transition-colors">
               Pricing Cards
             </a>
@@ -143,7 +216,7 @@ export default function Navbar({
             {/* Primary CTA: Get a Quote */}
             <button
               type="button"
-              onClick={onOpenQuote}
+              onClick={() => onOpenQuote?.()}
               className="hidden sm:inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 active:scale-[0.98] text-white text-sm font-bold shadow-md shadow-orange-500/25 transition-all cursor-pointer"
             >
               <span>Get a Free Quote</span>
