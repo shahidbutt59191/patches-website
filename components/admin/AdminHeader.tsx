@@ -13,6 +13,7 @@ import {
   CheckCircle2,
   Database,
   Search,
+  LogOut,
 } from 'lucide-react';
 import { AdminTabId } from './AdminSidebar';
 
@@ -22,6 +23,7 @@ interface AdminHeaderProps {
   onSave: () => void;
   isSaving: boolean;
   onToggleMobileMenu: () => void;
+  onSignOut?: () => void;
 }
 
 const TAB_TITLES: Record<AdminTabId, { title: string; subtitle: string }> = {
@@ -69,6 +71,7 @@ export default function AdminHeader({
   onSave,
   isSaving,
   onToggleMobileMenu,
+  onSignOut,
 }: AdminHeaderProps) {
   const [timeStr, setTimeStr] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -173,6 +176,19 @@ export default function AdminHeader({
           <Save className={`w-4 h-4 ${isSaving ? 'animate-spin' : ''}`} />
           <span>{isSaving ? 'Publishing...' : 'Save & Publish'}</span>
         </button>
+
+        {/* Sign Out Button */}
+        {onSignOut && (
+          <button
+            type="button"
+            onClick={onSignOut}
+            title="Sign out of Admin Portal"
+            className="p-2 sm:px-3 sm:py-2 rounded-xl bg-slate-900/90 hover:bg-rose-500/15 border border-slate-800 hover:border-rose-500/30 text-slate-400 hover:text-rose-400 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+          >
+            <LogOut className="w-4 h-4" />
+            <span className="hidden md:inline">Sign Out</span>
+          </button>
+        )}
       </div>
     </header>
   );

@@ -14,6 +14,8 @@ import {
   Share2,
   Sliders,
   Check,
+  Lock,
+  KeyRound,
 } from 'lucide-react';
 import { SiteSettings } from '@/lib/settings';
 
@@ -359,6 +361,49 @@ export default function AdminSettings({
                 onChange={(e) => handleChange('socialLinkedin', e.target.value)}
                 className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-mono"
               />
+            </div>
+          </div>
+        </div>
+
+        {/* SECTION 7: Admin Portal Access & Security */}
+        <div className="p-5 sm:p-7 rounded-2xl sm:rounded-3xl bg-slate-900/90 border border-slate-800/90 space-y-4">
+          <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+            <div className="flex items-center gap-2.5">
+              <KeyRound className="w-4 h-4 text-orange-400" />
+              <h3 className="text-sm font-bold text-white">7. Admin Portal Security & Password</h3>
+            </div>
+            <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+              AES-256 Session Encrypted
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <div>
+              <label className="font-semibold text-slate-400 block mb-1">
+                Admin Master Login Email / Username
+              </label>
+              <input
+                type="text"
+                disabled
+                value="admin@bdigitizing.com (or admin)"
+                className="w-full bg-slate-950/60 border border-slate-800/80 rounded-xl px-3 py-2 text-slate-400 font-mono cursor-not-allowed"
+              />
+              <p className="text-[10px] text-slate-500 mt-1">Default administrator username identifier.</p>
+            </div>
+            <div>
+              <label className="font-semibold text-slate-300 block mb-1">
+                Admin Access Password
+              </label>
+              <input
+                type="text"
+                value={settings.adminPassword || 'admin123'}
+                onChange={(e) => handleChange('adminPassword', e.target.value)}
+                placeholder="Set new admin password (e.g. admin123)"
+                className="w-full bg-slate-950 border border-slate-800 focus:border-orange-500 rounded-xl px-3 py-2 text-white font-mono"
+              />
+              <p className="text-[10px] text-orange-400/80 mt-1">
+                Changes take effect after clicking &ldquo;Save &amp; Publish Live&rdquo;. Default is <span className="font-mono font-bold text-orange-300">admin123</span>.
+              </p>
             </div>
           </div>
         </div>

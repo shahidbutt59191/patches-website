@@ -25,6 +25,7 @@ import AdminReviews from '@/components/admin/AdminReviews';
 import AdminFaqs from '@/components/admin/AdminFaqs';
 import AdminSettings from '@/components/admin/AdminSettings';
 import AdminB2B from '@/components/admin/AdminB2B';
+import AdminLogin from '@/components/admin/AdminLogin';
 import { PatchOrderItem, QuoteItem, B2BAccountItem } from '@/components/admin/types';
 
 const INITIAL_B2B_ACCOUNTS: B2BAccountItem[] = [
@@ -66,6 +67,10 @@ const INITIAL_B2B_ACCOUNTS: B2BAccountItem[] = [
 export default function AdminDashboardPage() {
   const [activeTab, setActiveTab] = useState<AdminTabId>('overview');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Authentication State
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [authChecked, setAuthChecked] = useState<boolean>(false);
 
   // Live Settings
   const [settings, setSettings] = useState<SiteSettings>(DEFAULT_SETTINGS);
@@ -273,6 +278,36 @@ export default function AdminDashboardPage() {
     }
   }, []);
 
+  // Check admin session on mount
+  useEffect(() => {
+    try {
+      const raw =
+        localStorage.getItem('bdigitizing_admin_session') ||
+        sessionStorage.getItem('bdigitizing_admin_session');
+      if (raw) {
+        const sess = JSON.parse(raw);
+        if (sess && sess.expiresAt && sess.expiresAt > Date.now()) {
+          setIsAuthenticated(true);
+        } else {
+          localStorage.removeItem('bdigitizing_admin_session');
+          sessionStorage.removeItem('bdigitizing_admin_session');
+        }
+      }
+    } catch (e) {
+      console.warn('Session check note:', e);
+    } finally {
+      setAuthChecked(true);
+    }
+  }, []);
+
+  const handleSignOut = () => {
+    try {
+      localStorage.removeItem('bdigitizing_admin_session');
+      sessionStorage.removeItem('bdigitizing_admin_session');
+    } catch (e) {}
+    setIsAuthenticated(false);
+  };
+
   useEffect(() => {
     try {
       const local = localStorage.getItem('apex_live_settings');
@@ -431,6 +466,28 @@ export default function AdminDashboardPage() {
     };
   }, [orders]);
 
+  // 1. Initial Auth Check Spinner
+  if (!authChecked) {
+    return (
+      <div className="min-h-screen bg-[#07090e] flex flex-col items-center justify-center text-slate-400 font-sans gap-3">
+        <div className="w-9 h-9 rounded-full border-2 border-orange-500 border-t-transparent animate-spin" />
+        <span className="text-xs font-mono tracking-widest uppercase text-slate-500">
+          Verifying Admin Access...
+        </span>
+      </div>
+    );
+  }
+
+  // 2. Unauthenticated: Render Cyber Login Screen
+  if (!isAuthenticated) {
+    return (
+      <AdminLogin
+        onLoginSuccess={() => setIsAuthenticated(true)}
+        configuredPassword={settings.adminPassword}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#090b10] text-slate-100 flex flex-col font-sans antialiased selection:bg-orange-500 selection:text-white">
       
@@ -441,6 +498,7 @@ export default function AdminDashboardPage() {
         onSave={() => handleSaveSettings()}
         isSaving={isSavingSettings}
         onToggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)}
+        onSignOut={handleSignOut}
       />
 
       {/* Save Notification Toast */}

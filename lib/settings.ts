@@ -171,6 +171,9 @@ export interface SiteSettings {
   // SEO & Meta
   siteTitle: string;
   metaDescription: string;
+
+  // Admin Security
+  adminPassword?: string;
 }
 
 export const DEFAULT_PORTFOLIO: PortfolioItem[] = [
@@ -749,4 +752,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   // SEO
   siteTitle: 'BDigitizing | Custom Patches Manufacturer & Digitizing',
   metaDescription: 'Order custom embroidered, velcro, leather, and woven patches directly from the factory. Free digital proof in 6 hours, fast worldwide shipping.',
+
+  // Admin Security
+  adminPassword: 'admin123',
 };
