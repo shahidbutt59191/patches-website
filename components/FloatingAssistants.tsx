@@ -129,9 +129,9 @@ export default function FloatingAssistants({
       {socialProofEnabled && showOrderToast && !isDismissedByUser && (
         <div
           onClick={() => onOpenQuote?.()}
-          className="fixed bottom-6 left-6 z-40 hidden sm:flex max-w-sm bg-white/95 backdrop-blur-md rounded-2xl p-3.5 shadow-2xl border border-slate-200/90 items-start gap-3 animate-in slide-in-from-bottom-5 fade-in duration-300 cursor-pointer hover:border-orange-500/50 hover:shadow-orange-500/10 transition-all select-none"
+          className="fixed bottom-6 left-6 z-40 hidden sm:flex max-w-sm bg-white/95 backdrop-blur-md rounded-2xl p-3.5 shadow-2xl border border-slate-200/90 items-start gap-3 animate-in slide-in-from-bottom-5 fade-in duration-300 cursor-pointer hover:border-[#1dbf73] hover:shadow-emerald-500/10 transition-all select-none"
         >
-          <div className="w-10 h-10 rounded-xl bg-orange-500/10 text-orange-600 flex items-center justify-center shrink-0 mt-0.5 border border-orange-500/20">
+          <div className="w-10 h-10 rounded-xl bg-emerald-50 text-[#109655] flex items-center justify-center shrink-0 mt-0.5 border border-emerald-200">
             <span className="text-lg">🧵</span>
           </div>
 
@@ -141,7 +141,7 @@ export default function FloatingAssistants({
               <span className="text-slate-400 font-normal truncate">({toastData.city})</span>
             </div>
             <div className="text-[11px] text-slate-700 font-medium truncate mt-0.5">
-              Ordered <strong className="text-orange-600 font-bold">{toastData.order}</strong>
+              Ordered <strong className="text-[#109655] font-bold">{toastData.order}</strong>
             </div>
             <div className="flex items-center gap-1 text-[10px] text-emerald-600 font-mono font-bold mt-1">
               <CheckCircle2 className="w-3 h-3 text-emerald-500 shrink-0" />

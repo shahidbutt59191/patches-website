@@ -38,7 +38,7 @@ export default function FaqAndCta({
           
           {/* Left Column: FAQ Accordion (7 Cols) */}
           <div className="lg:col-span-7">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-50 border border-orange-200 text-orange-600 text-xs font-bold mb-2">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-[#109655] text-xs font-bold mb-2">
               <HelpCircle className="w-3.5 h-3.5" />
               <span>Instant Answers</span>
             </div>
@@ -65,8 +65,8 @@ export default function FaqAndCta({
                   onClick={() => setFilterCategory(c.id)}
                   className={`text-xs font-bold px-3 py-1 rounded-full border transition-all cursor-pointer ${
                     filterCategory === c.id
-                      ? 'bg-slate-900 text-white border-slate-900'
-                      : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                      ? 'bg-[#1dbf73] text-white border-[#1dbf73]'
+                      : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100 hover:border-slate-300'
                   }`}
                 >
                   {c.label}
@@ -79,17 +79,17 @@ export default function FaqAndCta({
               {filteredFaqs.map((faq, idx) => (
                 <div
                   key={idx}
-                  className="rounded-2xl border border-slate-200 bg-white overflow-hidden transition-all duration-200 hover:border-orange-300"
+                  className="rounded-2xl border border-slate-200 bg-white overflow-hidden transition-all duration-200 hover:border-[#1dbf73]"
                 >
                   <button
                     type="button"
                     onClick={() => toggleFaq(idx)}
-                    className="w-full flex items-center justify-between px-6 py-4 text-left text-xs sm:text-sm font-bold text-slate-900 hover:text-orange-600 transition-colors cursor-pointer"
+                    className="w-full flex items-center justify-between px-6 py-4 text-left text-xs sm:text-sm font-bold text-slate-900 hover:text-[#1dbf73] transition-colors cursor-pointer"
                   >
                     <span>{faq.q}</span>
-                    <span className="ml-4 text-slate-400 group-hover:text-orange-500">
+                    <span className="ml-4 text-slate-400 group-hover:text-[#1dbf73]">
                       {openIndex === idx ? (
-                        <Minus className="w-4 h-4 text-orange-500" />
+                        <Minus className="w-4 h-4 text-[#1dbf73]" />
                       ) : (
                         <Plus className="w-4 h-4" />
                       )}
