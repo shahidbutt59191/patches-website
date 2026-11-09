@@ -356,6 +356,40 @@ export default function Hero({
           </div>
 
         </div>
+
+        {/* ======================================================== */}
+        {/* Verified Brand Trust & Client Strip                       */}
+        {/* ======================================================== */}
+        <div className="mt-14 pt-8 border-t border-slate-100 flex flex-col lg:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-3 shrink-0">
+            <div className="flex items-center gap-1 text-amber-400 text-sm">
+              <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+            </div>
+            <div>
+              <div className="text-xs font-bold text-slate-900 font-sans flex items-center gap-1.5">
+                <span>4.9 / 5.0 Rating</span>
+                <span className="text-[10px] text-slate-400 font-mono font-normal">• 2,400+ Verified Runs</span>
+              </div>
+              <p className="text-[11px] text-slate-500">
+                Trusted by military units, motorcycle clubs, and global apparel teams.
+              </p>
+            </div>
+          </div>
+
+          {/* Logo Brands Carousel / Ribbon */}
+          <div className="flex flex-wrap items-center justify-center lg:justify-end gap-6 sm:gap-8 text-slate-400 font-mono text-xs font-black tracking-wider opacity-75">
+            <span className="hover:text-slate-900 transition-colors">APEX TACTICAL</span>
+            <span className="text-slate-300">•</span>
+            <span className="hover:text-slate-900 transition-colors">IRON HORSE MC</span>
+            <span className="text-slate-300">•</span>
+            <span className="hover:text-slate-900 transition-colors">METRO SWAT</span>
+            <span className="text-slate-300">•</span>
+            <span className="hover:text-slate-900 transition-colors">TIMBER & BEAN</span>
+            <span className="text-slate-300 hidden sm:inline">•</span>
+            <span className="hover:text-slate-900 transition-colors hidden sm:inline">ALPINE EXPEDITIONS</span>
+          </div>
+        </div>
+
       </div>
 
     </section>
