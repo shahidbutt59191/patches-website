@@ -8,6 +8,14 @@
 }
 
 :root {
+  --primary-fiverr: #1dbf73;
+  --primary-fiverr-hover: #19a463;
+  --primary-fiverr-dark: #109655;
+  --fiverr-black: #222325;
+  --fiverr-gray-dark: #404145;
+  --fiverr-gray-light: #74767e;
+  --fiverr-border: #e4e5e7;
+  --fiverr-bg-gray: #f7f7f7;
   --primary-orange: #f97316;
   --primary-orange-hover: #ea580c;
   --dark-bg: #111318;
@@ -15,7 +23,7 @@
 }
 
 body {
-  color: #1e293b;
+  color: #222325;
   background-color: #ffffff;
   font-family: var(--font-sans);
   overflow-x: hidden;
@@ -27,23 +35,56 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
   letter-spacing: -0.025em;
+  color: #222325;
 }
 
 code, kbd, samp, pre, .font-mono {
   font-family: var(--font-mono);
 }
 
-/* Vibrant Orange Button */
-.btn-orange {
-  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+/* Fiverr Vibrant Green Button */
+.btn-fiverr {
+  background: #1dbf73;
   color: #ffffff;
   font-weight: 700;
-  box-shadow: 0 4px 14px rgba(249, 115, 22, 0.35);
+  box-shadow: 0 4px 14px rgba(29, 191, 115, 0.28);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-fiverr:hover {
+  background: #19a463;
+  box-shadow: 0 6px 20px rgba(29, 191, 115, 0.42);
+  transform: translateY(-1.5px);
+}
+.btn-fiverr:active {
+  transform: translateY(0px);
+}
+
+/* Fiverr Outline Button */
+.btn-fiverr-outline {
+  border: 1.5px solid #1dbf73;
+  color: #1dbf73;
+  background: #ffffff;
+  font-weight: 700;
+  transition: all 0.2s ease-in-out;
+}
+.btn-fiverr-outline:hover {
+  background: #f0fdf4;
+  border-color: #19a463;
+  color: #19a463;
+  transform: translateY(-1px);
+}
+
+/* Vibrant Orange Button */
+.btn-orange {
+  background: #1dbf73;
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(29, 191, 115, 0.3);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .btn-orange:hover {
-  box-shadow: 0 8px 24px rgba(249, 115, 22, 0.5);
-  filter: brightness(1.06);
+  background: #19a463;
+  box-shadow: 0 8px 24px rgba(29, 191, 115, 0.45);
   transform: translateY(-2px);
 }
 .btn-orange:active {

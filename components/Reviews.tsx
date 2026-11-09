@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, Star, CheckCircle, ShieldCheck } from 'lucide-react';
-
 import { CustomerReviewItem } from '@/lib/settings';
 
 interface ReviewsProps {
@@ -14,10 +13,10 @@ export default function Reviews({ items }: ReviewsProps) {
     {
       id: '1',
       author: 'David Miller',
-      country: 'USA',
+      country: 'Austin, TX 🇺🇸',
       company: 'Apex Tactical Gear',
-      verifiedOrder: 'BD-43541 (250 pcs Velcro)',
-      comment: 'Excellent quality and super fast delivery. Highly recommended!',
+      verifiedOrder: '250 pcs Velcro Tactical Patches',
+      comment: 'The stitch density on the subdued coyote brown PVC is unmatched. Our plate carriers look incredible. Free 6-hour proof was spot-on!',
       rating: 5,
       date: 'Yesterday',
       featured: true,
@@ -26,10 +25,10 @@ export default function Reviews({ items }: ReviewsProps) {
     {
       id: '2',
       author: 'Sarah Johnson',
-      country: 'Canada',
-      company: 'Wilderness Explorers Club',
-      verifiedOrder: 'BD-38910 (150 pcs Woven)',
-      comment: 'Amazing patches! The colors are perfect. Will order again.',
+      country: 'Vancouver, BC 🇨🇦',
+      company: 'Wilderness Apparel Co.',
+      verifiedOrder: '300 pcs Debossed Leather Snapbacks',
+      comment: 'Laser-etched detail on the caramel leatherette patches is crisp and clean. Best wholesale pricing we have found across North America.',
       rating: 5,
       date: '3 days ago',
       featured: true,
@@ -37,11 +36,11 @@ export default function Reviews({ items }: ReviewsProps) {
     },
     {
       id: '3',
-      author: 'Ahmed Khan',
-      country: 'UK',
-      company: 'Khan Motorsports MC',
-      verifiedOrder: 'BD-27480 (500 pcs Iron-On)',
-      comment: 'Professional service and outstanding quality.',
+      author: 'Michael Henderson',
+      country: 'Chicago, IL 🇺🇸',
+      company: 'Iron Horse MC Chapter',
+      verifiedOrder: '150 sets Embroidered Top Rockers',
+      comment: 'Heavy twill backing and thick merrowed gold border stood up to high-speed wind with zero fraying. True professional patch crafters.',
       rating: 5,
       date: '5 days ago',
       featured: true,
@@ -49,32 +48,19 @@ export default function Reviews({ items }: ReviewsProps) {
     },
     {
       id: '4',
-      author: 'Michael Rossi',
-      country: 'Australia',
-      company: 'Outback Adventures',
-      verifiedOrder: 'BD-19230 (300 pcs Leather)',
-      comment: 'Turnaround was under 10 days and stitch density is unmatched!',
+      author: 'Elena Rostova',
+      country: 'Miami, FL 🇺🇸',
+      company: 'Streetwear Merch Drop',
+      verifiedOrder: '500 pcs Micro Woven Labels',
+      comment: 'Tiny 4pt typography was perfectly legible. The damask micro-weave is silky soft and retail ready. Will be ordering for every season.',
       rating: 5,
       date: '1 week ago',
-      featured: true,
-      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80',
-    },
-    {
-      id: '5',
-      author: 'Elena Rostova',
-      country: 'Germany',
-      company: 'Cyberpunk Apparel Brand',
-      verifiedOrder: 'BD-88401 (200 pcs Glow Velcro)',
-      comment: 'The stitch precision on tiny text is incredible. 10/10 experience.',
-      rating: 5,
-      date: '2 weeks ago',
       featured: true,
       avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
     },
   ];
 
   const reviewsList = items && items.length > 0 ? items : defaultReviews;
-
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const prevReview = () => {
@@ -86,125 +72,100 @@ export default function Reviews({ items }: ReviewsProps) {
   };
 
   return (
-    <section className="py-14 sm:py-20 bg-white">
+    <section id="reviews" className="py-16 sm:py-22 bg-[#f7f7f7] border-b border-[#e4e5e7]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Dark Luxury Container matching screenshot */}
-        <div className="relative rounded-3xl bg-[#111318] border border-slate-800 p-8 sm:p-12 text-white shadow-2xl overflow-hidden">
-          
-          {/* Subtle Fabric Grid */}
-          <div className="absolute inset-0 bg-fabric-pattern opacity-40 pointer-events-none" />
-
-          {/* Top Rating Badge */}
-          <div className="relative z-10 flex items-center justify-center gap-2 mb-3">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/30 text-orange-400 text-xs font-bold">
-              <Star className="w-3.5 h-3.5 fill-orange-400 text-orange-400" />
-              <span>4.9 / 5.0 Rating Across 3,840+ Direct Factory Orders</span>
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
+          <div>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-[#109655] border border-emerald-200 text-xs font-bold mb-2">
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>Verified Buyer Feedback</span>
             </div>
-          </div>
-
-          {/* Heading with Orange Accents */}
-          <div className="relative z-10 text-center mb-10 flex items-center justify-center gap-4">
-            <span className="h-0.5 w-10 sm:w-20 bg-gradient-to-r from-transparent to-orange-500 rounded-full" />
-            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
-              What Our Customers Say
+            <h2 className="text-3xl sm:text-4xl font-black text-[#222325] tracking-tight">
+              Loved by 5,000+ brands &amp; creators
             </h2>
-            <span className="h-0.5 w-10 sm:w-20 bg-gradient-to-l from-transparent to-orange-500 rounded-full" />
+            <p className="mt-2 text-sm sm:text-base text-[#62646a]">
+              Read verified factory production reviews from real customers worldwide.
+            </p>
           </div>
 
-          {/* Reviews Carousel Wrapper */}
-          <div className="relative z-10 flex items-center justify-between gap-4">
-            
-            {/* Left Nav Arrow */}
+          {/* Navigation Arrows */}
+          <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={prevReview}
               aria-label="Previous review"
-              className="w-10 h-10 rounded-full bg-slate-800/90 hover:bg-orange-500 text-slate-300 hover:text-white flex items-center justify-center transition-colors shrink-0 cursor-pointer shadow-lg"
+              className="w-10 h-10 rounded-full bg-white border border-[#e4e5e7] hover:border-[#1dbf73] hover:text-[#1dbf73] flex items-center justify-center transition-all cursor-pointer shadow-xs text-slate-700"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
-
-            {/* 3 Review Cards Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
-              {reviewsList.slice(currentIndex, currentIndex + 3).map((item) => {
-                const authorName = (item as any).author || (item as any).name || 'Verified Client';
-                const quoteText = (item as any).comment || (item as any).quote || '';
-                const orderText = (item as any).verifiedOrder || (item as any).order || 'Custom Patch Run';
-                const companyText = (item as any).company || 'Client';
-                const countryText = (item as any).country || 'USA';
-                const avatarUrl = (item as any).avatar || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80';
-                const initials = authorName.split(' ').map((n: string) => n[0]).join('').slice(0, 2) || 'BD';
-
-                return (
-                  <div
-                    key={item.id}
-                    className="rounded-2xl bg-[#181b22] border border-slate-800/90 p-6 flex flex-col justify-between hover:border-orange-500/60 hover:-translate-y-1 transition-all duration-300 shadow-inner group"
-                  >
-                    {/* Verified & Order Tag */}
-                    <div className="flex items-center justify-between text-[10px] text-slate-400 mb-4 border-b border-slate-800 pb-2">
-                      <span className="flex items-center gap-1 text-emerald-400 font-bold">
-                        <CheckCircle className="w-3 h-3" /> Verified Customer
-                      </span>
-                      <span className="font-mono text-slate-500 truncate max-w-[140px]">
-                        {orderText}
-                      </span>
-                    </div>
-
-                    {/* Customer Quote */}
-                    <p className="text-xs sm:text-sm text-slate-300 italic leading-relaxed mb-6 group-hover:text-white transition-colors">
-                      &ldquo;{quoteText}&rdquo;
-                    </p>
-
-                    {/* Customer Info & Orange Stars */}
-                    <div className="flex items-center justify-between pt-4 border-t border-slate-800">
-                      {/* Avatar & Name */}
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full overflow-hidden bg-orange-600 flex items-center justify-center text-xs font-bold text-white border-2 border-orange-500 shrink-0">
-                          <img
-                            src={avatarUrl}
-                            alt={authorName}
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              (e.currentTarget as HTMLElement).style.display = 'none';
-                            }}
-                          />
-                          <span>{initials}</span>
-                        </div>
-                        <div>
-                          <div className="text-xs font-bold text-white leading-tight">
-                            {authorName}
-                          </div>
-                          <div className="text-[10px] text-slate-400 font-medium">
-                            {companyText} • {countryText}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* 5 Orange Stars */}
-                      <div className="flex items-center gap-0.5 text-orange-500">
-                        {[...Array(item.rating || 5)].map((_, i) => (
-                          <Star key={i} className="w-3.5 h-3.5 fill-orange-500 text-orange-500" />
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Right Nav Arrow */}
             <button
               type="button"
               onClick={nextReview}
               aria-label="Next review"
-              className="w-10 h-10 rounded-full bg-slate-800/90 hover:bg-orange-500 text-slate-300 hover:text-white flex items-center justify-center transition-colors shrink-0 cursor-pointer shadow-lg"
+              className="w-10 h-10 rounded-full bg-white border border-[#e4e5e7] hover:border-[#1dbf73] hover:text-[#1dbf73] flex items-center justify-center transition-all cursor-pointer shadow-xs text-slate-700"
             >
               <ChevronRight className="w-5 h-5" />
             </button>
-
           </div>
+        </div>
 
+        {/* 3 Reviews Grid (Fiverr Style Cards) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {reviewsList.slice(currentIndex, currentIndex + 3).map((item) => {
+            const authorName = (item as any).author || (item as any).name || 'Verified Client';
+            const quoteText = (item as any).comment || (item as any).quote || '';
+            const orderText = (item as any).verifiedOrder || (item as any).order || 'Custom Patch Run';
+            const countryText = (item as any).country || 'USA';
+            const avatarUrl = (item as any).avatar || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80';
+
+            return (
+              <div
+                key={item.id}
+                className="rounded-2xl bg-white border border-[#e4e5e7] p-6 flex flex-col justify-between hover:shadow-xl hover:border-[#1dbf73] transition-all duration-300"
+              >
+                <div>
+                  {/* Verified Header & Stars */}
+                  <div className="flex items-center justify-between mb-3 border-b border-[#e4e5e7] pb-3">
+                    <div className="flex items-center gap-1 text-[#1dbf73]">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className="w-4 h-4 fill-current" />
+                      ))}
+                    </div>
+                    <span className="flex items-center gap-1 text-[11px] font-bold text-[#109655] bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
+                      <CheckCircle className="w-3 h-3" />
+                      <span>Verified Order</span>
+                    </span>
+                  </div>
+
+                  {/* Customer Review Quote */}
+                  <p className="text-sm text-[#404145] leading-relaxed mb-6 font-normal">
+                    &ldquo;{quoteText}&rdquo;
+                  </p>
+                </div>
+
+                {/* Customer Details Footer */}
+                <div className="pt-4 border-t border-[#e4e5e7] flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full overflow-hidden bg-slate-900 flex items-center justify-center text-xs font-bold text-white shrink-0">
+                    <img
+                      src={avatarUrl}
+                      alt={authorName}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-sm font-bold text-[#222325] truncate">
+                      {authorName}
+                    </div>
+                    <div className="text-[11px] text-[#74767e] truncate font-medium">
+                      {orderText} • {countryText}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
 
       </div>

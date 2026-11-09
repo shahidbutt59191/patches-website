@@ -135,8 +135,8 @@ export default function Portfolio({ onOpenQuote, items }: PortfolioProps) {
                 onClick={() => setFilter(f.id)}
                 className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
                   filter === f.id
-                    ? 'bg-orange-500 text-white shadow-md'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    ? 'bg-[#1dbf73] text-white shadow-sm'
+                    : 'bg-[#f7f7f7] border border-[#e4e5e7] text-[#404145] hover:text-[#222325]'
                 }`}
               >
                 {f.label}
@@ -217,9 +217,9 @@ export default function Portfolio({ onOpenQuote, items }: PortfolioProps) {
                 <button
                   type="button"
                   onClick={() => onOpenQuote && onOpenQuote(item.styleId)}
-                  className="px-4 py-2 rounded-full border border-orange-500 text-orange-600 hover:bg-orange-500 hover:text-white font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs"
+                  className="px-4 py-2 rounded-lg border border-[#1dbf73] text-[#1dbf73] hover:bg-[#1dbf73] hover:text-white font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow-xs"
                 >
-                  <span>Request Similar</span>
+                  <span>Order Similar</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>

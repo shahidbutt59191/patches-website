@@ -91,73 +91,13 @@ export default function PricingCards({
   };
 
   const getColorStyles = (color: string = 'blue') => {
-    switch (color) {
-      case 'orange':
-        return {
-          pill: 'bg-orange-500 text-white',
-          iconBox: 'bg-orange-50 border-orange-200 text-orange-600',
-          priceBox: 'bg-orange-50/70 border-orange-200/80',
-          priceText: 'text-orange-600',
-          btn: 'btn-orange shadow-lg shadow-orange-500/20',
-        };
-      case 'blue':
-        return {
-          pill: 'bg-[#0a58ca] text-white',
-          iconBox: 'bg-[#eef3ff] border-blue-100 text-[#0a58ca]',
-          priceBox: 'bg-[#edf2fe] border-[#d6e2ff]',
-          priceText: 'text-[#0a58ca]',
-          btn: 'bg-[#1a56db] hover:bg-blue-700 text-white',
-        };
-      case 'green':
-        return {
-          pill: 'bg-[#00875a] text-white',
-          iconBox: 'bg-[#e6f6ee] border-emerald-100 text-[#00875a]',
-          priceBox: 'bg-[#ebf8f2] border-[#c1ebd6]',
-          priceText: 'text-[#00875a]',
-          btn: 'bg-[#00875a] hover:bg-emerald-800 text-white',
-        };
-      case 'purple':
-        return {
-          pill: 'bg-purple-700 text-white',
-          iconBox: 'bg-purple-50 border-purple-100 text-purple-700',
-          priceBox: 'bg-purple-50/70 border-purple-200/80',
-          priceText: 'text-purple-700',
-          btn: 'bg-purple-700 hover:bg-purple-800 text-white',
-        };
-      case 'amber':
-        return {
-          pill: 'bg-amber-700 text-white',
-          iconBox: 'bg-amber-50 border-amber-100 text-amber-700',
-          priceBox: 'bg-amber-50/70 border-amber-200/80',
-          priceText: 'text-amber-700',
-          btn: 'bg-amber-700 hover:bg-amber-800 text-white',
-        };
-      case 'teal':
-        return {
-          pill: 'bg-teal-700 text-white',
-          iconBox: 'bg-teal-50 border-teal-100 text-teal-700',
-          priceBox: 'bg-teal-50/70 border-teal-200/80',
-          priceText: 'text-teal-700',
-          btn: 'bg-teal-700 hover:bg-teal-800 text-white',
-        };
-      case 'yellow':
-        return {
-          pill: 'bg-yellow-600 text-white',
-          iconBox: 'bg-yellow-50 border-yellow-200 text-yellow-700',
-          priceBox: 'bg-yellow-50/70 border-yellow-200/80',
-          priceText: 'text-yellow-700',
-          btn: 'bg-yellow-600 hover:bg-yellow-700 text-white',
-        };
-      case 'indigo':
-      default:
-        return {
-          pill: 'bg-indigo-700 text-white',
-          iconBox: 'bg-indigo-50 border-indigo-100 text-indigo-700',
-          priceBox: 'bg-indigo-50/70 border-indigo-200/80',
-          priceText: 'text-indigo-700',
-          btn: 'bg-indigo-700 hover:bg-indigo-800 text-white',
-        };
-    }
+    return {
+      pill: 'bg-[#1dbf73] text-white',
+      iconBox: 'bg-emerald-50 border-emerald-200 text-[#109655]',
+      priceBox: 'bg-[#f7f7f7] border-[#e4e5e7]',
+      priceText: 'text-[#222325]',
+      btn: 'btn-fiverr shadow-sm',
+    };
   };
 
   return (
@@ -166,24 +106,24 @@ export default function PricingCards({
         
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-14">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-orange-100/80 border border-orange-200 text-orange-600 text-xs font-bold mb-3 shadow-2xs">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-[#109655] text-xs font-bold mb-3 shadow-2xs">
             <Sparkles className="w-3.5 h-3.5" />
             <span>Direct Patch Factory Rates • Every Custom Patch Style</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight">
-            Complete Custom Patch Pricing Cards
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#222325] tracking-tight">
+            Transparent Pricing &amp; Package Rates
           </h2>
-          <p className="mt-3 text-sm sm:text-base text-slate-600 leading-relaxed">
+          <p className="mt-3 text-sm sm:text-base text-[#62646a] leading-relaxed">
             Select your preferred patch material below. Every order includes a free 6-hour digital proof scan, free vector artwork optimization, zero setup fees, and free tracked worldwide delivery.
           </p>
 
           {/* Category Filter Pills */}
           <div className="flex flex-wrap items-center justify-center gap-2 mt-8">
             {[
-              { id: 'all', label: 'All 8 Patch Types' },
-              { id: 'popular', label: '⭐ Most Popular' },
+              { id: 'all', label: 'All Patch Types' },
+              { id: 'popular', label: '⭐ Top Rated' },
               { id: 'tactical', label: 'Tactical & Combat' },
-              { id: 'apparel', label: 'Lifestyle & Headwear' },
+              { id: 'apparel', label: 'Lifestyle & Merch' },
             ].map((tab) => (
               <button
                 type="button"
@@ -191,8 +131,8 @@ export default function PricingCards({
                 onClick={() => setFilterCategory(tab.id as any)}
                 className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
                   filterCategory === tab.id
-                    ? 'bg-slate-900 text-white shadow-md'
-                    : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:border-slate-300'
+                    ? 'bg-[#1dbf73] text-white shadow-sm'
+                    : 'bg-white border border-[#e4e5e7] text-[#404145] hover:text-[#222325] hover:border-[#1dbf73]'
                 }`}
               >
                 <span>{tab.label}</span>

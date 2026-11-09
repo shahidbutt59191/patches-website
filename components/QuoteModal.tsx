@@ -200,9 +200,9 @@ export default function QuoteModal({
     <div className="fixed inset-0 z-50 bg-[#0c0e14] text-slate-900 overflow-y-auto flex flex-col w-full h-full min-h-screen animate-in fade-in duration-200">
       
       {/* 1. Full-Width Edge-to-Edge Sticky Top Header */}
-      <header className="sticky top-0 z-40 bg-[#111318] text-white px-4 sm:px-8 py-3.5 sm:py-4 flex items-center justify-between border-b border-slate-800 shadow-xl shrink-0">
+      <header className="sticky top-0 z-40 bg-[#1a1a1a] text-white px-4 sm:px-8 py-3.5 sm:py-4 flex items-center justify-between border-b border-neutral-800 shadow-xl shrink-0">
         <div className="flex items-center gap-3 sm:gap-4">
-          <div className="w-10 h-10 rounded-2xl bg-orange-500 text-white flex items-center justify-center font-black text-lg shadow-md shadow-orange-500/20">
+          <div className="w-10 h-10 rounded-xl bg-[#1dbf73] text-white flex items-center justify-center font-black text-lg shadow-md">
             B
           </div>
           <div>
@@ -654,7 +654,7 @@ export default function QuoteModal({
                         All inclusive for {quantity} patches
                       </span>
                     </div>
-                    <span className="text-3xl font-black text-orange-600 font-mono tracking-tight">
+                    <span className="text-3xl font-black text-[#109655] font-mono tracking-tight">
                       ${pricing.totalPrice}
                     </span>
                   </div>
@@ -666,14 +666,14 @@ export default function QuoteModal({
                     </div>
                     <div className="flex justify-between text-slate-600">
                       <span>Worldwide Shipping</span>
-                      <span className="text-emerald-600 font-bold flex items-center gap-1">
+                      <span className="text-[#109655] font-bold flex items-center gap-1">
                         <Truck className="w-3 h-3" />
                         <span>100% Free Tracked</span>
                       </span>
                     </div>
                     <div className="flex justify-between text-slate-600">
                       <span>Digital Proof</span>
-                      <span className="text-orange-600 font-bold flex items-center gap-1">
+                      <span className="text-[#1dbf73] font-bold flex items-center gap-1">
                         <Clock className="w-3 h-3" />
                         <span>Free in 6 Hours</span>
                       </span>
@@ -685,7 +685,7 @@ export default function QuoteModal({
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full btn-orange py-4 rounded-2xl text-sm font-black flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 shadow-xl shadow-orange-500/20 hover:scale-[1.01] transition-transform"
+                  className="w-full btn-fiverr py-4 rounded-xl text-sm font-black flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 shadow-md hover:scale-[1.01] transition-transform"
                 >
                   {isSubmitting ? (
                     <>

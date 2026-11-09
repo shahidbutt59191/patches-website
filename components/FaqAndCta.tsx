@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { Plus, Minus, ArrowRight, HelpCircle, Sparkles, Tag, ShieldCheck } from 'lucide-react';
-import { GoldenCrownPatch } from './PatchVisuals';
 import { FaqItem, DEFAULT_FAQS } from '@/lib/settings';
 
 interface FaqAndCtaProps {
@@ -107,55 +106,54 @@ export default function FaqAndCta({
             </div>
           </div>
 
-          {/* Right Column: Vibrant Orange CTA Card with Crown Watermark (5 Cols) */}
+          {/* Right Column: Fiverr Dark CTA Card (5 Cols) */}
           <div className="lg:col-span-5">
-            <div className="relative rounded-3xl bg-gradient-to-br from-orange-500 via-orange-500 to-orange-600 p-8 sm:p-10 text-white shadow-2xl overflow-hidden min-h-[380px] flex flex-col justify-between border border-orange-400/40">
+            <div className="relative rounded-3xl bg-[#222325] p-8 sm:p-10 text-white shadow-2xl overflow-hidden min-h-[380px] flex flex-col justify-between border border-neutral-800">
               
-              {/* Subtle Crown Watermark in Bottom-Right */}
-              <div className="absolute -bottom-6 -right-6 opacity-25 pointer-events-none transform rotate-12">
-                <GoldenCrownPatch className="w-64 h-52" />
+              {/* Subtle Stitched Watermark in Bottom-Right */}
+              <div className="absolute -bottom-6 -right-6 opacity-15 pointer-events-none transform rotate-12 text-[#1dbf73]">
+                <svg className="w-56 h-48 fill-current" viewBox="0 0 24 24">
+                  <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                </svg>
               </div>
-
-              {/* Diagonal Stitch Line Texture */}
-              <div className="absolute inset-0 bg-fabric-pattern opacity-15 pointer-events-none" />
 
               {/* Top Promo Tag */}
               <div className="relative z-10">
-                <div className="inline-flex items-center gap-1.5 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-[11px] font-bold text-white mb-4 border border-white/20">
+                <div className="inline-flex items-center gap-1.5 bg-[#1dbf73]/20 border border-[#1dbf73]/40 px-3 py-1 rounded-full text-[11px] font-bold text-[#1dbf73] mb-4">
                   <Tag className="w-3.5 h-3.5" />
-                  <span>Limited Offer: {discountRate}% Off Code: {promoCode}</span>
+                  <span>Special Launch: {discountRate}% Off Code: {promoCode}</span>
                 </div>
 
                 <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight leading-snug">
-                  Ready to Create Your Custom Patches?
+                  Ready to manufacture your custom patches?
                 </h3>
-                <p className="mt-2 text-xs sm:text-sm text-orange-100 leading-relaxed max-w-sm">
-                  Get a free quote today and bring your design to life with factory direct pricing!
+                <p className="mt-2 text-xs sm:text-sm text-slate-300 leading-relaxed max-w-sm">
+                  Get a free instant quote today and bring your design to life with direct factory pricing!
                 </p>
               </div>
 
               {/* Bullet perks inside CTA */}
-              <div className="relative z-10 space-y-1.5 py-4 text-xs font-semibold text-white/90">
+              <div className="relative z-10 space-y-2 py-4 text-xs font-semibold text-slate-200">
                 <div className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-white" />
+                  <span className="w-2 h-2 rounded-full bg-[#1dbf73]" />
                   <span>Free 6-Hour Digital Scan Proof</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-white" />
-                  <span>Free Worldwide Courier Tracking</span>
+                  <span className="w-2 h-2 rounded-full bg-[#1dbf73]" />
+                  <span>Free Worldwide Express Tracking</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-white" />
-                  <span>No Setup or Digitizing Fees</span>
+                  <span className="w-2 h-2 rounded-full bg-[#1dbf73]" />
+                  <span>Zero Digitizing &amp; Setup Surcharges</span>
                 </div>
               </div>
 
-              {/* White Pill Action Button */}
+              {/* Green Action Button */}
               <div className="relative z-10 pt-2">
                 <button
                   type="button"
                   onClick={onOpenQuote}
-                  className="bg-white text-orange-600 hover:bg-orange-50 font-bold px-8 py-3.5 rounded-full text-xs sm:text-sm shadow-xl flex items-center gap-2 hover:scale-105 transition-all cursor-pointer"
+                  className="btn-fiverr px-8 py-3.5 rounded-xl text-xs sm:text-sm font-bold shadow-xl flex items-center gap-2 transition-all cursor-pointer"
                 >
                   <span>Get a Free Quote Now</span>
                   <ArrowRight className="w-4 h-4" />
