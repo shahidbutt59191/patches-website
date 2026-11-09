@@ -99,15 +99,15 @@ export default function AdminPricingCalculator({
     <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-300">
       
       {/* Header Bar */}
-      <div className="p-5 rounded-2xl sm:rounded-3xl bg-slate-900/80 backdrop-blur-md border border-slate-800/80 shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="p-5 rounded-2xl sm:rounded-3xl bg-white border border-[#e4e5e7] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <DollarSign className="w-5 h-5 text-orange-400" />
-            <h2 className="text-lg sm:text-xl font-bold text-white">
+            <DollarSign className="w-5 h-5 text-[#109655]" />
+            <h2 className="text-lg sm:text-xl font-bold text-[#222325]">
               Rates, Surcharges & Live Simulator
             </h2>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-[#74767e] mt-1">
             Configure factory base rates, backing attachments, rush production fees, and test quotes in real-time.
           </p>
         </div>
@@ -115,7 +115,7 @@ export default function AdminPricingCalculator({
         <button
           type="button"
           onClick={() => onSaveSettings()}
-          className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-orange-500/25 cursor-pointer self-start sm:self-auto"
+          className="px-5 py-2.5 rounded-xl bg-[#1dbf73] hover:bg-[#19a463] text-white font-bold text-xs flex items-center gap-2 shadow-xs cursor-pointer self-start sm:self-auto"
         >
           <Save className="w-4 h-4" />
           <span>Save All Rates</span>
@@ -128,13 +128,13 @@ export default function AdminPricingCalculator({
         <div className="lg:col-span-7 space-y-6">
           
           {/* Base Rates by Patch Style */}
-          <div className="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-slate-900/90 border border-slate-800/90 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-                <Layers className="w-4 h-4 text-orange-400" />
+          <div className="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-white border border-[#e4e5e7] shadow-xs space-y-4">
+            <div className="flex items-center justify-between border-b border-[#e4e5e7] pb-3">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#222325] flex items-center gap-2">
+                <Layers className="w-4 h-4 text-[#109655]" />
                 <span>Base Unit Rates (3.0" Standard Baseline)</span>
               </span>
-              <span className="text-[10px] text-slate-500 font-mono">Currency: USD ($)</span>
+              <span className="text-[10px] text-[#74767e] font-mono">Currency: USD ($)</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
@@ -147,9 +147,9 @@ export default function AdminPricingCalculator({
                 { label: '3D Molded Soft PVC', key: 'pricePvc', default: 2.55 },
               ].map((style) => (
                 <div key={style.key} className="space-y-1">
-                  <label className="font-semibold text-slate-300 block">{style.label}</label>
+                  <label className="font-semibold text-[#62646a] block">{style.label}</label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-mono">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#74767e] font-mono">
                       $
                     </span>
                     <input
@@ -157,7 +157,7 @@ export default function AdminPricingCalculator({
                       step="0.05"
                       value={(settings as any)[style.key] ?? style.default}
                       onChange={(e) => handleFieldChange(style.key as any, parseFloat(e.target.value) || 0)}
-                      className="w-full bg-slate-950 border border-slate-800 focus:border-orange-500 rounded-xl pl-8 pr-3 py-2 text-white font-mono focus:outline-none"
+                      className="w-full bg-[#f7f7f7] border border-[#e4e5e7] focus:border-[#1dbf73] focus:bg-white rounded-xl pl-8 pr-3 py-2 text-[#222325] font-mono focus:outline-none"
                     />
                   </div>
                 </div>
@@ -166,9 +166,9 @@ export default function AdminPricingCalculator({
           </div>
 
           {/* Attachment Backing Surcharges */}
-          <div className="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-slate-900/90 border border-slate-800/90 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-300">
+          <div className="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-white border border-[#e4e5e7] shadow-xs space-y-4">
+            <div className="flex items-center justify-between border-b border-[#e4e5e7] pb-3">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#222325]">
                 Attachment Backing Fees (Per Patch)
               </span>
             </div>
@@ -181,9 +181,9 @@ export default function AdminPricingCalculator({
                 { label: 'Sew-On Twill', key: 'sewOnFee', default: 0.00 },
               ].map((b) => (
                 <div key={b.key} className="space-y-1">
-                  <label className="text-[11px] font-semibold text-slate-400 block">{b.label}</label>
+                  <label className="text-[11px] font-semibold text-[#62646a] block">{b.label}</label>
                   <div className="relative">
-                    <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-500 font-mono">
+                    <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#74767e] font-mono">
                       +$
                     </span>
                     <input
@@ -191,7 +191,7 @@ export default function AdminPricingCalculator({
                       step="0.05"
                       value={(settings as any)[b.key] ?? b.default}
                       onChange={(e) => handleFieldChange(b.key as any, parseFloat(e.target.value) || 0)}
-                      className="w-full bg-slate-950 border border-slate-800 focus:border-orange-500 rounded-xl pl-8 pr-2 py-2 text-white font-mono focus:outline-none text-xs"
+                      className="w-full bg-[#f7f7f7] border border-[#e4e5e7] focus:border-[#1dbf73] focus:bg-white rounded-xl pl-8 pr-2 py-2 text-[#222325] font-mono focus:outline-none text-xs"
                     />
                   </div>
                 </div>
@@ -200,70 +200,70 @@ export default function AdminPricingCalculator({
           </div>
 
           {/* Finishing, Rush & Free Shipping */}
-          <div className="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-slate-900/90 border border-slate-800/90 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-300">
+          <div className="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-white border border-[#e4e5e7] shadow-xs space-y-4">
+            <div className="flex items-center justify-between border-b border-[#e4e5e7] pb-3">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#222325]">
                 Finishing, Rush Production & Logistics
               </span>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs">
               <div>
-                <label className="font-semibold text-slate-400 block mb-1">Laser Cut Border ($)</label>
+                <label className="font-semibold text-[#62646a] block mb-1">Laser Cut Border ($)</label>
                 <input
                   type="number"
                   step="0.05"
                   value={settings.laserCutFee ?? 0.15}
                   onChange={(e) => handleFieldChange('laserCutFee', parseFloat(e.target.value) || 0)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-mono focus:outline-none focus:border-orange-500"
+                  className="w-full bg-[#f7f7f7] border border-[#e4e5e7] rounded-xl px-3 py-2 text-[#222325] font-mono focus:outline-none focus:border-[#1dbf73] focus:bg-white"
                 />
               </div>
 
               <div>
-                <label className="font-semibold text-slate-400 block mb-1">Rush Turnaround Fee ($)</label>
+                <label className="font-semibold text-[#62646a] block mb-1">Rush Turnaround Fee ($)</label>
                 <input
                   type="number"
                   step="5.0"
                   value={settings.rushOrderFee ?? 45.0}
                   onChange={(e) => handleFieldChange('rushOrderFee', parseFloat(e.target.value) || 0)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-mono focus:outline-none focus:border-orange-500"
+                  className="w-full bg-[#f7f7f7] border border-[#e4e5e7] rounded-xl px-3 py-2 text-[#222325] font-mono focus:outline-none focus:border-[#1dbf73] focus:bg-white"
                 />
               </div>
 
               <div>
-                <label className="font-semibold text-slate-400 block mb-1">Free Shipping Min ($)</label>
+                <label className="font-semibold text-[#62646a] block mb-1">Free Shipping Min ($)</label>
                 <input
                   type="number"
                   step="10.0"
                   value={settings.freeShippingThreshold ?? 75.0}
                   onChange={(e) => handleFieldChange('freeShippingThreshold', parseFloat(e.target.value) || 0)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-mono focus:outline-none focus:border-orange-500"
+                  className="w-full bg-[#f7f7f7] border border-[#e4e5e7] rounded-xl px-3 py-2 text-[#222325] font-mono focus:outline-none focus:border-[#1dbf73] focus:bg-white"
                 />
               </div>
             </div>
           </div>
 
           {/* Bulk Discount Tiers Table */}
-          <div className="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-slate-900/90 border border-slate-800/90 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-300">
+          <div className="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-white border border-[#e4e5e7] shadow-xs space-y-4">
+            <div className="flex items-center justify-between border-b border-[#e4e5e7] pb-3">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#222325]">
                 Bulk Quantity Discount Tiers
               </span>
-              <span className="text-[10px] text-orange-400 font-bold">Auto-applied in estimator</span>
+              <span className="text-[10px] text-[#109655] font-bold">Auto-applied in estimator</span>
             </div>
 
             <div className="space-y-2">
               {(settings.bulkTiers && settings.bulkTiers.length > 0 ? settings.bulkTiers : DEFAULT_BULK_TIERS).map((tier, idx) => (
                 <div
                   key={idx}
-                  className="flex items-center justify-between p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-xs"
+                  className="flex items-center justify-between p-3 rounded-xl bg-[#f7f7f7] border border-[#e4e5e7] text-xs"
                 >
                   <div className="flex items-center gap-2">
-                    <span className="font-mono font-bold text-white">{tier.qty}+ pieces</span>
-                    <span className="text-slate-500">({tier.label || 'Wholesale Tier'})</span>
+                    <span className="font-mono font-bold text-[#222325]">{tier.qty}+ pieces</span>
+                    <span className="text-[#74767e]">({tier.label || 'Wholesale Tier'})</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-slate-400 font-mono">Discount:</span>
+                    <span className="text-[#62646a] font-mono">Discount:</span>
                     <div className="relative w-20">
                       <input
                         type="number"
@@ -271,9 +271,9 @@ export default function AdminPricingCalculator({
                         max="90"
                         value={tier.discountPct}
                         onChange={(e) => handleTierChange(idx, parseInt(e.target.value, 10) || 0)}
-                        className="w-full bg-slate-900 border border-slate-700 rounded-lg pr-6 pl-2 py-1 text-right text-orange-400 font-mono font-bold focus:outline-none focus:border-orange-500"
+                        className="w-full bg-white border border-[#e4e5e7] rounded-lg pr-6 pl-2 py-1 text-right text-[#109655] font-mono font-bold focus:outline-none focus:border-[#1dbf73]"
                       />
-                      <span className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 font-mono text-xs">
+                      <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[#74767e] font-mono text-xs">
                         %
                       </span>
                     </div>
@@ -287,14 +287,14 @@ export default function AdminPricingCalculator({
 
         {/* Right Column: Sticky Floating Live Simulator (5 Cols) */}
         <div className="lg:col-span-5">
-          <div className="sticky top-20 rounded-2xl sm:rounded-3xl bg-gradient-to-b from-slate-900 via-[#10131d] to-slate-950 border border-orange-500/30 p-5 sm:p-6 shadow-2xl space-y-5">
+          <div className="sticky top-20 rounded-2xl sm:rounded-3xl bg-white border border-[#e4e5e7] p-5 sm:p-6 shadow-md space-y-5">
             
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div className="flex items-center justify-between border-b border-[#e4e5e7] pb-3">
               <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-orange-400" />
-                <h3 className="text-sm font-bold text-white">Live Simulator Card</h3>
+                <Sparkles className="w-4 h-4 text-[#109655]" />
+                <h3 className="text-sm font-bold text-[#222325]">Live Simulator Card</h3>
               </div>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-orange-500/10 text-orange-400 border border-orange-500/20">
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-[#109655] border border-emerald-200">
                 Real-Time
               </span>
             </div>
@@ -304,11 +304,11 @@ export default function AdminPricingCalculator({
               
               {/* Style */}
               <div>
-                <label className="text-slate-400 font-medium block mb-1">Patch Material Style</label>
+                <label className="text-[#62646a] font-medium block mb-1">Patch Material Style</label>
                 <select
                   value={simStyle}
                   onChange={(e) => setSimStyle(e.target.value as any)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-semibold focus:outline-none focus:border-orange-500"
+                  className="w-full bg-[#f7f7f7] border border-[#e4e5e7] rounded-xl px-3 py-2 text-[#222325] font-semibold focus:outline-none focus:border-[#1dbf73] focus:bg-white"
                 >
                   <option value="embroidered">Embroidered</option>
                   <option value="iron_on">Iron-On</option>
@@ -322,9 +322,9 @@ export default function AdminPricingCalculator({
               {/* Dimensions */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <div className="flex justify-between text-slate-400 mb-1">
+                  <div className="flex justify-between text-[#62646a] mb-1">
                     <span>Width:</span>
-                    <span className="text-white font-mono font-bold">{simWidth.toFixed(1)}"</span>
+                    <span className="text-[#222325] font-mono font-bold">{simWidth.toFixed(1)}"</span>
                   </div>
                   <input
                     type="range"
@@ -333,13 +333,13 @@ export default function AdminPricingCalculator({
                     step="0.25"
                     value={simWidth}
                     onChange={(e) => setSimWidth(parseFloat(e.target.value))}
-                    className="w-full accent-orange-500 cursor-pointer"
+                    className="w-full accent-[#1dbf73] cursor-pointer"
                   />
                 </div>
                 <div>
-                  <div className="flex justify-between text-slate-400 mb-1">
+                  <div className="flex justify-between text-[#62646a] mb-1">
                     <span>Height:</span>
-                    <span className="text-white font-mono font-bold">{simHeight.toFixed(1)}"</span>
+                    <span className="text-[#222325] font-mono font-bold">{simHeight.toFixed(1)}"</span>
                   </div>
                   <input
                     type="range"
@@ -348,7 +348,7 @@ export default function AdminPricingCalculator({
                     step="0.25"
                     value={simHeight}
                     onChange={(e) => setSimHeight(parseFloat(e.target.value))}
-                    className="w-full accent-orange-500 cursor-pointer"
+                    className="w-full accent-[#1dbf73] cursor-pointer"
                   />
                 </div>
               </div>
@@ -356,11 +356,11 @@ export default function AdminPricingCalculator({
               {/* Backing & Border */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-slate-400 font-medium block mb-1">Backing</label>
+                  <label className="text-[#62646a] font-medium block mb-1">Backing</label>
                   <select
                     value={simBacking}
                     onChange={(e) => setSimBacking(e.target.value as any)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-1.5 text-white text-xs focus:outline-none"
+                    className="w-full bg-[#f7f7f7] border border-[#e4e5e7] rounded-xl px-2.5 py-1.5 text-[#222325] text-xs focus:outline-none focus:border-[#1dbf73] focus:bg-white"
                   >
                     <option value="velcro">Velcro Hook/Loop</option>
                     <option value="iron_on">Heat Iron-On</option>
@@ -369,11 +369,11 @@ export default function AdminPricingCalculator({
                   </select>
                 </div>
                 <div>
-                  <label className="text-slate-400 font-medium block mb-1">Border</label>
+                  <label className="text-[#62646a] font-medium block mb-1">Border</label>
                   <select
                     value={simBorder}
                     onChange={(e) => setSimBorder(e.target.value as any)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-1.5 text-white text-xs focus:outline-none"
+                    className="w-full bg-[#f7f7f7] border border-[#e4e5e7] rounded-xl px-2.5 py-1.5 text-[#222325] text-xs focus:outline-none focus:border-[#1dbf73] focus:bg-white"
                   >
                     <option value="merrowed">Merrowed Overlock</option>
                     <option value="laser_cut">Laser Cut Smooth</option>
@@ -383,9 +383,9 @@ export default function AdminPricingCalculator({
 
               {/* Quantity */}
               <div>
-                <div className="flex justify-between text-slate-400 mb-1">
+                <div className="flex justify-between text-[#62646a] mb-1">
                   <span>Batch Quantity:</span>
-                  <span className="text-orange-400 font-mono font-bold">{simQty} pcs</span>
+                  <span className="text-[#109655] font-mono font-bold">{simQty} pcs</span>
                 </div>
                 <input
                   type="range"
@@ -394,52 +394,52 @@ export default function AdminPricingCalculator({
                   step="25"
                   value={simQty}
                   onChange={(e) => setSimQty(parseInt(e.target.value, 10))}
-                  className="w-full accent-orange-500 cursor-pointer"
+                  className="w-full accent-[#1dbf73] cursor-pointer"
                 />
               </div>
 
               {/* Rush Toggle */}
-              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950/70 border border-slate-800">
-                <span className="text-slate-300 font-medium">Rush 4-6 Day Delivery:</span>
+              <div className="flex items-center justify-between p-3 rounded-xl bg-[#f7f7f7] border border-[#e4e5e7]">
+                <span className="text-[#222325] font-medium">Rush 4-6 Day Delivery:</span>
                 <input
                   type="checkbox"
                   checked={simRush}
                   onChange={(e) => setSimRush(e.target.checked)}
-                  className="w-4 h-4 accent-orange-500 cursor-pointer"
+                  className="w-4 h-4 accent-[#1dbf73] cursor-pointer"
                 />
               </div>
 
             </div>
 
             {/* Calculated Output Display */}
-            <div className="p-4 rounded-2xl bg-slate-950 border border-orange-500/40 space-y-3">
+            <div className="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-200 space-y-3">
               <div className="flex justify-between items-center text-xs">
-                <span className="text-slate-400">Unit Price:</span>
-                <span className="text-white font-mono font-bold">${simCalc.unitPrice} / pc</span>
+                <span className="text-[#62646a]">Unit Price:</span>
+                <span className="text-[#222325] font-mono font-bold">${simCalc.unitPrice} / pc</span>
               </div>
               <div className="flex justify-between items-center text-xs">
-                <span className="text-slate-400">Applied Discount:</span>
-                <span className="text-emerald-400 font-mono font-bold">
+                <span className="text-[#62646a]">Applied Discount:</span>
+                <span className="text-[#109655] font-mono font-bold">
                   {simCalc.discountPct > 0 ? `-${simCalc.discountPct}% OFF` : 'Standard Tier'}
                 </span>
               </div>
               <div className="flex justify-between items-center text-xs">
-                <span className="text-slate-400">Subtotal:</span>
-                <span className="text-white font-mono">${simCalc.subtotal}</span>
+                <span className="text-[#62646a]">Subtotal:</span>
+                <span className="text-[#222325] font-mono">${simCalc.subtotal}</span>
               </div>
               {simRush && (
-                <div className="flex justify-between items-center text-xs text-orange-400">
+                <div className="flex justify-between items-center text-xs text-amber-700">
                   <span>Rush Expedited Fee:</span>
                   <span className="font-mono font-bold">+${settings.rushOrderFee ?? 45.00}</span>
                 </div>
               )}
 
-              <div className="pt-3 border-t border-slate-800 flex items-baseline justify-between">
+              <div className="pt-3 border-t border-emerald-200 flex items-baseline justify-between">
                 <div>
-                  <span className="text-xs font-bold text-slate-300 block">Calculated Total</span>
-                  <span className="text-[10px] text-slate-500 font-mono">{simQty} Custom Patches</span>
+                  <span className="text-xs font-bold text-[#222325] block">Calculated Total</span>
+                  <span className="text-[10px] text-[#74767e] font-mono">{simQty} Custom Patches</span>
                 </div>
-                <div className="text-3xl font-black text-amber-400 font-mono tracking-tight">
+                <div className="text-3xl font-black text-[#109655] font-mono tracking-tight">
                   ${simCalc.total}
                 </div>
               </div>

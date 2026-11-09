@@ -469,16 +469,16 @@ export default function AdminDashboardPage() {
   // 1. Initial Auth Check Spinner
   if (!authChecked) {
     return (
-      <div className="min-h-screen bg-[#07090e] flex flex-col items-center justify-center text-slate-400 font-sans gap-3">
-        <div className="w-9 h-9 rounded-full border-2 border-orange-500 border-t-transparent animate-spin" />
-        <span className="text-xs font-mono tracking-widest uppercase text-slate-500">
+      <div className="min-h-screen bg-[#f7f7f7] flex flex-col items-center justify-center text-[#222325] font-sans gap-3">
+        <div className="w-9 h-9 rounded-full border-2 border-[#1dbf73] border-t-transparent animate-spin" />
+        <span className="text-xs font-mono tracking-widest uppercase text-slate-500 font-bold">
           Verifying Admin Access...
         </span>
       </div>
     );
   }
 
-  // 2. Unauthenticated: Render Cyber Login Screen
+  // 2. Unauthenticated: Render Fiverr Pro Login Screen
   if (!isAuthenticated) {
     return (
       <AdminLogin
@@ -489,7 +489,7 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#090b10] text-slate-100 flex flex-col font-sans antialiased selection:bg-orange-500 selection:text-white">
+    <div className="min-h-screen bg-[#f7f7f7] text-[#222325] flex flex-col font-sans antialiased selection:bg-[#1dbf73] selection:text-white">
       
       {/* 1. Sleek Sticky Header */}
       <AdminHeader
@@ -503,7 +503,7 @@ export default function AdminDashboardPage() {
 
       {/* Save Notification Toast */}
       {saveToast && (
-        <div className="bg-emerald-500 text-white text-xs font-bold py-2.5 px-6 text-center shadow-lg animate-in slide-in-from-top-2">
+        <div className="bg-[#109655] text-white text-xs font-bold py-2.5 px-6 text-center shadow-md animate-in slide-in-from-top-2">
           {saveToast}
         </div>
       )}

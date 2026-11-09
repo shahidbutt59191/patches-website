@@ -14,6 +14,7 @@ import {
   Database,
   Search,
   LogOut,
+  Sparkles,
 } from 'lucide-react';
 import { AdminTabId } from './AdminSidebar';
 
@@ -40,7 +41,7 @@ const TAB_TITLES: Record<AdminTabId, { title: string; subtitle: string }> = {
     subtitle: 'Configure real-time pricing cards and features displayed on the main site.',
   },
   pricing: {
-    title: 'Rates, Surcharges & Live Simulator',
+    title: 'Rates, Surcharges & Simulator',
     subtitle: 'Base rates, backing fees, size multipliers, and interactive price calculator.',
   },
   portfolio: {
@@ -91,13 +92,13 @@ export default function AdminHeader({
   const handleRefreshClick = () => {
     setIsRefreshing(true);
     onRefresh();
-    setTimeout(() => setIsRefreshing(false), 800);
+    setTimeout(() => setIsRefreshing(false), 600);
   };
 
   const meta = TAB_TITLES[activeTab] || TAB_TITLES.overview;
 
   return (
-    <header className="sticky top-0 z-30 bg-[#0c0e14]/90 backdrop-blur-xl border-b border-slate-800/80 px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
+    <header className="sticky top-0 z-30 bg-white border-b border-[#e4e5e7] px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between shadow-2xs">
       {/* Left: Mobile Toggle + Breadcrumb & Section Name */}
       <div className="flex items-center gap-3 sm:gap-4">
         {/* Mobile Hamburger Menu */}
@@ -105,22 +106,22 @@ export default function AdminHeader({
           type="button"
           onClick={onToggleMobileMenu}
           aria-label="Open navigation menu"
-          className="lg:hidden p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:border-slate-700"
+          className="lg:hidden p-2 rounded-xl bg-[#f7f7f7] border border-[#e4e5e7] text-slate-700 hover:text-[#1dbf73]"
         >
           <Menu className="w-5 h-5" />
         </button>
 
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-mono font-medium text-slate-400 hidden sm:inline">
-              B-Digitizing OS
+            <span className="text-[11px] font-bold text-slate-400 hidden sm:inline">
+              BDigitizing Pro
             </span>
-            <span className="text-slate-600 hidden sm:inline">/</span>
-            <h1 className="text-base sm:text-lg font-black text-white tracking-tight flex items-center gap-2">
+            <span className="text-slate-300 hidden sm:inline">/</span>
+            <h1 className="text-base sm:text-lg font-black text-[#222325] tracking-tight flex items-center gap-2">
               <span>{meta.title}</span>
             </h1>
           </div>
-          <p className="text-[11px] text-slate-400 hidden md:block line-clamp-1">
+          <p className="text-[11px] text-[#62646a] hidden md:block line-clamp-1">
             {meta.subtitle}
           </p>
         </div>
@@ -129,18 +130,17 @@ export default function AdminHeader({
       {/* Right: Live Connection Pill + Clock + Actions */}
       <div className="flex items-center gap-2 sm:gap-3">
         {/* Live Cloud Database Connection Pill */}
-        <div className="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/90 border border-slate-800 text-slate-300 text-xs font-mono">
+        <div className="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-xs font-semibold text-[#109655]">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#1dbf73]" />
           </span>
-          <span className="text-slate-400">Database:</span>
-          <span className="text-emerald-400 font-semibold">Supabase Connected</span>
+          <span>Supabase Connected</span>
         </div>
 
         {/* Live Digital Clock */}
-        <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/80 border border-slate-800/80 text-xs font-mono text-slate-300">
-          <Clock className="w-3.5 h-3.5 text-orange-400" />
+        <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#f7f7f7] border border-[#e4e5e7] text-xs font-mono text-slate-700 font-bold">
+          <Clock className="w-3.5 h-3.5 text-[#1dbf73]" />
           <span>{timeStr || '12:00:00'}</span>
         </div>
 
@@ -149,9 +149,9 @@ export default function AdminHeader({
           type="button"
           onClick={handleRefreshClick}
           title="Refresh database records"
-          className="p-2 sm:px-3 sm:py-2 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white transition-all flex items-center gap-2 cursor-pointer"
+          className="p-2 sm:px-3 sm:py-2 rounded-xl bg-white hover:bg-slate-50 border border-[#e4e5e7] text-slate-700 hover:text-[#222325] transition-all flex items-center gap-2 cursor-pointer shadow-2xs"
         >
-          <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-orange-400' : ''}`} />
+          <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-[#1dbf73]' : ''}`} />
           <span className="hidden sm:inline text-xs font-bold">Refresh</span>
         </button>
 
@@ -159,19 +159,19 @@ export default function AdminHeader({
         <Link
           href="/"
           target="_blank"
-          className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-white text-xs font-bold transition-all border border-slate-800 hover:border-slate-700"
+          className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 hover:text-[#222325] text-xs font-bold transition-all border border-[#e4e5e7] shadow-2xs"
         >
-          <Eye className="w-3.5 h-3.5 text-orange-400" />
+          <Eye className="w-3.5 h-3.5 text-[#1dbf73]" />
           <span>Live Site</span>
-          <ExternalLink className="w-3 h-3 text-slate-500" />
+          <ExternalLink className="w-3 h-3 text-slate-400" />
         </Link>
 
-        {/* Save & Publish All */}
+        {/* Save & Publish All (Fiverr Green) */}
         <button
           type="button"
           onClick={onSave}
           disabled={isSaving}
-          className="px-4 py-2 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 active:scale-[0.98] text-white text-xs font-bold flex items-center gap-2 shadow-lg shadow-orange-500/25 transition-all cursor-pointer disabled:opacity-50"
+          className="px-4 py-2 rounded-xl btn-fiverr text-white text-xs font-bold flex items-center gap-2 shadow-sm transition-all cursor-pointer disabled:opacity-50"
         >
           <Save className={`w-4 h-4 ${isSaving ? 'animate-spin' : ''}`} />
           <span>{isSaving ? 'Publishing...' : 'Save & Publish'}</span>
@@ -183,7 +183,7 @@ export default function AdminHeader({
             type="button"
             onClick={onSignOut}
             title="Sign out of Admin Portal"
-            className="p-2 sm:px-3 sm:py-2 rounded-xl bg-slate-900/90 hover:bg-rose-500/15 border border-slate-800 hover:border-rose-500/30 text-slate-400 hover:text-rose-400 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+            className="p-2 sm:px-3 sm:py-2 rounded-xl bg-white hover:bg-rose-50 border border-[#e4e5e7] hover:border-rose-200 text-slate-600 hover:text-rose-600 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
           >
             <LogOut className="w-4 h-4" />
             <span className="hidden md:inline">Sign Out</span>
